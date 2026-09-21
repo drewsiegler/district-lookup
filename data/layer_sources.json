@@ -12,7 +12,8 @@
       {"file": "oak_grove_school_district_trustee_areas.geojson", "name_field": "AREA", "extract": "Trustee Area C(\\d+)"}
     ],
     "high_school_trustee_area": [
-      {"file": "campbell_union_hsd_trustee_areas.geojson", "name_field": "TRUSTEEARE"}
+      {"file": "campbell_union_hsd_trustee_areas.geojson", "name_field": "TRUSTEEARE"},
+      {"file": "fremont_union_hsd_trustee_areas.geojson", "name_field": "DIST_ID"}
     ]
   }
 }

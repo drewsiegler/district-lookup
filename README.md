@@ -169,8 +169,8 @@ TIGER names some districts slightly differently than common usage — e.g. "Los 
 
 **K-12 districts that elect by trustee area (need a map) — 14 of the 31 on the original list.** The Registrar's top-line "Election:" field only tells part of the story — 4 of these districts recently adopted a transition resolution and that field still says "at-large" even though their *first* trustee-area election is already scheduled. Caught this because a district you flagged (East Side Union) turned out to have a transition note further down its page that a first pass checking only the summary line had missed — worth being aware that a same pattern could apply elsewhere if this list is ever re-verified.
 
-- **Trustee-area maps loaded:** Campbell Union HSD (in `high_school_trustee_area`), Oak Grove SD (in `elementary_trustee_area`)
-- **Already electing by trustee area, map still needed:** Gilroy USD, Morgan Hill USD, San José USD, Santa Clara USD, Fremont Union HSD, Campbell Union SD, Moreland SD, Sunnyvale SD
+- **Trustee-area maps loaded:** Campbell Union HSD and Fremont Union HSD (in `high_school_trustee_area`), Oak Grove SD (in `elementary_trustee_area`)
+- **Already electing by trustee area, map still needed:** Gilroy USD, Morgan Hill USD, San José USD, Santa Clara USD, Campbell Union SD, Moreland SD, Sunnyvale SD
 - **Mid-transition — first trustee-area election is November 3, 2026, ~7 weeks out:** East Side Union HSD, Los Gatos-Saratoga Joint Union HSD, Mountain View-Los Altos Union HSD, Alum Rock Union ESD. Sourcing these maps is time-sensitive if you want coverage in place before that election.
 
 **K-12 districts confirmed at-large (no trustee-area map needed) — the other 17:**
