@@ -43,6 +43,12 @@
       "name_field": "NAME"
     },
     {
+      "id": "unified_trustee_area",
+      "label": "Unified Trustee Area",
+      "name_field": "district_name",
+      "format": "TA{}"
+    },
+    {
       "id": "elementary_school_districts",
       "label": "Elementary School District",
       "name_field": "NAME"

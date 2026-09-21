@@ -8,6 +8,9 @@
       {"file": "sunnyvale_council.geojson", "name_field": "DISTRICT", "city": "Sunnyvale"},
       {"file": "gilroy_council.geojson", "name_field": "DISTRICT", "city": "Gilroy"}
     ],
+    "unified_trustee_area": [
+      {"file": "gilroy_unified_school_district_trustee_areas.geojson", "name_field": "TRUSTEEARE"}
+    ],
     "elementary_trustee_area": [
       {"file": "oak_grove_school_district_trustee_areas.geojson", "name_field": "AREA", "extract": "Trustee Area C(\\d+)"}
     ],
