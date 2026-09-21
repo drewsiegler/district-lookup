@@ -1,0 +1,68 @@
+{
+  "layers": [
+    {
+      "id": "city",
+      "label": "City / Town (Santa Clara County)",
+      "name_field": "NAME"
+    },
+    {
+      "id": "council_district",
+      "label": "City Council District",
+      "name_field": "district_name",
+      "same_city_as": "city"
+    },
+    {
+      "id": "santa_clara_county_supervisorial",
+      "label": "Santa Clara County Supervisorial District",
+      "name_field": "name",
+      "pattern": "District (?P<num>\\d+)\\s*[—–-]\\s*Supervisor (?P<name>.+)",
+      "format": "D{num}—Sup. {name}",
+      "coverage": true
+    },
+    {
+      "id": "us_congress",
+      "label": "U.S. Congressional District",
+      "name_field": "CD119FP",
+      "format": "US-CA{:02d}"
+    },
+    {
+      "id": "ca_state_senate",
+      "label": "CA State Senate District",
+      "name_field": "SLDUST",
+      "format": "SD{:02d}"
+    },
+    {
+      "id": "ca_state_assembly",
+      "label": "CA State Assembly District",
+      "name_field": "SLDLST",
+      "format": "AD{:02d}"
+    },
+    {
+      "id": "unified_school_districts",
+      "label": "Unified School District",
+      "name_field": "NAME"
+    },
+    {
+      "id": "elementary_school_districts",
+      "label": "Elementary School District",
+      "name_field": "NAME"
+    },
+    {
+      "id": "elementary_trustee_area",
+      "label": "Elementary Trustee Area",
+      "name_field": "district_name",
+      "format": "TA{}"
+    },
+    {
+      "id": "secondary_school_districts",
+      "label": "High School District",
+      "name_field": "NAME"
+    },
+    {
+      "id": "high_school_trustee_area",
+      "label": "High School Trustee Area",
+      "name_field": "district_name",
+      "format": "TA{}"
+    }
+  ]
+}

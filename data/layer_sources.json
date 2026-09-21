@@ -1,0 +1,18 @@
+{
+  "merge_groups": {
+    "council_district": [
+      {"file": "san_jose_council.geojson", "name_field": "DISTRICT", "city": "San Jose"},
+      {"file": "santa_clara_city_council.geojson", "name_field": "DISTRICTNO", "city": "Santa Clara"},
+      {"file": "campbell_council.geojson", "name_field": "CAMPBELLCC", "city": "Campbell"},
+      {"file": "morgan_hill_council.geojson", "name_field": "CCD", "city": "Morgan Hill"},
+      {"file": "sunnyvale_council.geojson", "name_field": "DISTRICT", "city": "Sunnyvale"},
+      {"file": "gilroy_council.geojson", "name_field": "DISTRICT", "city": "Gilroy"}
+    ],
+    "elementary_trustee_area": [
+      {"file": "oak_grove_school_district_trustee_areas.geojson", "name_field": "AREA", "extract": "Trustee Area C(\\d+)"}
+    ],
+    "high_school_trustee_area": [
+      {"file": "campbell_union_hsd_trustee_areas.geojson", "name_field": "TRUSTEEARE"}
+    ]
+  }
+}
