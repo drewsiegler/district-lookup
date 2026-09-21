@@ -1,7 +1,3 @@
-# urban-succotash
-
-An app that can take lists of people &amp; addresses and map them across all of their electoral districts into a csv.
-
 # District Lookup
 
 Give it a CSV of names and addresses; it geocodes each address, checks it against every custom boundary map you've loaded (city council districts, school districts, anything you have a GeoJSON for), and writes one row per person with a column per district type. A custom, growable version of what a registrar of voters' office uses internally.
@@ -17,7 +13,7 @@ Built as a Python CLI, following the plan from [this design conversation](https:
 Needs Python 3:
 
 ```bash
-cd urban-succotash
+cd district-lookup
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -119,7 +115,7 @@ Defaults to `data/people.csv` if you don't pass a path.
 ## Project layout
 
 ```
-urban-succotash/
+district-lookup/
 ├── data/
 │   ├── raw_geojson/          # boundary files you add, one .geojson at a time
 │   ├── layer_sources.json    # which council / trustee-area files feed each shared column
