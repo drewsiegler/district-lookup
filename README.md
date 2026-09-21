@@ -33,10 +33,12 @@ If you already have a `.venv` here, just `source .venv/bin/activate`. The GeoPac
        {"file": "los_altos_council.geojson", "name_field": "DISTRICT", "city": "Los Altos"}
        ```
        A council district is only filled in when the address is inside that same city's official limits. So unincorporated county land gets a blank city *and* a blank council district, even where a city's map extends over it. It also stops a district number from being borrowed from a neighboring city where two agencies draw the shared border a little differently. (San José's council map and the official city limits disagree by about a square mile in total, mostly along unincorporated pockets.)
-     - **Trustee-area maps** go in one column per district type (`high_school_trustee_area`, and later `elementary_trustee_area`, `unified_trustee_area`, `community_college_trustee_area`), written as `TA3` etc. — the district itself is already named in the school district column just before it:
+     - **Trustee-area maps** go in one column per district type (`unified_trustee_area`, `elementary_trustee_area`, `high_school_trustee_area`, and later `community_college_trustee_area`), written as `TA3` etc. — the district itself is already named in the school district column just before it. Say which district the file is for, spelled exactly as the Census names it in that column:
        ```json
-       {"file": "campbell_union_hsd_trustee_areas.geojson", "name_field": "TRUSTEEARE"}
+       {"file": "campbell_union_hsd_trustee_areas.geojson", "name_field": "TRUSTEEARE",
+        "district": "Campbell Union High School District"}
        ```
+       Like the council maps, an area is only filled in when the address is in that same district — so it's left blank outside it, never borrowed from a neighboring district where two agencies draw their shared border differently, and someone inside a district whose map has a hole is flagged for review instead of silently coming out blank.
        A new group name (e.g. `unified_trustee_area`) creates that column the first time it has a file, already set to the `TA#` format.
 
      If a file spells its districts out in a longer string rather than a bare number, add `extract` — a regex whose first group is the number. Oak Grove's file says "Trustee Area C1" (the C is the adopted map's letter, not part of the area name), so:
@@ -108,7 +110,7 @@ The reasons:
 
 - `unmatched_address` — the geocoder couldn't resolve the address at all. Usually a typo, a PO box, or a landmark name instead of a street address.
 - `outside_coverage_area` — it geocoded fine, but landed outside every layer marked `"coverage": true` in `data/layers.json` (currently the county supervisorial layer, since it covers the whole county with no gaps). Either the address is wrong, or that person genuinely lives outside the area and belongs on a different list.
-- `missing_council_district` — it's inside the official limits of a city that has a council map loaded, but that city's map doesn't cover the spot, so the district needs looking up by hand. These are small gaps between each city's own map and the official limits — about 1.3 sq mi in San José, about a tenth of a square mile or less in each other city (none in Sunnyvale). At-large cities and unincorporated land are *not* flagged; a blank council district is the right answer there.
+- `missing_council_district`, `missing_unified_trustee_area`, and the like — the address is inside a city or school district whose map is loaded, but that map doesn't cover the spot, so the district needs looking up by hand. These are gaps between an agency's own map and its official boundary: about 1.3 sq mi in San José, a tenth of a square mile or less in each other city, and about 78 sq mi at the eastern edge of Gilroy USD. Places with no map loaded at all — at-large cities, districts whose trustee map you don't have yet, unincorporated land — are *not* flagged; blank is the right answer there.
 
 Defaults to `data/people.csv` if you don't pass a path.
 

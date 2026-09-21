@@ -115,8 +115,8 @@ def main():
                     else:
                         review_reason = next((
                             f"missing_{layer['id']}" for layer in layers
-                            if layer["same_city_as"]
-                            and districts.get(layer["same_city_as"]) in layer["cities"]
+                            if layer["must_match"]
+                            and districts.get(layer["must_match"]["layer"]) in layer["mapped"]
                             and not districts.get(layer["id"])
                         ), None)
 

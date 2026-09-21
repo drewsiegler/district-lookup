@@ -28,7 +28,7 @@ Two ways a GeoJSON file becomes a layer:
 
    The group becomes one layer with a single "district_name" column holding
    the number, however each agency named its own field, plus "source_file"
-   (and "city", if the entries give one — see "same_city_as" in
+   (and "city" or "district", if the entries give one — see "must_match" in
    src/layers.py). Its registry entry is filled in automatically; groups named
    "*_trustee_area" also get format "TA{}" (area 3 is written "TA3"). Files
    listed in a group are skipped by the one-file-one-layer pass. Only group
@@ -107,8 +107,11 @@ def build_merged_layer(group_name: str, entries: list[dict]) -> gpd.GeoDataFrame
         if "extract" in entry:
             values = [extract_number(v, entry["extract"], entry["file"]) for v in values]
         columns = {MERGED_NAME_FIELD: values, "source_file": entry["file"]}
-        if "city" in entry:
-            columns["city"] = entry["city"]
+        # Whichever jurisdiction the file belongs to, checked at lookup time
+        # against the column beside it (see must_match in src/layers.py).
+        for scope in ("city", "district"):
+            if scope in entry:
+                columns[scope] = entry[scope]
         parts.append(gpd.GeoDataFrame({**columns, "geometry": gdf.geometry}, crs="EPSG:4326"))
     if not parts:
         return None

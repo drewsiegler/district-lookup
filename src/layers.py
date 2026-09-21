@@ -14,11 +14,13 @@ Registry entry fields:
                 (e.g. "D{num}—Sup. {name}")
     coverage    optional true: this layer's footprint is the whole area the
                 tool covers (see main.py's outside_coverage_area check)
-    same_city_as  optional id of an earlier layer (the city layer). A feature
-                only counts if its "city" column equals that layer's value
-                for the address, so a council district is left blank on
-                unincorporated land and never borrowed from a neighboring
-                city where two agencies' boundary lines disagree.
+    must_match  optional {"layer": <id of an earlier layer>, "column": <column
+                on this layer>}. A feature only counts if that column equals
+                the earlier layer's value for the address. Council districts
+                must match the official city, trustee areas must match the
+                school district, so an area is left blank outside the
+                jurisdiction that drew it and never borrowed from a neighbor
+                where two agencies' boundary lines disagree.
 """
 
 import json
@@ -108,36 +110,40 @@ def load_layers() -> list[dict]:
             gdf[DISPLAY_COLUMN] = [format_value(v, fmt, pattern) for v in gdf[name_field]]
         except (ValueError, KeyError, IndexError) as err:
             raise ValueError(f"Layer '{layer_id}': can't apply format {fmt!r}: {err}") from err
-        same_city_as = entry.get("same_city_as")
-        if same_city_as:
-            check_same_city(layer_id, gdf, same_city_as, loaded)
+        must_match = entry.get("must_match")
+        if must_match:
+            check_must_match(layer_id, gdf, must_match, loaded)
         gdf.sindex  # build the spatial index once, up front
         loaded.append({
             "id": layer_id,
             "label": entry.get("label", layer_id),
             "coverage": bool(entry.get("coverage")),
-            "same_city_as": same_city_as,
-            "cities": set(gdf["city"].dropna()) if same_city_as else set(),
+            "must_match": must_match,
+            # The jurisdictions this layer actually holds a map for, so main.py
+            # can tell "no map for this district yet" from "map exists but has
+            # a hole where this address falls".
+            "mapped": set(gdf[must_match["column"]].dropna()) if must_match else set(),
             "gdf": gdf,
         })
     return loaded
 
 
-def check_same_city(layer_id: str, gdf, city_layer_id: str, loaded: list[dict]) -> None:
-    city_layer = next((layer for layer in loaded if layer["id"] == city_layer_id), None)
-    if city_layer is None:
+def check_must_match(layer_id: str, gdf, must_match: dict, loaded: list[dict]) -> None:
+    other_id, column = must_match["layer"], must_match["column"]
+    other = next((layer for layer in loaded if layer["id"] == other_id), None)
+    if other is None:
         raise ValueError(
-            f"Layer '{layer_id}': same_city_as '{city_layer_id}' must be a layer listed "
+            f"Layer '{layer_id}': must_match layer '{other_id}' has to be listed "
             f"above it in {REGISTRY_PATH.name}."
         )
-    if "city" not in gdf.columns:
-        raise ValueError(f"Layer '{layer_id}' uses same_city_as but has no 'city' column.")
-    known = set(city_layer["gdf"][DISPLAY_COLUMN].dropna())
-    unknown = sorted(set(gdf["city"].dropna()) - known)
+    if column not in gdf.columns:
+        raise ValueError(f"Layer '{layer_id}' uses must_match but has no '{column}' column.")
+    known = set(other["gdf"][DISPLAY_COLUMN].dropna())
+    unknown = sorted(set(gdf[column].dropna()) - known)
     if unknown:
         raise ValueError(
-            f"Layer '{layer_id}': city {unknown} doesn't match any value in '{city_layer_id}' "
-            f"(check spelling). Known cities: {sorted(known)}"
+            f"Layer '{layer_id}': {column} {unknown} doesn't match any value in "
+            f"'{other_id}' (check spelling). Known values: {sorted(known)}"
         )
 
 

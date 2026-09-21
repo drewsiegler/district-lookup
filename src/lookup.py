@@ -12,12 +12,15 @@ def lookup_point(layers: list[dict], lat: float, lon: float) -> dict:
     results = {}
     for layer in layers:
         gdf = layer["gdf"]
-        required_city = results.get(layer["same_city_as"]) if layer["same_city_as"] else None
+        must_match = layer["must_match"]
+        # e.g. the official city for a council district, or the school district
+        # for a trustee area — whatever this layer's features have to agree with.
+        required = results.get(must_match["layer"]) if must_match else None
         match = None
-        if not layer["same_city_as"] or required_city:
+        if not must_match or required:
             for idx in gdf.sindex.query(point, predicate="intersects"):
                 row = gdf.iloc[idx]
-                if required_city and row["city"] != required_city:
+                if required and row[must_match["column"]] != required:
                     continue
                 if row.geometry.contains(point):
                     match = row[DISPLAY_COLUMN]

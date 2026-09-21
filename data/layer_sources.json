@@ -9,14 +9,18 @@
       {"file": "gilroy_council.geojson", "name_field": "DISTRICT", "city": "Gilroy"}
     ],
     "unified_trustee_area": [
-      {"file": "gilroy_unified_school_district_trustee_areas.geojson", "name_field": "TRUSTEEARE"}
+      {"file": "gilroy_unified_school_district_trustee_areas.geojson", "name_field": "TRUSTEEARE",
+       "district": "Gilroy Unified School District"}
     ],
     "elementary_trustee_area": [
-      {"file": "oak_grove_school_district_trustee_areas.geojson", "name_field": "AREA", "extract": "Trustee Area C(\\d+)"}
+      {"file": "oak_grove_school_district_trustee_areas.geojson", "name_field": "AREA",
+       "extract": "Trustee Area C(\\d+)", "district": "Oak Grove Elementary School District"}
     ],
     "high_school_trustee_area": [
-      {"file": "campbell_union_hsd_trustee_areas.geojson", "name_field": "TRUSTEEARE"},
-      {"file": "fremont_union_hsd_trustee_areas.geojson", "name_field": "DIST_ID"}
+      {"file": "campbell_union_hsd_trustee_areas.geojson", "name_field": "TRUSTEEARE",
+       "district": "Campbell Union High School District"},
+      {"file": "fremont_union_hsd_trustee_areas.geojson", "name_field": "DIST_ID",
+       "district": "Fremont Union High School District"}
     ]
   }
 }

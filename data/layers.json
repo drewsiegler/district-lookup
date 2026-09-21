@@ -9,7 +9,10 @@
       "id": "council_district",
       "label": "City Council District",
       "name_field": "district_name",
-      "same_city_as": "city"
+      "must_match": {
+        "layer": "city",
+        "column": "city"
+      }
     },
     {
       "id": "santa_clara_county_supervisorial",
@@ -46,7 +49,11 @@
       "id": "unified_trustee_area",
       "label": "Unified Trustee Area",
       "name_field": "district_name",
-      "format": "TA{}"
+      "format": "TA{}",
+      "must_match": {
+        "layer": "unified_school_districts",
+        "column": "district"
+      }
     },
     {
       "id": "elementary_school_districts",
@@ -57,7 +64,11 @@
       "id": "elementary_trustee_area",
       "label": "Elementary Trustee Area",
       "name_field": "district_name",
-      "format": "TA{}"
+      "format": "TA{}",
+      "must_match": {
+        "layer": "elementary_school_districts",
+        "column": "district"
+      }
     },
     {
       "id": "secondary_school_districts",
@@ -68,7 +79,11 @@
       "id": "high_school_trustee_area",
       "label": "High School Trustee Area",
       "name_field": "district_name",
-      "format": "TA{}"
+      "format": "TA{}",
+      "must_match": {
+        "layer": "secondary_school_districts",
+        "column": "district"
+      }
     }
   ]
 }
