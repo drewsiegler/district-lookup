@@ -66,6 +66,24 @@ Current conventions: `city` is the city/town name and `council_district` is the 
 
 ## Running a lookup
 
+Two ways: the app window, or the command line. Both do exactly the same work and write the same files.
+
+### The app window
+
+Double-click **Start District Lookup.command** in Finder, or run:
+
+```bash
+python src/web.py
+```
+
+It opens a page in your browser where you can drop a file, pick one from Finder, or paste a list straight in, then click Start. It shows progress as it goes and gives you download buttons at the end. Leave the small Terminal window open while you're using it; closing it shuts the app down.
+
+Nothing is uploaded anywhere. The page is served by your own computer, reachable only from it, and your list never leaves the machine — the only thing that goes out is one address at a time to the Census geocoder, exactly as the command line does.
+
+The first time you double-click the launcher, macOS may say it can't verify the developer. Right-click it and choose **Open** instead, then **Open** again to confirm. You only need to do that once.
+
+### The command line
+
 ```bash
 python src/main.py data/people.csv
 ```
@@ -129,6 +147,9 @@ district-lookup/
 ├── scripts/
 │   └── build_gpkg.py         # raw_geojson/ -> districts.gpkg + registry
 ├── src/
+│   ├── web.py                # the app window (a page served to your browser)
+│   ├── web_page.html         # that page
+│   ├── pipeline.py           # the lookup itself, shared by the window and the CLI
 │   ├── input_table.py        # reads the input list in whatever shape it arrives
 │   ├── geocode.py            # address -> lat/lon, with caching
 │   ├── layers.py             # loads registered layers from the .gpkg

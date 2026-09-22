@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>District Lookup</title>
+<style>
+  :root {
+    --ink: #1c2b2a; --muted: #62726f; --line: #dfe3e3; --bg: #f4f6f6;
+    --surface: #fff; --accent: #1f6f68; --accent-soft: #e3f2ef; --warn: #a5461f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.5 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  main { max-width: 680px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 22px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); font-size: 13px; margin: 0 0 24px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; }
+  #drop {
+    border: 2px dashed var(--line); border-radius: 10px; padding: 32px 20px; text-align: center;
+    transition: border-color .15s, background .15s; cursor: pointer;
+  }
+  #drop.over { border-color: var(--accent); background: var(--accent-soft); }
+  #drop strong { display: block; font-size: 16px; margin-bottom: 4px; }
+  #drop span { color: var(--muted); font-size: 13px; }
+  .or { text-align: center; color: var(--muted); font-size: 12px; text-transform: uppercase;
+        letter-spacing: .08em; margin: 18px 0 10px; }
+  textarea {
+    width: 100%; min-height: 110px; resize: vertical; padding: 10px; border-radius: 6px;
+    border: 1px solid var(--line); background: #fbfcfc; color: var(--ink); line-height: 1.45;
+    font: 13px/1.45 'IBM Plex Mono', ui-monospace, monospace;
+  }
+  .row { display: flex; align-items: center; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+  button {
+    font: inherit; font-weight: 700; font-size: 14px; padding: 9px 18px; border-radius: 6px;
+    border: none; background: var(--accent); color: #fff; cursor: pointer;
+  }
+  button:disabled { background: #a9bcb9; cursor: not-allowed; }
+  button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); font-weight: 600; }
+  .chosen { font-size: 13px; color: var(--muted); }
+  .chosen b { color: var(--ink); }
+  #panel { margin-top: 20px; display: none; }
+  #panel.show { display: block; }
+  .bar { height: 8px; border-radius: 4px; background: #eef1f1; overflow: hidden; margin: 12px 0 8px; }
+  .bar div { height: 100%; width: 0; background: var(--accent); border-radius: 4px; transition: width .2s; }
+  .status { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+  .count { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); }
+  .done h2 { font-size: 17px; margin: 0 0 12px; }
+  .tally { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+  .pill { border-radius: 8px; padding: 10px 14px; font-size: 13px; flex: 1; min-width: 160px; }
+  .pill.ok { background: var(--accent-soft); color: var(--accent); }
+  .pill.review { background: #fbeeea; color: var(--warn); }
+  .pill .n { display: block; font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .reasons { font-size: 12px; color: var(--muted); margin: 10px 0 0; }
+  .paths { font: 12px/1.6 'IBM Plex Mono', ui-monospace, monospace; color: var(--muted);
+           margin-top: 14px; overflow-wrap: anywhere; }
+  .error { background: #fbeaea; color: #a52121; border-radius: 6px; padding: 12px 14px; font-size: 13px; }
+  a.dl { display: inline-block; text-decoration: none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>District Lookup</h1>
+  <p class="sub">Give it a list of addresses; get back every electoral district they fall in. Your list stays on this computer.</p>
+
+  <div class="card" id="input-card">
+    <div id="drop">
+      <strong>Drop a CSV or TXT file here</strong>
+      <span>or click to choose one from Finder</span>
+      <input type="file" id="file" accept=".csv,.txt,text/csv,text/plain" hidden>
+    </div>
+
+    <p class="or">or paste your list</p>
+    <textarea id="paste" spellcheck="false" placeholder="1660 Tully Rd, San Jose, CA 95122&#10;Alex Lee | 70 N First St, Campbell, CA 95008&#10;&#10;…or paste rows copied straight out of a spreadsheet, headings and all."></textarea>
+
+    <div class="row">
+      <button id="start" disabled>Start</button>
+      <span class="chosen" id="chosen">Nothing chosen yet</span>
+      <button class="ghost" id="clear" hidden>Clear</button>
+    </div>
+  </div>
+
+  <div class="card" id="panel">
+    <div id="running">
+      <div class="bar"><div id="fill"></div></div>
+      <p class="status"><span class="count" id="counter"></span> <span id="message"></span></p>
+    </div>
+    <div id="finished" class="done" hidden></div>
+    <div id="failed" hidden></div>
+  </div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+let chosen = null;  // {filename, text}
+
+function choose(filename, text) {
+  chosen = { filename, text };
+  const lines = text.trim().split("\n").filter(Boolean).length;
+  $("chosen").innerHTML = `<b>${filename}</b> — ${lines.toLocaleString()} line${lines === 1 ? "" : "s"}`;
+  $("start").disabled = lines === 0;
+  $("clear").hidden = false;
+}
+
+$("drop").onclick = () => $("file").click();
+$("file").onchange = e => {
+  const file = e.target.files[0];
+  if (file) file.text().then(text => { $("paste").value = ""; choose(file.name, text); });
+};
+["dragenter", "dragover"].forEach(evt =>
+  $("drop").addEventListener(evt, e => { e.preventDefault(); $("drop").classList.add("over"); }));
+["dragleave", "drop"].forEach(evt =>
+  $("drop").addEventListener(evt, e => { e.preventDefault(); $("drop").classList.remove("over"); }));
+$("drop").addEventListener("drop", e => {
+  const file = e.dataTransfer.files[0];
+  if (file) file.text().then(text => { $("paste").value = ""; choose(file.name, text); });
+});
+$("paste").oninput = e => {
+  const text = e.target.value;
+  if (text.trim()) choose("pasted list", text);
+  else { chosen = null; $("chosen").textContent = "Nothing chosen yet"; $("start").disabled = true; $("clear").hidden = true; }
+};
+$("clear").onclick = () => {
+  chosen = null; $("paste").value = ""; $("file").value = "";
+  $("chosen").textContent = "Nothing chosen yet";
+  $("start").disabled = true; $("clear").hidden = true;
+  $("panel").classList.remove("show");
+};
+
+$("start").onclick = async () => {
+  if (!chosen) return;
+  $("start").disabled = true;
+  $("panel").classList.add("show");
+  $("running").hidden = false; $("finished").hidden = true; $("failed").hidden = true;
+  $("fill").style.width = "0"; $("counter").textContent = ""; $("message").textContent = "Starting…";
+  await fetch("/run", { method: "POST", body: JSON.stringify(chosen) });
+  poll();
+};
+
+function poll() {
+  fetch("/status").then(r => r.json()).then(s => {
+    if (s.status === "running") {
+      if (s.total) {
+        $("fill").style.width = (s.done / s.total * 100) + "%";
+        $("counter").textContent = `${s.done.toLocaleString()} of ${s.total.toLocaleString()}`;
+      }
+      $("message").textContent = s.message || "";
+      setTimeout(poll, 400);
+    } else if (s.status === "done") {
+      finish(s.summary);
+    } else if (s.status === "error") {
+      $("running").hidden = true;
+      $("failed").hidden = false;
+      $("failed").innerHTML = `<p class="error">${escapeHtml(s.error)}</p>`;
+      $("start").disabled = false;
+    } else {
+      setTimeout(poll, 400);
+    }
+  });
+}
+
+function finish(s) {
+  $("running").hidden = true;
+  $("finished").hidden = false;
+  const reasons = s.reasons.length
+    ? `<p class="reasons">Reasons: ${s.reasons.map(escapeHtml).join(", ")}</p>` : "";
+  $("finished").innerHTML = `
+    <h2>Done</h2>
+    <div class="tally">
+      <div class="pill ok"><span class="n">${s.results.toLocaleString()}</span>mapped to their districts</div>
+      <div class="pill review"><span class="n">${s.review.toLocaleString()}</span>need a look first</div>
+    </div>
+    ${reasons}
+    <div class="row">
+      <a class="dl" href="/download/results" download><button>Download results</button></a>
+      ${s.review ? '<a class="dl" href="/download/review" download><button class="ghost">Download needs review</button></a>' : ""}
+    </div>
+    <p class="paths">Also saved to:<br>${escapeHtml(s.results_path)}<br>${escapeHtml(s.review_path)}</p>`;
+  $("start").disabled = false;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+</script>
+</body>
+</html>
