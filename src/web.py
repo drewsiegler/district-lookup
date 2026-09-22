@@ -29,6 +29,10 @@ ICON_PATH = Path(__file__).resolve().parent.parent / "assets" / "AppIcon.appicon
 state = {"status": "idle", "done": 0, "total": 0, "message": "", "summary": None, "error": None}
 state_lock = threading.Lock()
 layers_cache = []
+# The finished rows live here and nowhere else: never written to disk, so a
+# list of real people's addresses can't be left behind in the project folder
+# (or committed by accident). Downloading is how you get them out.
+last_outcome = {"results": None, "review": None}
 
 
 def update(**changes):
@@ -54,13 +58,13 @@ def run_job(filename: str, text: str):
             update(done=i - 1, total=total, message=f"{label or address}")
 
         outcome = pipeline.run(people, source_columns, roles, layers_cache, on_row=on_row)
-        results_path, review_path = pipeline.write_outputs(outcome)
+        with state_lock:
+            last_outcome["results"] = pipeline.csv_text(outcome, "results")
+            last_outcome["review"] = pipeline.csv_text(outcome, "review")
         update(status="done", done=len(people), message="", summary={
             "results": len(outcome["results"]),
             "review": len(outcome["review"]),
             "reasons": sorted({r["review_reason"] for r in outcome["review"]}),
-            "results_path": str(results_path),
-            "review_path": str(review_path),
         })
     except Exception as err:  # shown in the page rather than only the terminal
         message = str(err) or err.__class__.__name__
@@ -92,12 +96,15 @@ class Handler(BaseHTTPRequestHandler):
                 body = json.dumps(state).encode("utf-8")
             self.send(200, body, "application/json")
         elif self.path in ("/download/results", "/download/review"):
-            path = pipeline.RESULTS_PATH if self.path.endswith("results") else pipeline.REVIEW_PATH
-            if not path.exists():
-                self.send(404, b"not generated yet", "text/plain")
+            which = "results" if self.path.endswith("results") else "review"
+            with state_lock:
+                text = last_outcome[which]
+            if text is None:
+                self.send(404, b"nothing to download yet", "text/plain")
                 return
-            self.send(200, path.read_bytes(), "text/csv", {
-                "Content-Disposition": f'attachment; filename="{path.name}"',
+            filename = "results.csv" if which == "results" else "needs_review.csv"
+            self.send(200, text.encode("utf-8-sig"), "text/csv", {
+                "Content-Disposition": f'attachment; filename="{filename}"',
             })
         else:
             self.send(404, b"not found", "text/plain")

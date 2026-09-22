@@ -88,6 +88,8 @@ python src/web.py
 
 It opens a page in your browser where you can drop a file, pick one from Finder, or paste a list straight in, then click Start. It shows progress as it goes and gives you download buttons at the end. Leave the small Terminal window open while you're using it; closing it shuts the app down.
 
+**Results are never written to disk here.** They're held in memory and handed over only when you click Download, so a list of real people's names and addresses can't be left sitting in the project folder — or committed by accident. Download before starting another lookup; the next one replaces them.
+
 Nothing is uploaded anywhere. The page is served by your own computer, reachable only from it, and your list never leaves the machine — the only thing that goes out is one address at a time to the Census geocoder, exactly as the command line does.
 
 The first time you double-click the launcher, macOS may say it can't verify the developer. Right-click it and choose **Open** instead, then **Open** again to confirm. You only need to do that once.
@@ -131,8 +133,10 @@ Two things worth knowing:
 
 Every column of your input comes back in the output, in its original order and spelling, with the lookup columns added on the end. So the name, email and phone stay in their own fields and the file is ready to work from. Each person lands in exactly one of two files:
 
-- `output/results.csv` — everyone whose address resolved to somewhere inside the county, with `matched_address`, `lat`, `lon`, and one column per registered layer.
-- `output/needs_review.csv` — everyone who needs a human look first, with the same columns plus a `review_reason` and `address_searched` (exactly what was sent to the geocoder, which usually shows why it failed). Once an address is corrected, re-run and that person moves over to `results.csv`.
+- **results** — everyone whose address resolved to somewhere inside the county, with `matched_address`, `lat`, `lon`, and one column per registered layer.
+- **needs review** — everyone who needs a human look first, with the same columns plus a `review_reason` and `address_searched` (exactly what was sent to the geocoder, which usually shows why it failed). Once an address is corrected, re-run and that person moves over to the results file.
+
+From the app window these come as downloads. From the command line they're written next to your input list — `list.csv` produces `list.results.csv` and `list.needs_review.csv` — so they land wherever your list lives rather than inside this folder. Every `.csv` in the project is gitignored as a backstop, with the one example template deliberately allowed back in.
 
 The outputs are written so Excel shows characters like the em dash in `D2—Sup.` correctly.
 
@@ -172,10 +176,7 @@ district-lookup/
 │   ├── geocode.py            # address -> lat/lon, with caching
 │   ├── layers.py             # loads registered layers from the .gpkg
 │   ├── lookup.py             # point-in-polygon matching
-│   └── main.py               # reads the input list, writes output/results.csv
-├── output/
-│   ├── results.csv
-│   └── needs_review.csv      # unmatched or out-of-coverage addresses, for follow-up
+│   └── main.py               # reads the input list, writes results beside it
 ├── requirements.txt         # what the app needs: shapely, requests
 └── requirements-build.txt   # what adding maps needs: geopandas, GDAL, pandas
 ```

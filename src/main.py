@@ -3,10 +3,14 @@
 Reads the input list (see input_table.py for the shapes it accepts), geocodes
 each address, and looks it up against every registered district layer. Every
 column of the input comes through to the output untouched, with the district
-columns added on the end. Each person lands in exactly one output file:
+columns added on the end.
 
-- output/results.csv — everyone who geocoded to somewhere inside the area.
-- output/needs_review.csv — everyone who needs a human look first:
+Two files are written next to your input list — never inside this folder,
+since they carry the same names and addresses it does. For list.csv you get
+list.results.csv and list.needs_review.csv. Each person lands in exactly one:
+
+- .results.csv — everyone who geocoded to somewhere inside the area.
+- .needs_review.csv — everyone who needs a human look first:
   - unmatched_address: the address failed to geocode.
   - outside_coverage_area: it geocoded to somewhere outside every layer
     marked "coverage": true in data/layers.json (e.g. the county). Either the
@@ -58,7 +62,13 @@ def main():
         print(f"[{i}/{total}] {label or '(no name)'} — {address}")
 
     outcome = pipeline.run(people, source_columns, roles, layers, on_row=report)
-    results_path, review_path = pipeline.write_outputs(outcome)
+    # Written beside your list, not inside this folder — results carry the same
+    # names and addresses as the input, and shouldn't sit in a git repo.
+    results_path, review_path = pipeline.write_outputs(
+        outcome,
+        input_path.with_name(f"{input_path.stem}.results.csv"),
+        input_path.with_name(f"{input_path.stem}.needs_review.csv"),
+    )
 
     print(f"\nWrote {len(outcome['results'])} row(s) to {results_path}")
     print(f"Flagged {len(outcome['review'])} row(s) for follow-up in {review_path}")

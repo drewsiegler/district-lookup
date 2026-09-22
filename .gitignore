@@ -3,16 +3,16 @@ __pycache__/
 *.pyc
 .DS_Store
 
-# Results, and the cache of addresses already looked up
-output/*.csv
+# Real contact lists never belong in a public repo. The app window keeps
+# results in memory and only hands them over as downloads, and the command
+# line writes them next to your input list rather than in here — these
+# patterns are a backstop in case a list or its results land in the project
+# folder anyway.
+*.csv
+!data/people_contacts_example.csv
 data/geocode_cache.sqlite
-
-# Real contact lists never belong in a public repo. This is the default input
-# path, so it's ignored on purpose — data/people_contacts_example.csv is the
-# tracked template. Keep your own lists here or anywhere else; they stay local.
-data/people.csv
 
 # Built from data/raw_geojson/ by scripts/build_gpkg.py. Ignored so the repo
 # doesn't carry a new multi-megabyte copy in its history on every rebuild;
-# run the build script once after cloning.
+# data/districts.json.gz (what the app reads) is committed instead.
 data/districts.gpkg

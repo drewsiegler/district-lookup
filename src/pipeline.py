@@ -4,16 +4,13 @@ sort them into results / needs-review.
 """
 
 import csv
+import io
 from pathlib import Path
 
 from geocode import geocode, _get_cache_conn
 from input_table import build_address, build_label, normalize
 from layers import coverage_layer_ids
 from lookup import lookup_point
-
-OUTPUT_DIR = Path(__file__).resolve().parent.parent / "output"
-RESULTS_PATH = OUTPUT_DIR / "results.csv"
-REVIEW_PATH = OUTPUT_DIR / "needs_review.csv"
 
 
 def unique_headers(keys: list[str], source_columns: list[str]) -> dict[str, str]:
@@ -95,14 +92,22 @@ def run(people: list[dict], source_columns: list[str], roles: dict, layers: list
     }
 
 
-def write_outputs(outcome: dict) -> tuple[Path, Path]:
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    for path, fields, rows in (
-        (RESULTS_PATH, outcome["fieldnames"], outcome["results"]),
-        (REVIEW_PATH, outcome["review_fieldnames"], outcome["review"]),
-    ):
-        with open(path, "w", newline="", encoding="utf-8-sig") as f:
-            writer = csv.DictWriter(f, fieldnames=fields)
-            writer.writeheader()
-            writer.writerows(rows)
-    return RESULTS_PATH, REVIEW_PATH
+def csv_text(outcome: dict, which: str) -> str:
+    """One output file as text. The app window keeps results in memory and
+    hands them over as a download, so a list of real people's addresses is
+    never written anywhere on its own."""
+    fields = outcome["fieldnames"] if which == "results" else outcome["review_fieldnames"]
+    rows = outcome[which]
+    buffer = io.StringIO()
+    writer = csv.DictWriter(buffer, fieldnames=fields, lineterminator="\r\n")
+    writer.writeheader()
+    writer.writerows(rows)
+    return buffer.getvalue()
+
+
+def write_outputs(outcome: dict, results_path: Path, review_path: Path) -> tuple[Path, Path]:
+    for path, which in ((results_path, "results"), (review_path, "review")):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        # utf-8-sig so Excel reads accented names and the em dash correctly
+        path.write_text(csv_text(outcome, which), encoding="utf-8-sig", newline="")
+    return results_path, review_path

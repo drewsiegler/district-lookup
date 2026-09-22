@@ -187,7 +187,7 @@ function finish(s) {
       <a class="dl" href="/download/results" download><button>Download results</button></a>
       ${s.review ? '<a class="dl" href="/download/review" download><button class="ghost">Download needs review</button></a>' : ""}
     </div>
-    <p class="paths">Also saved to:<br>${escapeHtml(s.results_path)}<br>${escapeHtml(s.review_path)}</p>`;
+    <p class="paths">Nothing has been saved to disk. Download while this window is open — starting another lookup replaces these.</p>`;
   $("start").disabled = false;
 }
 
