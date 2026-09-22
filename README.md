@@ -92,6 +92,8 @@ Nothing is uploaded anywhere. The page is served by your own computer, reachable
 
 The first time you double-click the launcher, macOS may say it can't verify the developer. Right-click it and choose **Open** instead, then **Open** again to confirm. You only need to do that once.
 
+If the launcher shows a generic script icon rather than the app icon, run `scripts/set_launcher_icon.sh` once. A custom file icon lives in the file's resource fork, which git doesn't carry across a clone.
+
 ### The command line
 
 ```bash
@@ -147,6 +149,9 @@ Defaults to `data/people.csv` if you don't pass a path.
 ```
 district-lookup/
 ├── Start District Lookup.command   # double-click in Finder to open the app window
+├── assets/
+│   ├── AppIcon.icns         # for the Mac app bundle, and the launcher's Finder icon
+│   └── AppIcon.appiconset/  # the same icon at every size; the app window uses the 256px one
 ├── data/
 │   ├── raw_geojson/          # boundary files you add, one .geojson at a time
 │   ├── layer_sources.json    # which council / trustee-area files feed each shared column
@@ -157,7 +162,8 @@ district-lookup/
 │   ├── people.csv            # your input list (any of the shapes above)
 │   └── people_contacts_example.csv   # template: address split across columns
 ├── scripts/
-│   └── build_gpkg.py         # raw_geojson/ -> districts.json.gz + .gpkg + registry
+│   ├── build_gpkg.py         # raw_geojson/ -> districts.json.gz + .gpkg + registry
+│   └── set_launcher_icon.sh  # puts the app icon on the launcher in Finder
 ├── src/
 │   ├── web.py                # the app window (a page served to your browser)
 │   ├── web_page.html         # that page

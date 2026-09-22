@@ -24,6 +24,7 @@ from layers import load_layers
 
 HOST, PORT = "127.0.0.1", 8734
 PAGE = (Path(__file__).resolve().parent / "web_page.html").read_text(encoding="utf-8")
+ICON_PATH = Path(__file__).resolve().parent.parent / "assets" / "AppIcon.appiconset" / "icon_128x128@2x.png"
 
 state = {"status": "idle", "done": 0, "total": 0, "message": "", "summary": None, "error": None}
 state_lock = threading.Lock()
@@ -84,6 +85,8 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/":
             self.send(200, PAGE.encode("utf-8"), "text/html; charset=utf-8")
+        elif self.path == "/icon.png" and ICON_PATH.exists():
+            self.send(200, ICON_PATH.read_bytes(), "image/png", {"Cache-Control": "max-age=86400"})
         elif self.path == "/status":
             with state_lock:
                 body = json.dumps(state).encode("utf-8")
