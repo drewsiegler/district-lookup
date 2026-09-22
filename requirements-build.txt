@@ -1,0 +1,7 @@
+# Only needed to run scripts/build_gpkg.py, i.e. to add or update boundary
+# maps. These carry GDAL and PROJ and are ~250 MB installed, which is why the
+# app itself doesn't depend on them.
+-r requirements.txt
+geopandas>=1.1
+pyogrio>=0.13
+pandas>=3.0

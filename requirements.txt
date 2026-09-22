@@ -1,5 +1,6 @@
-geopandas>=1.1
+# What the app needs to look addresses up. Small on purpose: no GDAL, no
+# PROJ, nothing that has to be compiled — so it can be bundled into a Mac app
+# for people who don't have Python. Preparing maps needs more; see
+# requirements-build.txt.
 shapely>=2.1
-pyogrio>=0.13
-pandas>=3.0
 requests>=2.34

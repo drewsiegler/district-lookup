@@ -1,12 +1,17 @@
-"""The layer registry: which boundary layers live in data/districts.gpkg,
-which attribute column on each holds its district name, and how that value is
-written in the output. scripts/build_gpkg.py adds new layers automatically;
-set name_field (and optionally format/pattern) by hand.
+"""The layer registry: which boundary layers the app knows about, which
+attribute on each holds its district name, and how that value is written in
+the output.
+
+Reads data/districts.json.gz, which scripts/build_gpkg.py writes from the
+boundary files. That file holds plain GeoJSON geometry already in lat/lon, so
+looking an address up needs only Shapely — no GeoPandas, GDAL or PROJ. Those
+are the maintainer's tools for preparing maps, not the app's for using them,
+which keeps the app small enough to hand to someone without Python installed.
 
 Registry entry fields:
-    id          layer name inside districts.gpkg (also the output column name)
+    id          layer name (also the output column name)
     label       human-readable description
-    name_field  column holding the district's name or number
+    name_field  attribute holding the district's name or number
     format      optional output template; "{}" is the value, "{:02d}" zero-pads
                 a number to two digits (e.g. "SD{:02d}" turns "015" into "SD15")
     pattern     optional regex with named groups, for pulling pieces out of a
@@ -14,8 +19,8 @@ Registry entry fields:
                 (e.g. "D{num}—Sup. {name}")
     coverage    optional true: this layer's footprint is the whole area the
                 tool covers (see main.py's outside_coverage_area check)
-    must_match  optional {"layer": <id of an earlier layer>, "column": <column
-                on this layer>}. A feature only counts if that column equals
+    must_match  optional {"layer": <id of an earlier layer>, "column": <attribute
+                on this layer>}. A feature only counts if that attribute equals
                 the earlier layer's value for the address. Council districts
                 must match the official city, trustee areas must match the
                 school district, so an area is left blank outside the
@@ -23,17 +28,19 @@ Registry entry fields:
                 where two agencies' boundary lines disagree.
 """
 
+import gzip
 import json
 import math
 import re
 from pathlib import Path
 
-import geopandas as gpd
+from shapely import STRtree
+from shapely.geometry import shape
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 GPKG_PATH = DATA_DIR / "districts.gpkg"
+RUNTIME_PATH = DATA_DIR / "districts.json.gz"
 REGISTRY_PATH = DATA_DIR / "layers.json"
-DISPLAY_COLUMN = "_display"
 
 
 def read_registry() -> list[dict]:
@@ -75,18 +82,23 @@ def format_value(value, fmt: str | None = None, pattern: str | None = None) -> s
     return fmt.format(int(text) if text.isdigit() else text)
 
 
+def read_runtime_data() -> dict:
+    if not RUNTIME_PATH.exists():
+        raise FileNotFoundError(
+            f"{RUNTIME_PATH} doesn't exist yet. Run scripts/build_gpkg.py after adding "
+            "boundary files to data/raw_geojson/."
+        )
+    with gzip.open(RUNTIME_PATH, "rt", encoding="utf-8") as f:
+        return json.load(f)
+
+
 def load_layers() -> list[dict]:
-    """Loads every registered layer's geometry into memory, reprojected to
-    EPSG:4326 (plain lat/lon) so it matches the geocoder's coordinates, with
-    each feature's output value pre-formatted and a spatial index built."""
+    """Loads every registered layer into memory with each feature's output
+    value formatted and a spatial index built."""
     registry = read_registry()
     if not registry:
         return []
-    if not GPKG_PATH.exists():
-        raise FileNotFoundError(
-            f"{GPKG_PATH} doesn't exist yet. Run scripts/build_gpkg.py after adding "
-            "boundary files to data/raw_geojson/."
-        )
+    data = read_runtime_data()
 
     loaded = []
     for entry in registry:
@@ -95,25 +107,33 @@ def load_layers() -> list[dict]:
         if not name_field:
             print(f"Skipping layer '{layer_id}': no name_field set in {REGISTRY_PATH.name} yet.")
             continue
-        gdf = gpd.read_file(GPKG_PATH, layer=layer_id)
-        if gdf.crs is None:
-            gdf = gdf.set_crs(epsg=4326)
-        elif gdf.crs.to_epsg() != 4326:
-            gdf = gdf.to_crs(epsg=4326)
-        if name_field not in gdf.columns:
+        if layer_id not in data["layers"]:
             raise ValueError(
-                f"Layer '{layer_id}' has no column '{name_field}'. "
-                f"Available columns: {list(gdf.columns)}"
+                f"Layer '{layer_id}' is registered in {REGISTRY_PATH.name} but isn't in "
+                f"{RUNTIME_PATH.name}. Re-run scripts/build_gpkg.py."
             )
+
+        features = data["layers"][layer_id]["features"]
+        attributes = [f["properties"] for f in features]
+        available = sorted({key for props in attributes for key in props})
+        if name_field not in available:
+            raise ValueError(
+                f"Layer '{layer_id}' has no attribute '{name_field}'. Available: {available}"
+            )
+
         fmt, pattern = entry.get("format"), entry.get("pattern")
         try:
-            gdf[DISPLAY_COLUMN] = [format_value(v, fmt, pattern) for v in gdf[name_field]]
+            display = [format_value(props.get(name_field), fmt, pattern) for props in attributes]
         except (ValueError, KeyError, IndexError) as err:
             raise ValueError(f"Layer '{layer_id}': can't apply format {fmt!r}: {err}") from err
+
         must_match = entry.get("must_match")
+        scope = [None] * len(features)
         if must_match:
-            check_must_match(layer_id, gdf, must_match, loaded)
-        gdf.sindex  # build the spatial index once, up front
+            check_must_match(layer_id, available, attributes, must_match, loaded)
+            scope = [clean_value(props.get(must_match["column"])) for props in attributes]
+
+        geometries = [shape(f["geometry"]) for f in features]
         loaded.append({
             "id": layer_id,
             "label": entry.get("label", layer_id),
@@ -122,13 +142,17 @@ def load_layers() -> list[dict]:
             # The jurisdictions this layer actually holds a map for, so main.py
             # can tell "no map for this district yet" from "map exists but has
             # a hole where this address falls".
-            "mapped": set(gdf[must_match["column"]].dropna()) if must_match else set(),
-            "gdf": gdf,
+            "mapped": {s for s in scope if s},
+            "display": display,
+            "scope": scope,
+            "geometries": geometries,
+            "tree": STRtree(geometries),
         })
     return loaded
 
 
-def check_must_match(layer_id: str, gdf, must_match: dict, loaded: list[dict]) -> None:
+def check_must_match(layer_id: str, available: list[str], attributes: list[dict],
+                     must_match: dict, loaded: list[dict]) -> None:
     other_id, column = must_match["layer"], must_match["column"]
     other = next((layer for layer in loaded if layer["id"] == other_id), None)
     if other is None:
@@ -136,10 +160,10 @@ def check_must_match(layer_id: str, gdf, must_match: dict, loaded: list[dict]) -
             f"Layer '{layer_id}': must_match layer '{other_id}' has to be listed "
             f"above it in {REGISTRY_PATH.name}."
         )
-    if column not in gdf.columns:
-        raise ValueError(f"Layer '{layer_id}' uses must_match but has no '{column}' column.")
-    known = set(other["gdf"][DISPLAY_COLUMN].dropna())
-    unknown = sorted(set(gdf[column].dropna()) - known)
+    if column not in available:
+        raise ValueError(f"Layer '{layer_id}' uses must_match but has no '{column}' attribute.")
+    known = {value for value in other["display"] if value}
+    unknown = sorted({clean_value(props.get(column)) for props in attributes} - known - {None})
     if unknown:
         raise ValueError(
             f"Layer '{layer_id}': {column} {unknown} doesn't match any value in "

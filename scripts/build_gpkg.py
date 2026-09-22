@@ -42,16 +42,20 @@ Usage:
     python scripts/build_gpkg.py
 """
 
+import gzip
 import json
+import math
 import re
 import sys
 from pathlib import Path
 
 import geopandas as gpd
 import pandas as pd
+from shapely.geometry import mapping
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
-from layers import DATA_DIR, GPKG_PATH, REGISTRY_PATH, clean_value, read_registry, write_registry
+from layers import (DATA_DIR, GPKG_PATH, REGISTRY_PATH, RUNTIME_PATH, clean_value,
+                    read_registry, write_registry)
 
 RAW_DIR = DATA_DIR / "raw_geojson"
 SOURCES_PATH = DATA_DIR / "layer_sources.json"
@@ -118,6 +122,51 @@ def build_merged_layer(group_name: str, entries: list[dict]) -> gpd.GeoDataFrame
     return gpd.GeoDataFrame(pd.concat(parts, ignore_index=True), crs="EPSG:4326")
 
 
+def json_safe(value):
+    """Attribute values as plain JSON types. Source files carry numpy numbers,
+    timestamps and NaNs, none of which json handles."""
+    if value is None or isinstance(value, (str, bool)):
+        return value
+    if hasattr(value, "item"):  # numpy scalar
+        value = value.item()
+    if isinstance(value, float) and math.isnan(value):
+        return None
+    if isinstance(value, (int, float)):
+        return value
+    return str(value)
+
+
+def round_coords(coords, places=6):
+    """~10cm precision, which is far finer than any boundary line is drawn and
+    roughly halves the file."""
+    if isinstance(coords[0], (int, float)):
+        return [round(float(c), places) for c in coords]
+    return [round_coords(c, places) for c in coords]
+
+
+def write_runtime_data(layer_frames: dict) -> None:
+    """Writes the file the app itself reads: plain GeoJSON geometry in lat/lon
+    plus each feature's attributes, so a lookup needs only Shapely and the
+    standard library. See src/layers.py."""
+    payload = {"layers": {}}
+    for layer_name, gdf in layer_frames.items():
+        features = []
+        for record, geometry in zip(gdf.drop(columns="geometry").to_dict("records"), gdf.geometry):
+            geo = mapping(geometry)
+            features.append({
+                "properties": {k: json_safe(v) for k, v in record.items()},
+                "geometry": {**geo, "coordinates": round_coords(geo["coordinates"])},
+            })
+        payload["layers"][layer_name] = {"features": features}
+
+    tmp = RUNTIME_PATH.with_suffix(".building.gz")
+    with gzip.open(tmp, "wt", encoding="utf-8") as f:
+        json.dump(payload, f, separators=(",", ":"))
+    tmp.replace(RUNTIME_PATH)
+    size = RUNTIME_PATH.stat().st_size / 1_048_576
+    print(f"  {RUNTIME_PATH.name}: {size:.1f} MB (what the app reads)")
+
+
 def main():
     if not RAW_DIR.exists() or not any(RAW_DIR.glob("*.geojson")):
         print(f"No .geojson files found in {RAW_DIR}. Add some boundary files first.")
@@ -153,6 +202,7 @@ def main():
         gdf.to_file(tmp_path, layer=layer_name, driver="GPKG")
         print(f"  {layer_name}: {len(gdf)} feature(s), columns: {[c for c in gdf.columns if c != 'geometry']}")
     tmp_path.replace(GPKG_PATH)
+    write_runtime_data(layer_frames)
 
     registry = read_registry()
     removed = [e["id"] for e in registry if e["id"] not in layer_frames]

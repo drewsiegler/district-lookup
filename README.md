@@ -5,22 +5,32 @@ Give it a CSV of names and addresses; it geocodes each address, checks it agains
 Built as a Python CLI, following the plan from [this design conversation](https://claude.ai/share/442797d6-ffc8-4d31-883f-d9cd4b18fd5c):
 
 - **Geocoding** — the free [U.S. Census Bureau geocoder](https://geocoding.geo.census.gov/) turns each address into lat/lon, U.S. addresses only. Results are cached in `data/geocode_cache.sqlite` so re-running a batch never re-hits the API for an address you've already resolved.
-- **Boundary storage** — every district map lives as its own layer inside `data/districts.gpkg`, a single GeoPackage file (SQLite under the hood) that GeoPandas reads and writes natively. `data/layers.json` is the registry: for each layer, which column holds its district name.
-- **Point-in-polygon matching** — GeoPandas + Shapely check each geocoded point against every registered layer at once, using each layer's spatial index.
+- **Boundary storage** — every district map lives as its own layer inside `data/districts.gpkg`, a single GeoPackage file (SQLite under the hood) that GeoPandas reads and writes natively, and that you can open in QGIS to eyeball boundaries. `data/layers.json` is the registry: for each layer, which column holds its district name.
+- **Point-in-polygon matching** — Shapely checks each geocoded point against every registered layer at once, using each layer's spatial index.
+
+The same build step also writes `data/districts.json.gz` — the same boundaries as plain GeoJSON in lat/lon. That's what the app actually reads, so a lookup needs only Shapely and the standard library. Loading all 12 layers takes about 0.2 seconds.
 
 ## Setup
 
-Needs Python 3:
+Needs Python 3. To **run** lookups, that's all you need:
 
 ```bash
 cd district-lookup
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-python scripts/build_gpkg.py       # builds data/districts.gpkg from the boundary files
 ```
 
-If you already have a `.venv` here, just `source .venv/bin/activate`. The GeoPackage isn't stored in the repo — it's rebuilt from `data/raw_geojson/`, which is why the build step comes first.
+That installs Shapely and requests, about 58 MB, nothing that has to be compiled. The prepared boundary data (`data/districts.json.gz`, 2.2 MB) is in the repo, so you can look addresses up straight away.
+
+To **add or update boundary maps** you also need the mapping toolchain, which is far heavier (~250 MB, carries GDAL and PROJ):
+
+```bash
+pip install -r requirements-build.txt
+python scripts/build_gpkg.py
+```
+
+The split is deliberate: the lookup itself only ever needs Shapely, so the app can be bundled for people who don't have Python installed, while GDAL stays on the maintainer's machine where the maps are prepared.
 
 ## Adding a district map
 
@@ -50,7 +60,7 @@ If you already have a `.venv` here, just `source .venv/bin/activate`. The GeoPac
    ```bash
    python scripts/build_gpkg.py
    ```
-   This rebuilds `data/districts.gpkg` from scratch and syncs `data/layers.json` — new layers are added, layers whose file is gone are removed.
+   This rebuilds `data/districts.gpkg` and `data/districts.json.gz` from scratch and syncs `data/layers.json` — new layers are added, layers whose file is gone are removed.
 4. For a standalone layer, open `data/layers.json` and fill in its `name_field` — the column holding the district's name or number (the build script prints each layer's columns to help). Shared trustee-area columns are filled in automatically. New entries land at the end of the file; move them next to related entries if you want the output columns grouped, since output column order follows this file.
 
 Re-run `scripts/build_gpkg.py` any time you add, replace, or remove a boundary file — existing registry entries keep their settings and order.
@@ -141,12 +151,13 @@ district-lookup/
 │   ├── raw_geojson/          # boundary files you add, one .geojson at a time
 │   ├── layer_sources.json    # which council / trustee-area files feed each shared column
 │   ├── layers.json           # registry: layer id -> label, name_field, optional format/pattern/coverage
-│   ├── districts.gpkg        # every boundary layer, built from raw_geojson/
+│   ├── districts.json.gz     # what the app reads: boundaries as plain GeoJSON
+│   ├── districts.gpkg        # same layers as a GeoPackage, for QGIS (not in the repo)
 │   ├── geocode_cache.sqlite  # cached address -> lat/lon lookups
 │   ├── people.csv            # your input list (any of the shapes above)
 │   └── people_contacts_example.csv   # template: address split across columns
 ├── scripts/
-│   └── build_gpkg.py         # raw_geojson/ -> districts.gpkg + registry
+│   └── build_gpkg.py         # raw_geojson/ -> districts.json.gz + .gpkg + registry
 ├── src/
 │   ├── web.py                # the app window (a page served to your browser)
 │   ├── web_page.html         # that page
@@ -159,7 +170,8 @@ district-lookup/
 ├── output/
 │   ├── results.csv
 │   └── needs_review.csv      # unmatched or out-of-coverage addresses, for follow-up
-└── requirements.txt
+├── requirements.txt         # what the app needs: shapely, requests
+└── requirements-build.txt   # what adding maps needs: geopandas, GDAL, pandas
 ```
 
 ## A note on split school districts
