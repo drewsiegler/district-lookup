@@ -14,13 +14,17 @@
     ],
     "elementary_trustee_area": [
       {"file": "oak_grove_school_district_trustee_areas.geojson", "name_field": "AREA",
-       "extract": "Trustee Area C(\\d+)", "district": "Oak Grove Elementary School District"}
+       "extract": "Trustee Area C(\\d+)", "district": "Oak Grove Elementary School District"},
+      {"file": "alum_rock_union_esd_trustee_areas.geojson", "name_field": "DISTRICT",
+       "district": "Alum Rock Union Elementary School District"}
     ],
     "high_school_trustee_area": [
       {"file": "campbell_union_hsd_trustee_areas.geojson", "name_field": "TRUSTEEARE",
        "district": "Campbell Union High School District"},
       {"file": "fremont_union_hsd_trustee_areas.geojson", "name_field": "DIST_ID",
-       "district": "Fremont Union High School District"}
+       "district": "Fremont Union High School District"},
+      {"file": "los_gatos_saratoga_union_hsd_trustee_areas.geojson", "name_field": "DISTRICT",
+       "district": "Los Gatos-Saratoga Joint Union School District"}
     ]
   }
 }

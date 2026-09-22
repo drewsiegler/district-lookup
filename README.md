@@ -212,11 +212,11 @@ TIGER names some districts slightly differently than common usage — e.g. "Los 
 
 **K-12 districts that elect by trustee area (need a map) — 14 of the 31 on the original list.** The Registrar's top-line "Election:" field only tells part of the story — 4 of these districts recently adopted a transition resolution and that field still says "at-large" even though their *first* trustee-area election is already scheduled. Caught this because a district you flagged (East Side Union) turned out to have a transition note further down its page that a first pass checking only the summary line had missed — worth being aware that a same pattern could apply elsewhere if this list is ever re-verified.
 
-- **Trustee-area maps loaded:** Campbell Union HSD and Fremont Union HSD (in `high_school_trustee_area`), Oak Grove SD (in `elementary_trustee_area`), Gilroy USD (in `unified_trustee_area`)
+- **Trustee-area maps loaded (6 of 14):** Campbell Union HSD, Fremont Union HSD and Los Gatos-Saratoga Joint Union HSD (in `high_school_trustee_area`); Oak Grove SD and Alum Rock Union ESD (in `elementary_trustee_area`); Gilroy USD (in `unified_trustee_area`)
 - **Already electing by trustee area, map still needed:** Morgan Hill USD, San José USD, Santa Clara USD, Campbell Union SD, Moreland SD, Sunnyvale SD
 
 Known data gap: Gilroy USD's trustee-area map stops about 78 sq mi short of the district's eastern edge as the Census draws it — the rural land out toward Pacheco Pass. Addresses there get the district but a blank trustee area. Worth asking the district for a map covering its full territory if anyone on your lists lives out that way.
-- **Mid-transition — first trustee-area election is November 3, 2026, ~7 weeks out:** East Side Union HSD, Los Gatos-Saratoga Joint Union HSD, Mountain View-Los Altos Union HSD, Alum Rock Union ESD. Sourcing these maps is time-sensitive if you want coverage in place before that election.
+- **Mid-transition — first trustee-area election is November 3, 2026:** Los Gatos-Saratoga Joint Union HSD and Alum Rock Union ESD are loaded. Still needed: East Side Union HSD and Mountain View-Los Altos Union HSD. Sourcing those two is the time-sensitive part if you want coverage in place before that election.
 
 **K-12 districts confirmed at-large (no trustee-area map needed) — the other 17:**
 - Unified: Milpitas, Palo Alto
