@@ -136,6 +136,7 @@ Defaults to `data/people.csv` if you don't pass a path.
 
 ```
 district-lookup/
+├── Start District Lookup.command   # double-click in Finder to open the app window
 ├── data/
 │   ├── raw_geojson/          # boundary files you add, one .geojson at a time
 │   ├── layer_sources.json    # which council / trustee-area files feed each shared column
