@@ -18,7 +18,9 @@ def server(layers, fake_geocoder, monkeypatch):
     monkeypatch.setattr(web, "last_outcome", {"results": None, "review": None})
     monkeypatch.setitem(web.state, "status", "idle")
     httpd = ThreadingHTTPServer(("127.0.0.1", 0), web.Handler)  # any free port
-    threading.Thread(target=httpd.serve_forever, daemon=True).start()
+    # serve_forever only checks for shutdown every poll_interval (0.5s by
+    # default), so each teardown would otherwise stall for up to half a second.
+    threading.Thread(target=httpd.serve_forever, kwargs={"poll_interval": 0.05}, daemon=True).start()
     yield f"http://127.0.0.1:{httpd.server_address[1]}"
     httpd.shutdown()
 

@@ -155,7 +155,7 @@ pip install -r requirements-dev.txt
 python -m pytest
 ```
 
-About 3 seconds, and no test touches the network: each one hands the app fixed coordinates for public buildings (city halls, a district office) instead of calling the Census geocoder, and any stray real request fails the test. The known-address tests assert the full district breakdown at each point, so a rebuilt map that moves someone into the wrong district shows up here. The rule tests — no council district on unincorporated land, no trustee area borrowed across a district border, a hole in a loaded map getting flagged — find their test points from the map data itself, so they follow the maps as they change, and skip with a note if the situation they test no longer exists.
+About 1.5 seconds, and no test touches the network: each one hands the app fixed coordinates for public buildings (city halls, a district office) instead of calling the Census geocoder, and any stray real request fails the test. The known-address tests assert the full district breakdown at each point, so a rebuilt map that moves someone into the wrong district shows up here. The rule tests — no council district on unincorporated land, no trustee area borrowed across a district border, a hole in a loaded map getting flagged — find their test points from the map data itself, so they follow the maps as they change, and skip with a note if the situation they test no longer exists.
 
 The map-building tests need `requirements-build.txt` and skip without it.
 
