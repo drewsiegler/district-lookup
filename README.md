@@ -148,6 +148,17 @@ The reasons:
 
 Defaults to `data/people.csv` if you don't pass a path.
 
+## Running the tests
+
+```bash
+pip install -r requirements-dev.txt
+python -m pytest
+```
+
+About 3 seconds, and no test touches the network: each one hands the app fixed coordinates for public buildings (city halls, a district office) instead of calling the Census geocoder, and any stray real request fails the test. The known-address tests assert the full district breakdown at each point, so a rebuilt map that moves someone into the wrong district shows up here. The rule tests — no council district on unincorporated land, no trustee area borrowed across a district border, a hole in a loaded map getting flagged — find their test points from the map data itself, so they follow the maps as they change, and skip with a note if the situation they test no longer exists.
+
+The map-building tests need `requirements-build.txt` and skip without it.
+
 ## Project layout
 
 ```
@@ -177,8 +188,10 @@ district-lookup/
 │   ├── layers.py             # loads registered layers from the .gpkg
 │   ├── lookup.py             # point-in-polygon matching
 │   └── main.py               # reads the input list, writes results beside it
+├── tests/                   # python -m pytest; no network needed
 ├── requirements.txt         # what the app needs: shapely, requests
-└── requirements-build.txt   # what adding maps needs: geopandas, GDAL, pandas
+├── requirements-build.txt   # what adding maps needs: geopandas, GDAL, pandas
+└── requirements-dev.txt     # what running the tests needs: pytest
 ```
 
 ## A note on split school districts
