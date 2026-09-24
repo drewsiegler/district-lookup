@@ -8,10 +8,10 @@ if [ -x .venv/bin/python ]; then
 elif command -v python3 > /dev/null; then
   PYTHON=python3
   echo "No .venv found here — using system python3."
-  echo "If this fails, see the Setup section of README.md."
+  echo "If this fails, see the Install section of README.md."
   echo
 else
-  echo "Python 3 isn't installed. See the Setup section of README.md."
+  echo "Python 3 isn't installed. See the Install section of README.md."
   read -r -p "Press Return to close."
   exit 1
 fi
