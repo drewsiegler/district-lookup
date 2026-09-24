@@ -84,6 +84,12 @@
         "layer": "secondary_school_districts",
         "column": "district"
       }
+    },
+    {
+      "id": "midpeninsula_regional_open_space_district",
+      "label": "Midpeninsula Regional Open Space District Ward",
+      "name_field": "WARDNUM",
+      "format": "Ward {}"
     }
   ]
 }
