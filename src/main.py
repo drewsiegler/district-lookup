@@ -58,10 +58,10 @@ def main():
             "run scripts/build_gpkg.py, then set each layer's name_field in data/layers.json."
         )
 
-    def report(i, total, label, address):
-        print(f"[{i}/{total}] {label or '(no name)'} — {address}")
+    def report(done, total):
+        print(f"Looked up {done:,} of {total:,} distinct addresses")
 
-    outcome = pipeline.run(people, source_columns, roles, layers, on_row=report)
+    outcome = pipeline.run(people, source_columns, roles, layers, on_progress=report)
     # Written beside your list, not inside this folder — results carry the same
     # names and addresses as the input, and shouldn't sit in a git repo.
     results_path, review_path = pipeline.write_outputs(

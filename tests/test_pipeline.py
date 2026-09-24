@@ -6,7 +6,7 @@ import sys
 import pipeline
 from conftest import POINTS
 
-ADDRESS_ROLES = {"street": "address", "name": "name"}
+ADDRESS_ROLES = {"street": "address"}
 
 
 def run(rows, layers, columns=("name", "address"), roles=ADDRESS_ROLES):
@@ -64,7 +64,7 @@ def test_review_rows_show_exactly_what_was_searched(layers, fake_geocoder):
 def test_input_columns_come_through_untouched_and_first(layers, fake_geocoder):
     fake_geocoder["1660 Tully Rd, San Jose, CA 95122"] = POINTS["tully_rd_san_jose"]
     columns = ["First Name", "Street Address", "City", "State", "Zip", "Email"]
-    roles = {"street": "Street Address", "city": "City", "state": "State", "zip": "Zip", "first": "First Name"}
+    roles = {"street": "Street Address", "city": "City", "state": "State", "zip": "Zip"}
     row = {"First Name": "Maria", "Street Address": "1660 Tully Rd", "City": "San Jose",
            "State": "CA", "Zip": "95122", "Email": "maria@example.org"}
     outcome = run([row], layers, columns, roles)

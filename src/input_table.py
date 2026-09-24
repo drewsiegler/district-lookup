@@ -21,9 +21,6 @@ ROLE_HEADERS = {
     "city": ["city", "town", "mailingcity", "citytown"],
     "state": ["state", "mailingstate", "stateprovince", "province"],
     "zip": ["zip", "zipcode", "postalcode", "postcode", "mailingzip"],
-    "name": ["name", "fullname", "contactname", "votername", "displayname"],
-    "first": ["firstname", "first", "givenname", "fname"],
-    "last": ["lastname", "last", "surname", "familyname", "lname"],
 }
 
 
@@ -56,14 +53,6 @@ def build_address(row: dict, roles: dict) -> str:
     state_zip = " ".join(p for p in [part("state"), part("zip")] if p)
     pieces = [part("street"), part("city"), state_zip]
     return ", ".join(p for p in pieces if p)
-
-
-def build_label(row: dict, roles: dict) -> str:
-    """A name for the progress line while a batch runs."""
-    if "name" in roles and (row.get(roles["name"]) or "").strip():
-        return row[roles["name"]].strip()
-    parts = [(row.get(roles[r]) or "").strip() for r in ("first", "last") if r in roles]
-    return " ".join(p for p in parts if p)
 
 
 def describe_roles(roles: dict) -> str:

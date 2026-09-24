@@ -4,7 +4,7 @@ Give it a CSV of names and addresses; it geocodes each address, checks it agains
 
 Built as a Python CLI, following the plan from [this design conversation](https://claude.ai/share/442797d6-ffc8-4d31-883f-d9cd4b18fd5c):
 
-- **Geocoding** — the free [U.S. Census Bureau geocoder](https://geocoding.geo.census.gov/) turns each address into lat/lon, U.S. addresses only. Results are cached in `data/geocode_cache.sqlite` so re-running a batch never re-hits the API for an address you've already resolved.
+- **Geocoding** — the free [U.S. Census Bureau geocoder](https://geocoding.geo.census.gov/) turns each address into lat/lon, U.S. addresses only. New addresses go to its batch service, 250 per request, at about 13 ms each; anything the batch doesn't match is retried one at a time, since the batch service occasionally reports spurious misses. Results are cached in `data/geocode_cache.sqlite`, so re-running a list never re-asks for an address already resolved.
 - **Boundary storage** — every district map lives as its own layer inside `data/districts.gpkg`, a single GeoPackage file (SQLite under the hood) that GeoPandas reads and writes natively, and that you can open in QGIS to eyeball boundaries. `data/layers.json` is the registry: for each layer, which column holds its district name.
 - **Point-in-polygon matching** — Shapely checks each geocoded point against every registered layer at once, using each layer's spatial index.
 

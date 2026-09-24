@@ -3,7 +3,7 @@ address the geocoder understands."""
 
 import pytest
 
-from input_table import build_address, build_label, read_people
+from input_table import build_address, read_people
 
 
 def write(tmp_path, name, text, bom=False):
@@ -20,7 +20,6 @@ def test_contact_export_is_stitched_into_one_address(tmp_path):
     assert columns == ["First Name", "Last Name", "Street Address", "Street Address 2",
                        "City", "State", "Zip", "Email"]
     assert build_address(rows[0], roles) == "1660 Tully Rd, San Jose, CA 95122"
-    assert build_label(rows[0], roles) == "Maria Gonzalez"
 
 
 def test_unit_line_is_kept_but_never_searched(tmp_path):
@@ -49,7 +48,7 @@ def test_excel_byte_order_mark_does_not_hide_the_first_column(tmp_path):
                  bom=True)
     rows, columns, roles = read_people(path)
     assert columns[0] == "name"
-    assert build_label(rows[0], roles) == "Jo"
+    assert rows[0]["name"] == "Jo"
 
 
 def test_semicolon_separated_file(tmp_path):

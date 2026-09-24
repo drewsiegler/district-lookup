@@ -86,14 +86,20 @@ def fake_geocoder(monkeypatch):
     geocode cache on disk."""
     known = {}
 
-    def fake(address, conn=None):
-        if address in known:
-            lat, lon = known[address]
-            return {"input": address, "matched": True, "matched_address": address.upper(),
-                    "lat": lat, "lon": lon}
-        return {"input": address, "matched": False, "matched_address": None,
-                "lat": None, "lon": None}
+    def fake(addresses, conn, on_progress=None):
+        results = {}
+        for address in dict.fromkeys(a for a in addresses if a):
+            if address in known:
+                lat, lon = known[address]
+                results[address] = {"matched": True, "matched_address": address.upper(),
+                                    "lat": lat, "lon": lon}
+            else:
+                results[address] = {"matched": False, "matched_address": None,
+                                    "lat": None, "lon": None}
+        if on_progress:
+            on_progress(len(results), len(results))
+        return results
 
-    monkeypatch.setattr(pipeline, "geocode", fake)
+    monkeypatch.setattr(pipeline, "geocode_many", fake)
     monkeypatch.setattr(pipeline, "_get_cache_conn", _NoCache)
     return known

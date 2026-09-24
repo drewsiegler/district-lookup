@@ -54,10 +54,10 @@ def run_job(filename: str, text: str):
 
         update(total=len(people), message=describe_roles(roles))
 
-        def on_row(i, total, label, address):
-            update(done=i - 1, total=total, message=f"{label or address}")
+        def on_progress(done, total):
+            update(done=done, total=total, message="addresses looked up")
 
-        outcome = pipeline.run(people, source_columns, roles, layers_cache, on_row=on_row)
+        outcome = pipeline.run(people, source_columns, roles, layers_cache, on_progress=on_progress)
         with state_lock:
             last_outcome["results"] = pipeline.csv_text(outcome, "results")
             last_outcome["review"] = pipeline.csv_text(outcome, "review")

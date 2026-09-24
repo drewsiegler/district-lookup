@@ -7,8 +7,8 @@ import csv
 import io
 from pathlib import Path
 
-from geocode import geocode, _get_cache_conn
-from input_table import build_address, build_label, normalize
+from geocode import UNMATCHED, _get_cache_conn, geocode_many
+from input_table import build_address, normalize
 from layers import coverage_layer_ids
 from lookup import lookup_point
 
@@ -40,10 +40,11 @@ def review_reason_for(layers: list[dict], coverage_ids: list[str], districts: di
 
 
 def run(people: list[dict], source_columns: list[str], roles: dict, layers: list[dict],
-        on_row=None) -> dict:
-    """Looks up every person. on_row(index, total, label, address) is called
-    before each lookup, for progress reporting. Returns the rows and headers
-    for both output files."""
+        on_progress=None) -> dict:
+    """Looks up every person. on_progress(done, total) reports geocoding
+    progress in distinct addresses — the only slow step; the district lookups
+    that follow take a fraction of a millisecond each. Returns the rows and
+    headers for both output files."""
     layer_columns = [layer["id"] for layer in layers]
     coverage_ids = coverage_layer_ids(layers)
     # The input's own columns come through untouched; anything this tool adds
@@ -52,37 +53,34 @@ def run(people: list[dict], source_columns: list[str], roles: dict, layers: list
     added = unique_headers(["matched_address", "lat", "lon"] + layer_columns, source_columns)
     fieldnames = source_columns + list(added.values())
 
-    results, review = [], []
+    addresses = [build_address(person, roles) for person in people]
     cache_conn = _get_cache_conn()
     try:
-        for i, person in enumerate(people, start=1):
-            address = build_address(person, roles)
-            if on_row:
-                on_row(i, len(people), build_label(person, roles), address)
-            geo = geocode(address, conn=cache_conn) if address else {
-                "matched": False, "matched_address": None, "lat": None, "lon": None,
-            }
-
-            row = dict(person)
-            row[added["matched_address"]] = geo["matched_address"]
-            row[added["lat"]] = geo["lat"]
-            row[added["lon"]] = geo["lon"]
-
-            if not geo["matched"]:
-                reason, districts = "unmatched_address", {}
-            else:
-                districts = lookup_point(layers, geo["lat"], geo["lon"]) if layers else {}
-                reason = review_reason_for(layers, coverage_ids, districts)
-
-            for col in layer_columns:
-                row[added[col]] = districts.get(col)
-
-            if reason:
-                review.append({"review_reason": reason, "address_searched": address, **row})
-            else:
-                results.append(row)
+        geocoded = geocode_many(addresses, cache_conn, on_progress=on_progress)
     finally:
         cache_conn.close()
+
+    results, review = [], []
+    for person, address in zip(people, addresses):
+        geo = geocoded.get(address, UNMATCHED)
+        row = dict(person)
+        row[added["matched_address"]] = geo["matched_address"]
+        row[added["lat"]] = geo["lat"]
+        row[added["lon"]] = geo["lon"]
+
+        if not geo["matched"]:
+            reason, districts = "unmatched_address", {}
+        else:
+            districts = lookup_point(layers, geo["lat"], geo["lon"]) if layers else {}
+            reason = review_reason_for(layers, coverage_ids, districts)
+
+        for col in layer_columns:
+            row[added[col]] = districts.get(col)
+
+        if reason:
+            review.append({"review_reason": reason, "address_searched": address, **row})
+        else:
+            results.append(row)
 
     return {
         "fieldnames": fieldnames,
