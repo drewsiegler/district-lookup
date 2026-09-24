@@ -93,8 +93,8 @@ About 1.5 seconds, and no test touches the network: each one hands the app fixed
 district-lookup/
 ├── Start District Lookup.command   # double-click in Finder to open the app window
 ├── assets/
-│   ├── AppIcon.icns         # for the Mac app bundle, and the launcher's Finder icon
-│   └── AppIcon.appiconset/  # the same icon at every size; the app window uses the 256px one
+│   ├── AppIcon.icns         # every size, 16–1024 px: for the Mac app bundle and the launcher's Finder icon
+│   └── AppIcon.png          # 256 px, for the app window's header and browser tab
 ├── data/
 │   ├── raw_geojson/          # source boundary files, one .geojson per map
 │   ├── layer_sources.json    # which council / trustee-area files feed each shared column
