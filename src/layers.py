@@ -2,8 +2,8 @@
 attribute on each holds its district name, and how that value is written in
 the output.
 
-Reads data/districts.json.gz, which scripts/build_gpkg.py writes from the
-boundary files. That file holds plain GeoJSON geometry already in lat/lon, so
+Reads data/districts/<layer>.json, which scripts/build_gpkg.py writes from the
+boundary files. Those hold plain GeoJSON geometry already in lat/lon, so
 looking an address up needs only Shapely — no GeoPandas, GDAL or PROJ. Those
 are the maintainer's tools for preparing maps, not the app's for using them,
 which keeps the app small enough to hand to someone without Python installed.
@@ -28,7 +28,6 @@ Registry entry fields:
                 where two agencies' boundary lines disagree.
 """
 
-import gzip
 import json
 import math
 import re
@@ -39,7 +38,7 @@ from shapely.geometry import shape
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 GPKG_PATH = DATA_DIR / "districts.gpkg"
-RUNTIME_PATH = DATA_DIR / "districts.json.gz"
+RUNTIME_DIR = DATA_DIR / "districts"
 REGISTRY_PATH = DATA_DIR / "layers.json"
 
 
@@ -82,14 +81,15 @@ def format_value(value, fmt: str | None = None, pattern: str | None = None) -> s
     return fmt.format(int(text) if text.isdigit() else text)
 
 
-def read_runtime_data() -> dict:
-    if not RUNTIME_PATH.exists():
-        raise FileNotFoundError(
-            f"{RUNTIME_PATH} doesn't exist yet. Run scripts/build_gpkg.py after adding "
-            "boundary files to data/raw_geojson/."
+def read_layer_features(layer_id: str) -> list[dict]:
+    path = RUNTIME_DIR / f"{layer_id}.json"
+    if not path.exists():
+        raise ValueError(
+            f"Layer '{layer_id}' is registered in {REGISTRY_PATH.name} but hasn't been "
+            f"built into {RUNTIME_DIR.name}/ yet. Re-run scripts/build_gpkg.py."
         )
-    with gzip.open(RUNTIME_PATH, "rt", encoding="utf-8") as f:
-        return json.load(f)
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)["features"]
 
 
 def load_layers() -> list[dict]:
@@ -98,7 +98,6 @@ def load_layers() -> list[dict]:
     registry = read_registry()
     if not registry:
         return []
-    data = read_runtime_data()
 
     loaded = []
     for entry in registry:
@@ -107,13 +106,8 @@ def load_layers() -> list[dict]:
         if not name_field:
             print(f"Skipping layer '{layer_id}': no name_field set in {REGISTRY_PATH.name} yet.")
             continue
-        if layer_id not in data["layers"]:
-            raise ValueError(
-                f"Layer '{layer_id}' is registered in {REGISTRY_PATH.name} but isn't in "
-                f"{RUNTIME_PATH.name}. Re-run scripts/build_gpkg.py."
-            )
 
-        features = data["layers"][layer_id]["features"]
+        features = read_layer_features(layer_id)
         attributes = [f["properties"] for f in features]
         available = sorted({key for props in attributes for key in props})
         if name_field not in available:

@@ -8,7 +8,7 @@ Built as a Python CLI, following the plan from [this design conversation](https:
 - **Boundary storage** — every district map lives as its own layer inside `data/districts.gpkg`, a single GeoPackage file (SQLite under the hood) that GeoPandas reads and writes natively, and that you can open in QGIS to eyeball boundaries. `data/layers.json` is the registry: for each layer, which column holds its district name.
 - **Point-in-polygon matching** — Shapely checks each geocoded point against every registered layer at once, using each layer's spatial index.
 
-The same build step also writes `data/districts.json.gz` — the same boundaries as plain GeoJSON in lat/lon. That's what the app actually reads, so a lookup needs only Shapely and the standard library. Loading all 12 layers takes about 0.2 seconds.
+The same build step also writes `data/districts/`, one plain GeoJSON file per layer in lat/lon, trimmed to the county plus a 1 km margin. That's what the app actually reads, so a lookup needs only Shapely and the standard library. Loading all 12 layers takes about 0.15 seconds. The files are deliberately uncompressed and rebuild byte-for-byte identically, so git stores only the layers that actually changed; adding a trustee map adds about 0.1 MB to the repo's history.
 
 ## Setup
 
@@ -21,7 +21,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-That installs Shapely and requests, about 58 MB, nothing that has to be compiled. The prepared boundary data (`data/districts.json.gz`, 2.2 MB) is in the repo, so you can look addresses up straight away.
+That installs Shapely and requests, about 58 MB, nothing that has to be compiled. The prepared boundary data (`data/districts/`, 6.4 MB) is in the repo, so you can look addresses up straight away.
 
 To **add or update boundary maps** you also need the mapping toolchain, which is far heavier (~250 MB, carries GDAL and PROJ):
 
@@ -60,7 +60,7 @@ The split is deliberate: the lookup itself only ever needs Shapely, so the app c
    ```bash
    python scripts/build_gpkg.py
    ```
-   This rebuilds `data/districts.gpkg` and `data/districts.json.gz` from scratch and syncs `data/layers.json` — new layers are added, layers whose file is gone are removed.
+   This rebuilds `data/districts/` and `data/districts.gpkg` from scratch and syncs `data/layers.json` — new layers are added, layers whose file is gone are removed.
 4. For a standalone layer, open `data/layers.json` and fill in its `name_field` — the column holding the district's name or number (the build script prints each layer's columns to help). Shared trustee-area columns are filled in automatically. New entries land at the end of the file; move them next to related entries if you want the output columns grouped, since output column order follows this file.
 
 Re-run `scripts/build_gpkg.py` any time you add, replace, or remove a boundary file — existing registry entries keep their settings and order.
@@ -171,13 +171,13 @@ district-lookup/
 │   ├── raw_geojson/          # boundary files you add, one .geojson at a time
 │   ├── layer_sources.json    # which council / trustee-area files feed each shared column
 │   ├── layers.json           # registry: layer id -> label, name_field, optional format/pattern/coverage
-│   ├── districts.json.gz     # what the app reads: boundaries as plain GeoJSON
+│   ├── districts/            # what the app reads: one GeoJSON file per layer
 │   ├── districts.gpkg        # same layers as a GeoPackage, for QGIS (not in the repo)
 │   ├── geocode_cache.sqlite  # cached address -> lat/lon lookups
 │   ├── people.csv            # your input list (any of the shapes above)
 │   └── people_contacts_example.csv   # template: address split across columns
 ├── scripts/
-│   ├── build_gpkg.py         # raw_geojson/ -> districts.json.gz + .gpkg + registry
+│   ├── build_gpkg.py         # raw_geojson/ -> districts/ + .gpkg + registry
 │   └── set_launcher_icon.sh  # puts the app icon on the launcher in Finder
 ├── src/
 │   ├── web.py                # the app window (a page served to your browser)

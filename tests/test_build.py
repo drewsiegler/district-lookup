@@ -44,3 +44,44 @@ def test_json_safe_turns_timestamps_into_text():
 
 def test_round_coords_nested():
     assert build_gpkg.round_coords([[[-121.123456789, 37.987654321]]]) == [[[-121.123457, 37.987654]]]
+
+
+def _layer(*polygons):
+    import geopandas as gpd
+    from shapely.geometry import box
+    return gpd.GeoDataFrame({"name": [str(i) for i in range(len(polygons))]},
+                            geometry=[box(*p) for p in polygons], crs="EPSG:4326")
+
+
+def test_layers_are_trimmed_to_the_county_plus_a_margin():
+    county = _layer((-122.0, 37.0, -121.5, 37.5))
+    statewide = _layer((-123.0, 36.0, -121.0, 38.0),    # straddles the county
+                       (-118.0, 34.0, -117.5, 34.5))    # Los Angeles: nowhere near it
+    registry = [{"id": "county", "coverage": True}]
+    clipped = build_gpkg.clip_to_coverage({"county": county, "statewide": statewide}, registry)
+
+    kept = clipped["statewide"]
+    assert list(kept["name"]) == ["0"]                  # the far-away feature is dropped
+    minx, miny, maxx, maxy = kept.total_bounds
+    assert -122.02 < minx < -122.0 and 37.5 < maxy < 37.52   # county edge + ~1 km, no more
+
+
+def test_without_a_coverage_layer_nothing_is_trimmed():
+    layer = _layer((-123.0, 36.0, -121.0, 38.0))
+    assert build_gpkg.clip_to_coverage({"x": layer}, [])["x"] is layer
+
+
+def test_output_is_identical_for_identical_input(tmp_path, monkeypatch):
+    monkeypatch.setattr(build_gpkg, "RUNTIME_DIR", tmp_path)
+    frames = {"a": _layer((-122.0, 37.0, -121.5, 37.5))}
+    build_gpkg.write_runtime_data(frames)
+    first = (tmp_path / "a.json").read_bytes()
+    build_gpkg.write_runtime_data(frames)
+    assert (tmp_path / "a.json").read_bytes() == first
+
+
+def test_layers_no_longer_built_are_removed(tmp_path, monkeypatch):
+    monkeypatch.setattr(build_gpkg, "RUNTIME_DIR", tmp_path)
+    (tmp_path / "gone.json").write_text("{}")
+    build_gpkg.write_runtime_data({"kept": _layer((0, 0, 1, 1))})
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["kept.json"]

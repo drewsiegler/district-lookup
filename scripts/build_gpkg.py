@@ -1,4 +1,6 @@
-"""Rebuilds data/districts.gpkg from everything in data/raw_geojson/, and keeps
+"""Rebuilds the prepared maps from everything in data/raw_geojson/ — one file
+per layer in data/districts/, which the app reads, plus data/districts.gpkg
+for opening in QGIS — trimmed to the county plus a 1 km margin. Keeps
 data/layers.json in sync: new layers are registered, and layers that no longer
 come out of the build are removed.
 
@@ -42,7 +44,6 @@ Usage:
     python scripts/build_gpkg.py
 """
 
-import gzip
 import json
 import math
 import re
@@ -54,12 +55,14 @@ import pandas as pd
 from shapely.geometry import mapping
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
-from layers import (DATA_DIR, GPKG_PATH, REGISTRY_PATH, RUNTIME_PATH, clean_value,
+from layers import (DATA_DIR, GPKG_PATH, REGISTRY_PATH, RUNTIME_DIR, clean_value,
                     read_registry, write_registry)
 
 RAW_DIR = DATA_DIR / "raw_geojson"
 SOURCES_PATH = DATA_DIR / "layer_sources.json"
 MERGED_NAME_FIELD = "district_name"
+CALIFORNIA_ALBERS = 3310  # equal-area, in meters, for buffering
+COVERAGE_MARGIN_METERS = 1000
 
 
 def default_format(group_name: str) -> str | None:
@@ -144,27 +147,53 @@ def round_coords(coords, places=6):
     return [round_coords(c, places) for c in coords]
 
 
+def clip_to_coverage(layer_frames: dict, registry: list[dict]) -> dict:
+    """Trims every layer to the area the tool covers (layers marked "coverage"
+    in the registry, i.e. the county) plus COVERAGE_MARGIN_METERS. Statewide
+    Census layers otherwise ship whole: over half of the Congress, State Senate
+    and Assembly data describes territory hours away. Anyone geocoded outside
+    the county is routed to needs_review anyway."""
+    coverage_ids = [e["id"] for e in registry if e.get("coverage") and e["id"] in layer_frames]
+    if not coverage_ids:
+        print("  (no coverage layer registered yet; maps shipped untrimmed)")
+        return layer_frames
+    area = pd.concat([layer_frames[i] for i in coverage_ids]).to_crs(CALIFORNIA_ALBERS)
+    mask = gpd.GeoSeries([area.union_all().buffer(COVERAGE_MARGIN_METERS)],
+                         crs=CALIFORNIA_ALBERS).to_crs(4326).iloc[0]
+    clipped = {}
+    for name, gdf in layer_frames.items():
+        kept = gdf.clip(mask, keep_geom_type=True).sort_index()
+        clipped[name] = kept[~kept.geometry.is_empty]
+    return clipped
+
+
 def write_runtime_data(layer_frames: dict) -> None:
-    """Writes the file the app itself reads: plain GeoJSON geometry in lat/lon
-    plus each feature's attributes, so a lookup needs only Shapely and the
-    standard library. See src/layers.py."""
-    payload = {"layers": {}}
+    """Writes what the app itself reads: one file per layer in RUNTIME_DIR,
+    plain GeoJSON geometry in lat/lon plus each feature's attributes, so a
+    lookup needs only Shapely and the standard library (see src/layers.py).
+
+    Deliberately uncompressed, one feature per line, and byte-for-byte the
+    same for the same input: git compresses text itself and stores only what
+    changed, so adding a trustee map adds that layer's file to history, not a
+    fresh copy of every map."""
+    RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
     for layer_name, gdf in layer_frames.items():
-        features = []
+        lines = []
         for record, geometry in zip(gdf.drop(columns="geometry").to_dict("records"), gdf.geometry):
             geo = mapping(geometry)
-            features.append({
+            lines.append(json.dumps({
                 "properties": {k: json_safe(v) for k, v in record.items()},
                 "geometry": {**geo, "coordinates": round_coords(geo["coordinates"])},
-            })
-        payload["layers"][layer_name] = {"features": features}
-
-    tmp = RUNTIME_PATH.with_suffix(".building.gz")
-    with gzip.open(tmp, "wt", encoding="utf-8") as f:
-        json.dump(payload, f, separators=(",", ":"))
-    tmp.replace(RUNTIME_PATH)
-    size = RUNTIME_PATH.stat().st_size / 1_048_576
-    print(f"  {RUNTIME_PATH.name}: {size:.1f} MB (what the app reads)")
+            }, separators=(",", ":"), ensure_ascii=False))
+        path = RUNTIME_DIR / f"{layer_name}.json"
+        tmp = path.with_suffix(".building")
+        tmp.write_text('{"features":[\n' + ",\n".join(lines) + "\n]}\n", encoding="utf-8")
+        tmp.replace(path)
+    for stale in RUNTIME_DIR.glob("*.json"):
+        if stale.stem not in layer_frames:
+            stale.unlink()
+    total = sum(p.stat().st_size for p in RUNTIME_DIR.glob("*.json")) / 1_048_576
+    print(f"  {RUNTIME_DIR.name}/: {len(layer_frames)} layer file(s), {total:.1f} MB (what the app reads)")
 
 
 def main():
@@ -192,6 +221,9 @@ def main():
         print("Nothing to build.")
         sys.exit(1)
 
+    registry = read_registry()
+    layer_frames = clip_to_coverage(layer_frames, registry)
+
     # Build into a fresh file and swap it in, so layers whose source was removed
     # or moved into a merge group don't linger, and a failed build leaves the
     # previous districts.gpkg untouched.
@@ -204,7 +236,6 @@ def main():
     tmp_path.replace(GPKG_PATH)
     write_runtime_data(layer_frames)
 
-    registry = read_registry()
     removed = [e["id"] for e in registry if e["id"] not in layer_frames]
     registry = [e for e in registry if e["id"] in layer_frames]
     existing_ids = {e["id"] for e in registry}

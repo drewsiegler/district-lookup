@@ -14,5 +14,5 @@ data/geocode_cache.sqlite
 
 # Built from data/raw_geojson/ by scripts/build_gpkg.py. Ignored so the repo
 # doesn't carry a new multi-megabyte copy in its history on every rebuild;
-# data/districts.json.gz (what the app reads) is committed instead.
+# data/districts/ (what the app reads) is committed instead.
 *.gpkg

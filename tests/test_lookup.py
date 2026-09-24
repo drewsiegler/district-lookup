@@ -1,5 +1,5 @@
 """Point-in-polygon lookups against the real boundary data in
-data/districts.json.gz."""
+data/districts/."""
 
 import pytest
 from shapely import union_all
