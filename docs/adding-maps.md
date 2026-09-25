@@ -118,6 +118,8 @@ district-lookup/
 │   └── lookup.py             # point-in-polygon matching
 ├── tests/                   # python -m pytest; no network needed
 ├── COVERAGE.md              # which maps are in, which are still needed
+├── AGENTS.md                # guidance for AI coding agents working on this repo
+├── CLAUDE.md                # points Claude at AGENTS.md
 ├── requirements.txt         # what the app needs: shapely, requests
 ├── requirements-build.txt   # what adding maps needs: geopandas, GDAL, pandas
 └── requirements-dev.txt     # what running the tests needs: pytest
