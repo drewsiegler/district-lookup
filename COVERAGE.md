@@ -1,6 +1,6 @@
 # Coverage — Santa Clara County
 
-Updated 2026-09-24. What's loaded, what's still to source, and where the gaps are. How to add a map: [docs/adding-maps.md](docs/adding-maps.md).
+Updated 2026-09-25. What's loaded, what's still to source, and where the gaps are. How to add a map: [docs/adding-maps.md](docs/adding-maps.md).
 
 ## Complete, from Census data
 
@@ -25,6 +25,14 @@ Of the 31 K-12 districts tracked here, 14 elect their boards by trustee area and
 
 All four community college districts — Foothill-De Anza, San José-Evergreen, West Valley-Mission and Gavilan Joint — elect by trustee area; none are loaded yet.
 
+## County Board of Education
+
+- **Loaded:** Santa Clara County Board of Education trustee areas, written `TA1`–`TA7` — the map approved January 10, 2022, drawn from the 2020 Census. It matches SCCOE's own published map, "Santa Clara County Board of Education Trustee Areas (2022)" on ArcGIS Online, exactly.
+
+  It covers the whole county except two stretches of mostly empty eastern hills, where the column is blank:
+  - about 119 sq mi in Patterson Joint Unified, a school district run from Stanislaus County and so outside this board's territory;
+  - about 80 sq mi east of Gilroy, out toward Pacheco Pass — the same land Gilroy USD's own trustee map leaves out (see Known gaps below).
+
 ## Special districts
 
 - **Loaded:** Midpeninsula Regional Open Space District wards — the map adopted March 23, 2022 (Resolution 22-12, drawn from the 2020 Census), first used in the November 2022 election. It covers the county's northwest: all of Palo Alto, Los Altos, Los Altos Hills, Mountain View, Sunnyvale, Saratoga, Monte Sereno and Los Gatos, nearly all of Cupertino, plus neighboring unincorporated land. Everyone outside it gets a blank ward. Ward 7 lies entirely in San Mateo County, so only Wards 1–6 turn up here.
@@ -34,15 +42,14 @@ All four community college districts — Foothill-De Anza, San José-Evergreen, 
 ## Not started
 
 - Santa Clara Valley Open Space Authority
-- Santa Clara County Board of Education (SCCOE) trustee areas
 
-None of these are in Census data; they come from each agency's GIS portal or a records request, the same way the council and trustee maps have.
+It isn't in Census data; it will come from the agency's GIS portal or a records request, the same way the council and trustee maps have.
 
 ## Known gaps in loaded maps
 
 People who fall in one of these are flagged for review rather than given a blank or wrong answer.
 
-- **Gilroy USD** — the district's trustee-area map stops about 78 sq mi short of its eastern edge as the Census draws it: the rural land out toward Pacheco Pass. Worth asking the district for a map covering its full territory if anyone on your lists lives out that way.
+- **Gilroy USD** — the district's trustee-area map stops about 78 sq mi short of its eastern edge as the Census draws it: the rural land out toward Pacheco Pass. The County Board of Education's trustee map leaves out the same land, which suggests the Census boundary overreaches there rather than the district's map falling short. Worth asking the district for a map covering its full territory if anyone on your lists lives out that way.
 - **San José** — about 1.3 sq mi inside the official city limits isn't covered by the city's own council map.
 - **Other council maps** — a tenth of a square mile or less each; none in Sunnyvale.
 

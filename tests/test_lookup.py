@@ -25,6 +25,7 @@ def test_tully_road_the_original_example(layers):
     assert d["ca_state_assembly"] == "AD25"
     assert d["elementary_school_districts"] == "Evergreen Elementary School District"
     assert d["secondary_school_districts"] == "East Side Union High School District"
+    assert d["scc_board_of_education_trustee_areas"] == "TA7"
     assert d["midpeninsula_regional_open_space_district"] is None  # east of Midpen's boundary
 
 
@@ -36,6 +37,9 @@ def test_tully_road_the_original_example(layers):
     ("morgan_hill_peak_ave", "council_district", "C"),
     ("cupertino_city_hall", "high_school_trustee_area", "TA1"),
     ("oak_grove_district_office", "elementary_trustee_area", "TA5"),
+    ("campbell_city_hall", "scc_board_of_education_trustee_areas", "TA3"),
+    ("oak_grove_district_office", "scc_board_of_education_trustee_areas", "TA4"),
+    ("stanford_campus", "scc_board_of_education_trustee_areas", "TA1"),
     # Ward 2 on Midpen's 2011 map; the 2022 redistricting moved it to Ward 1.
     ("cupertino_city_hall", "midpeninsula_regional_open_space_district", "Ward 1"),
     ("stanford_campus", "midpeninsula_regional_open_space_district", "Ward 2"),

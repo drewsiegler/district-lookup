@@ -1,6 +1,6 @@
 # District Lookup
 
-Give it a list of people and their addresses; it tells you every electoral district each person lives in — city council, county supervisor, Congress, State Senate and Assembly, school districts and trustee areas, Midpeninsula Open Space wards — and hands the list back with those added as columns. A custom, growable version of what a registrar of voters' office uses internally, currently covering Santa Clara County.
+Give it a list of people and their addresses; it tells you every electoral district each person lives in — city council, county supervisor, Congress, State Senate and Assembly, school districts and trustee areas, County Board of Education, Midpeninsula Open Space wards — and hands the list back with those added as columns. A custom, growable version of what a registrar of voters' office uses internally, currently covering Santa Clara County.
 
 ## Your list stays private
 
@@ -79,7 +79,7 @@ The reasons:
 
 A blank district on its own isn't an error. At-large cities have no council districts, unincorporated land has no city, the Midpeninsula Open Space District covers only the county's northwest, and some school districts' trustee-area maps aren't loaded yet — see [COVERAGE.md](COVERAGE.md) for what's in and what's still to come.
 
-How districts are written: `city` is the city or town; `council_district` is the bare district number (Morgan Hill uses letters `A`–`D`); county `D2—Sup. Betty Duong`, Congress `US-CA16`, State Senate `SD15`, Assembly `AD25`, trustee areas `TA3`, Midpeninsula Open Space `Ward 1`.
+How districts are written: `city` is the city or town; `council_district` is the bare district number (Morgan Hill uses letters `A`–`D`); county `D2—Sup. Betty Duong`, Congress `US-CA16`, State Senate `SD15`, Assembly `AD25`, trustee areas `TA3` (County Board of Education too), Midpeninsula Open Space `Ward 1`.
 
 Boundaries change. Verify anything you'd act on against the county Registrar of Voters.
 
@@ -96,7 +96,7 @@ Free to download, free to use, and free to adapt for another county. Donations a
 **The boundary data is not covered by that license.** The files in `data/raw_geojson/` come from public agencies, each with its own terms:
 
 - Census TIGER/Line files (`us_congress`, `ca_state_senate`, `ca_state_assembly`, the three school district layers, `city`) are U.S. government works, in the public domain.
-- City council, county supervisorial, trustee-area and Midpeninsula Open Space ward maps come from each agency's GIS portal or public records request, and may carry their own attribution terms. Check with the source agency before redistributing.
+- City council, county supervisorial, trustee-area (including the County Board of Education's) and Midpeninsula Open Space ward maps come from each agency's GIS portal or public records request, and may carry their own attribution terms. Check with the source agency before redistributing.
 
 ## Trademark
 

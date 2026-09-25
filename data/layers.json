@@ -86,6 +86,13 @@
       }
     },
     {
+      "id": "scc_board_of_education_trustee_areas",
+      "label": "Santa Clara County Board of Education Trustee Area",
+      "name_field": "District",
+      "pattern": "D(?P<num>\\d+)",
+      "format": "TA{num}"
+    },
+    {
       "id": "midpeninsula_regional_open_space_district",
       "label": "Midpeninsula Regional Open Space District Ward",
       "name_field": "WARDNUM",
