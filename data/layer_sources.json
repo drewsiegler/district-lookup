@@ -6,7 +6,8 @@
       {"file": "campbell_council.geojson", "name_field": "CAMPBELLCC", "city": "Campbell"},
       {"file": "morgan_hill_council.geojson", "name_field": "CCD", "city": "Morgan Hill"},
       {"file": "sunnyvale_council.geojson", "name_field": "DISTRICT", "city": "Sunnyvale"},
-      {"file": "gilroy_council.geojson", "name_field": "DISTRICT", "city": "Gilroy"}
+      {"file": "gilroy_council.geojson", "name_field": "DISTRICT", "city": "Gilroy"},
+      {"file": "los_altos_council.geojson", "name_field": "DISTRICT", "city": "Los Altos"}
     ],
     "unified_trustee_area": [
       {"file": "gilroy_unified_school_district_trustee_areas.geojson", "name_field": "TRUSTEEARE",

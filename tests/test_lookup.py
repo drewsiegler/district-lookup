@@ -35,6 +35,7 @@ def test_tully_road_the_original_example(layers):
     ("gilroy_rosanna_st", "council_district", "5"),
     ("gilroy_rosanna_st", "unified_trustee_area", "TA7"),
     ("morgan_hill_peak_ave", "council_district", "C"),
+    ("los_altos_city_hall", "council_district", "4"),
     ("cupertino_city_hall", "high_school_trustee_area", "TA1"),
     ("oak_grove_district_office", "elementary_trustee_area", "TA5"),
     ("campbell_city_hall", "scc_board_of_education_trustee_areas", "TA3"),

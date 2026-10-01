@@ -1,6 +1,6 @@
 # Coverage — Santa Clara County
 
-Updated 2026-09-25. What's loaded, what's still to source, and where the gaps are. How to add a map: [docs/adding-maps.md](docs/adding-maps.md).
+Updated 2026-10-01. What's loaded, what's still to source, and where the gaps are. How to add a map: [docs/adding-maps.md](docs/adding-maps.md).
 
 ## Complete, from Census data
 
@@ -10,8 +10,8 @@ County supervisorial, U.S. Congress, CA State Senate, CA State Assembly, all 15 
 
 The `city` column covers all 15 cities and towns. `council_district` is filled in only for cities that elect by district:
 
-- **Loaded:** San José, Santa Clara, Campbell, Morgan Hill, Sunnyvale, Gilroy
-- **Still needed:** Los Altos — recently switched to district elections; map requested by email
+- **Loaded:** San José, Santa Clara, Campbell, Morgan Hill, Sunnyvale, Gilroy, Los Altos
+- **Los Altos** switched to district elections in 2024. Its map, "F2a", was adopted October 22, 2024, and the first district elections are November 3, 2026, for Districts 2 and 4. The loaded file agrees with the district the city's own GIS assigns each parcel, at every one of 349 sample points checked, 115 of them within 25 m of a district line.
 - **At-large, so no council map needed:** Los Gatos, Milpitas, Mountain View, Los Altos Hills, Monte Sereno, Palo Alto, Cupertino, Saratoga
 
 ## School trustee areas
@@ -51,7 +51,7 @@ People who fall in one of these are flagged for review rather than given a blank
 
 - **Gilroy USD** — the district's trustee-area map stops about 78 sq mi short of its eastern edge as the Census draws it: the rural land out toward Pacheco Pass. The County Board of Education's trustee map leaves out the same land, which suggests the Census boundary overreaches there rather than the district's map falling short. Worth asking the district for a map covering its full territory if anyone on your lists lives out that way.
 - **San José** — about 1.3 sq mi inside the official city limits isn't covered by the city's own council map.
-- **Other council maps** — a tenth of a square mile or less each; none in Sunnyvale.
+- **Other council maps** — a tenth of a square mile or less each; none in Sunnyvale or Los Altos.
 
 ## How election methods were verified
 
