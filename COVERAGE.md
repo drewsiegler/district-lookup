@@ -23,7 +23,14 @@ Of the 31 K-12 districts tracked here, 14 elect their boards by trustee area and
 - **Still needed — already electing by trustee area:** Morgan Hill USD, San José USD, Santa Clara USD, Campbell Union SD, Moreland SD, Sunnyvale SD
 - **At-large, so no trustee map needed:** Milpitas USD, Palo Alto USD; Berryessa Union, Cambrian, Cupertino Union, Evergreen, Franklin-McKinley, Lakeside Joint, Loma Prieta Joint Union, Los Altos, Los Gatos Union, Luther Burbank, Mount Pleasant, Mountain View Whisman, Orchard, Saratoga Union and Union elementary districts
 
-All four community college districts — Foothill-De Anza, San José-Evergreen, West Valley-Mission and Gavilan Joint — elect by trustee area; none are loaded yet.
+## Community college districts
+
+All four community college districts — Foothill-De Anza, San José-Evergreen, West Valley-Mission and Gavilan Joint — elect by trustee area. The Census doesn't map community college districts, so the `community_college_district` column is drawn from each college's own trustee map. A college is named only once its trustee map is loaded; until then both college columns are blank for the people it serves.
+
+- **Loaded (1 of 4):** Gavilan Joint CCD — the trustee areas adopted February 8, 2022, from the 2020 Census, for elections through 2030. In this county it covers Gilroy, Morgan Hill, San Martin and the southern end of San José around Coyote Valley: the same ground as the Gilroy and Morgan Hill unified districts, to within about a square mile. Trustee Areas 5 and 7 lie entirely in San Benito County, so only `TA1`–`TA4` and `TA6` turn up here.
+
+  The loaded file matches San Benito County's published copy (`Gavilan_CC_District` on services2.arcgis.com/NjMFCzThTMQy3AJa) to within about 9 m, with identical populations: about 28,500 per area and 199,595 in all, which are 2020 Census figures. It also agrees with the adopted map on [Gavilan's redistricting page](https://www.gavilan.edu/administration/board/redistricting/redistricting_trustee_areas_2022.php).
+- **Still needed:** Foothill-De Anza, San José-Evergreen, West Valley-Mission
 
 ## County Board of Education
 
@@ -52,7 +59,7 @@ All four community college districts — Foothill-De Anza, San José-Evergreen, 
 
 People who fall in one of these are flagged for review rather than given a blank or wrong answer.
 
-- **Gilroy USD** — the district's trustee-area map stops about 78 sq mi short of its eastern edge as the Census draws it: the rural land out toward Pacheco Pass. The County Board of Education's trustee map leaves out the same land, which suggests the Census boundary overreaches there rather than the district's map falling short. Worth asking the district for a map covering its full territory if anyone on your lists lives out that way.
+- **Gilroy USD** — the district's trustee-area map stops about 78 sq mi short of its eastern edge as the Census draws it: the rural land out toward Pacheco Pass. The County Board of Education's trustee map leaves out the same land too, but Gavilan College's trustee map includes it, as the Census does, so it's unclear which is right. Worth asking the district for a map covering its full territory if anyone on your lists lives out that way.
 - **San José** — about 1.3 sq mi inside the official city limits isn't covered by the city's own council map.
 - **Other council maps** — a tenth of a square mile or less each; none in Sunnyvale or Los Altos.
 

@@ -4,8 +4,10 @@ data/districts/."""
 import pytest
 from shapely import union_all
 
-from conftest import POINTS, layer_features as features
+from conftest import POINTS, largest_piece, layer_features as features
+from layers import coverage_layer_ids
 from lookup import lookup_point
+from pipeline import review_reason_for
 
 
 def at(layers, name):
@@ -28,6 +30,8 @@ def test_tully_road_the_original_example(layers):
     assert d["scc_board_of_education_trustee_areas"] == "TA7"
     assert d["midpeninsula_regional_open_space_district"] is None  # east of Midpen's boundary
     assert d["scvosa_director_districts"] == "D7"
+    # San José-Evergreen's trustee map hasn't been loaded, so its college isn't known yet.
+    assert d["community_college_district"] is None and d["community_college_trustee_area"] is None
 
 
 @pytest.mark.parametrize("point, column, expected", [
@@ -47,6 +51,9 @@ def test_tully_road_the_original_example(layers):
     ("stanford_campus", "midpeninsula_regional_open_space_district", "Ward 2"),
     ("campbell_city_hall", "scvosa_director_districts", "D4"),
     ("morgan_hill_peak_ave", "scvosa_director_districts", "D1"),
+    ("gilroy_rosanna_st", "community_college_district", "Gavilan Joint Community College District"),
+    ("gilroy_rosanna_st", "community_college_trustee_area", "TA4"),
+    ("morgan_hill_peak_ave", "community_college_trustee_area", "TA2"),
 ])
 def test_known_districts(layers, point, column, expected):
     assert at(layers, point)[column] == expected
@@ -131,3 +138,21 @@ def test_hole_in_a_loaded_trustee_map_leaves_the_area_blank(layers, gilroy_gap):
     d = lookup_point(layers, *gilroy_gap)
     assert d["unified_school_districts"] == "Gilroy Unified School District"
     assert d["unified_trustee_area"] is None
+
+
+def test_gap_between_college_trustee_areas_is_flagged(layers):
+    """The college district column is drawn from the colleges' own trustee
+    maps, with the hairline gaps between neighboring areas closed. An address
+    in one of those gaps has its college but no area, and goes to review
+    rather than coming back with neither."""
+    county = union_all([g for _, _, g in features(layers, "santa_clara_county_supervisorial")])
+    colleges = union_all([g for _, _, g in features(layers, "community_college_district")])
+    areas = union_all([g for _, _, g in features(layers, "community_college_trustee_area")])
+    gap = colleges.difference(areas).intersection(county)
+    if gap.is_empty:
+        pytest.skip("no gaps between college trustee areas in current data")
+    point = largest_piece(gap).representative_point()
+    d = lookup_point(layers, point.y, point.x)
+    assert d["community_college_district"] and d["community_college_trustee_area"] is None
+    assert review_reason_for(layers, coverage_layer_ids(layers), d) == \
+        "missing_community_college_trustee_area"

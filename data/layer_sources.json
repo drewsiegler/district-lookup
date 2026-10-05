@@ -26,6 +26,13 @@
        "district": "Fremont Union High School District"},
       {"file": "los_gatos_saratoga_union_hsd_trustee_areas.geojson", "name_field": "DISTRICT",
        "district": "Los Gatos-Saratoga Joint Union School District"}
+    ],
+    "community_college_trustee_area": [
+      {"file": "gavilan_jccd_trustee_areas.geojson", "name_field": "DISTRICT",
+       "district": "Gavilan Joint Community College District"}
     ]
+  },
+  "district_outlines": {
+    "community_college_district": "community_college_trustee_area"
   }
 }

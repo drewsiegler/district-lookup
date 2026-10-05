@@ -35,12 +35,18 @@ The split is deliberate: the lookup only ever needs Shapely, so the app can be b
        {"file": "los_altos_council.geojson", "name_field": "DISTRICT", "city": "Los Altos"}
        ```
        A council district is only filled in when the address is inside that same city's official limits. So unincorporated county land gets a blank city *and* a blank council district, even where a city's map extends over it. It also stops a district number being borrowed from a neighboring city where two agencies draw a shared border a little differently. (San José's council map and the official city limits disagree by about a square mile in total, mostly along unincorporated pockets.)
-     - **Trustee-area maps** go in one column per district type (`unified_trustee_area`, `elementary_trustee_area`, `high_school_trustee_area`, and later `community_college_trustee_area`), written as `TA3` etc. — the district itself is already named in the school district column just before it. Say which district the file is for, spelled exactly as the Census names it in that column:
+     - **Trustee-area maps** go in one column per district type (`unified_trustee_area`, `elementary_trustee_area`, `high_school_trustee_area`, `community_college_trustee_area`), written as `TA3` etc. — the district itself is already named in the column just before it. Say which district the file is for, spelled exactly as the Census names it in that column:
        ```json
        {"file": "campbell_union_hsd_trustee_areas.geojson", "name_field": "TRUSTEEARE",
         "district": "Campbell Union High School District"}
        ```
        Like council maps, an area is only filled in when the address is in that same district — so it's left blank outside it, never borrowed from a neighboring district where two agencies draw their shared border differently, and someone inside a district whose map has a hole is flagged for review instead of silently coming out blank. A new group name creates that column the first time it has a file, already set to the `TA#` format.
+     - **Community college trustee-area maps** go in `community_college_trustee_area`. The Census doesn't map community college districts, so the `community_college_district` column before it is drawn from these same files: each college's outline is all of its trustee areas together, named by the entry's `"district"`, with the hairline gaps where neighboring areas don't quite meet closed. (`"district_outlines"` in `layer_sources.json` sets that up.) Spell the college's name the way you want it to appear in results:
+       ```json
+       {"file": "gavilan_jccd_trustee_areas.geojson", "name_field": "DISTRICT",
+        "district": "Gavilan Joint Community College District"}
+       ```
+       So a college only gets named once its trustee map is in; until then both columns are blank for its residents.
 
      If a file spells its districts out in a longer string rather than a bare number, add `extract` — a regex whose first group is the number. Oak Grove's file says "Trustee Area C1" (the C is the adopted map's letter, not part of the area name), so:
      ```json
@@ -97,7 +103,7 @@ district-lookup/
 │   └── AppIcon.png          # 256 px, for the app window's header and browser tab
 ├── data/
 │   ├── raw_geojson/          # source boundary files, one .geojson per map
-│   ├── layer_sources.json    # which council / trustee-area files feed each shared column
+│   ├── layer_sources.json    # which council / trustee-area files feed each shared column, and which columns are drawn from their outlines
 │   ├── layers.json           # registry: layer id -> label, name_field, and output settings
 │   ├── districts/            # what the app reads: one GeoJSON file per layer
 │   ├── districts.gpkg        # same layers as a GeoPackage, for QGIS (not committed)

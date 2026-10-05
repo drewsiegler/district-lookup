@@ -85,3 +85,28 @@ def test_layers_no_longer_built_are_removed(tmp_path, monkeypatch):
     (tmp_path / "gone.json").write_text("{}")
     build_gpkg.write_runtime_data({"kept": _layer((0, 0, 1, 1))})
     assert sorted(p.name for p in tmp_path.iterdir()) == ["kept.json"]
+
+
+def test_district_outline_is_its_areas_together_without_the_slivers():
+    import geopandas as gpd
+    from shapely.geometry import box
+    merged = gpd.GeoDataFrame(
+        {"district_name": ["1", "2", "1"], "district": ["A", "A", "B"]},
+        geometry=[box(-121.60, 37.0, -121.59, 37.01),
+                  box(-121.58998, 37.0, -121.58, 37.01),   # ~2 m from area 1
+                  box(-121.50, 37.0, -121.49, 37.01)],
+        crs="EPSG:4326")
+    outline = build_gpkg.build_outline_layer("college_trustee_area", merged)
+    assert list(outline["district"]) == ["A", "B"]
+    a = outline.geometry.iloc[0]
+    assert a.geom_type == "Polygon"                      # the 2 m gap is closed...
+    assert a.bounds == pytest.approx((-121.60, 37.0, -121.58, 37.01), abs=1e-7)   # ...the edge isn't moved
+
+
+def test_district_outline_needs_every_file_to_name_its_district():
+    import geopandas as gpd
+    from shapely.geometry import box
+    merged = gpd.GeoDataFrame({"district_name": ["1"], "district": [None]},
+                              geometry=[box(0, 0, 1, 1)], crs="EPSG:4326")
+    with pytest.raises(SystemExit, match="'college_trustee_area' needs a \"district\""):
+        build_gpkg.build_outline_layer("college_trustee_area", merged)

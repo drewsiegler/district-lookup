@@ -4,7 +4,7 @@ Guidance for AI coding agents working in this repo. The human docs are the sourc
 
 ## What this is
 
-A tool that runs on the user's own computer. It takes a list of people and addresses, geocodes each address with the free U.S. Census geocoder, and uses point-in-polygon matching to find every district the address falls in: council, supervisor, Congress, State Senate and Assembly, school districts and trustee areas, County Board of Education, Midpen wards and Open Space Authority districts. It covers Santa Clara County. The users are community organizers, not developers, mostly on Macs. They use a browser page (`src/web.py`) or the command line (`src/main.py`).
+A tool that runs on the user's own computer. It takes a list of people and addresses, geocodes each address with the free U.S. Census geocoder, and uses point-in-polygon matching to find every district the address falls in: council, supervisor, Congress, State Senate and Assembly, school and community college districts and their trustee areas, County Board of Education, Midpen wards and Open Space Authority districts. It covers Santa Clara County. The users are community organizers, not developers, mostly on Macs. They use a browser page (`src/web.py`) or the command line (`src/main.py`).
 
 `src/` is flat modules, not a package: each entry point puts `src/` on `sys.path` and imports siblings directly (`import pipeline`). The project layout is at the end of docs/adding-maps.md.
 
@@ -55,6 +55,7 @@ The full procedure is in docs/adding-maps.md. In short:
    - City names are spelled as in the `city` column (`"San Jose"`, no accent).
    - School district names are spelled the way Census TIGER spells them, which differs from common usage. For example, "Los Gatos-Saratoga Joint Union School District" has no "High".
    - A split district's trustee map goes in the elementary or the high school group, never both.
+   - The Census doesn't map community college districts, so the `community_college_district` column is drawn from the college trustee maps themselves (`district_outlines`). A college's `"district"` is its name as it appears in results.
 3. Run `python scripts/build_gpkg.py`. For a standalone layer, fill in `name_field` (and `format` if needed) in `data/layers.json`.
 4. Add a known-address test (above) and run the tests.
 5. Update COVERAGE.md, including its "Updated" date. For a new column, also update the README's district list and its "How districts are written" section.

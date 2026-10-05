@@ -34,7 +34,7 @@ def test_real_registry_is_consistent(layers):
     for layer in layers:
         if layer["id"].endswith("_trustee_area"):
             assert all(v is None or v.startswith("TA") for v in layer["display"])
-            assert layer["must_match"], f"{layer['id']} should be tied to its school district"
+            assert layer["must_match"], f"{layer['id']} should be tied to the district it belongs to"
 
 
 def test_unknown_name_field_is_refused(registry):

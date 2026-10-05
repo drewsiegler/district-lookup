@@ -37,6 +37,18 @@ Two ways a GeoJSON file becomes a layer:
    boundaries that never overlap each other (districts of the same type do
    not), since an address takes the first match.
 
+3. Drawn from a merge group's outlines — for district types the Census doesn't
+   map, like community college districts. Each district's outline is all of
+   its own trustee areas together, named by the entries' "district":
+
+       "district_outlines": {
+         "community_college_district": "community_college_trustee_area"
+       }
+
+   gives a community_college_district layer (one feature per college, column
+   "district") for the trustee areas beside it to be checked against, the way
+   school trustee areas are checked against the Census school districts.
+
 Safe to re-run any time you add, replace, or remove files. Existing registry
 entries keep their label, name_field, and order.
 
@@ -63,6 +75,7 @@ SOURCES_PATH = DATA_DIR / "layer_sources.json"
 MERGED_NAME_FIELD = "district_name"
 CALIFORNIA_ALBERS = 3310  # equal-area, in meters, for buffering
 COVERAGE_MARGIN_METERS = 1000
+SLIVER_METERS = 10  # gaps between neighboring areas narrower than this are closed
 
 
 def default_format(group_name: str) -> str | None:
@@ -80,11 +93,12 @@ def load_and_normalize(path: Path) -> gpd.GeoDataFrame:
     return gdf.rename(columns=reserved)
 
 
-def read_merge_groups() -> dict:
+def read_sources(section: str) -> dict:
+    """One section of data/layer_sources.json: "merge_groups" or "district_outlines"."""
     if not SOURCES_PATH.exists():
         return {}
     with open(SOURCES_PATH, encoding="utf-8") as f:
-        return json.load(f).get("merge_groups", {})
+        return json.load(f).get(section, {})
 
 
 def extract_number(text: str | None, regex: str, filename: str) -> str | None:
@@ -123,6 +137,25 @@ def build_merged_layer(group_name: str, entries: list[dict]) -> gpd.GeoDataFrame
     if not parts:
         return None
     return gpd.GeoDataFrame(pd.concat(parts, ignore_index=True), crs="EPSG:4326")
+
+
+def build_outline_layer(group_name: str, merged: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    """One feature per district in a merged trustee-area layer: all of that
+    district's areas together, named by the entries' "district".
+
+    Neighboring areas in an agency's map rarely meet exactly, so their union
+    is riddled with slivers a few meters wide (48 in Gavilan's). Those are
+    closed, leaving the outer edge where it was: an address in one then has a
+    district but no area, and goes to review as a gap in the map rather than
+    silently getting neither."""
+    if "district" not in merged.columns or merged["district"].isna().any():
+        sys.exit(f"Every file in merge group '{group_name}' needs a \"district\" "
+                 f"in {SOURCES_PATH.name} to draw district outlines from.")
+    outline = merged[["district", "geometry"]].dissolve(by="district", as_index=False)
+    meters = outline.to_crs(CALIFORNIA_ALBERS).geometry
+    half = SLIVER_METERS / 2  # mitred joins keep every corner of the outer edge sharp
+    outline.geometry = meters.buffer(half, join_style="mitre").buffer(-half, join_style="mitre").to_crs(4326)
+    return outline
 
 
 def json_safe(value):
@@ -201,7 +234,7 @@ def main():
         print(f"No .geojson files found in {RAW_DIR}. Add some boundary files first.")
         sys.exit(1)
 
-    merge_groups = read_merge_groups()
+    merge_groups = read_sources("merge_groups")
     grouped_files = {entry["file"] for entries in merge_groups.values() for entry in entries}
 
     layer_frames = {}  # layer_name -> GeoDataFrame
@@ -216,6 +249,12 @@ def main():
         if gdf is not None:
             layer_frames[group_name] = gdf
             merged_layers.add(group_name)
+
+    outline_layers = set()
+    for outline_name, group_name in read_sources("district_outlines").items():
+        if group_name in merged_layers:
+            layer_frames[outline_name] = build_outline_layer(group_name, layer_frames[group_name])
+            outline_layers.add(outline_name)
 
     if not layer_frames:
         print("Nothing to build.")
@@ -243,14 +282,14 @@ def main():
     for layer_name in layer_frames:
         if layer_name in existing_ids:
             continue
-        is_merged = layer_name in merged_layers
+        is_merged, is_outline = layer_name in merged_layers, layer_name in outline_layers
         entry = {"id": layer_name, "label": layer_name.replace("_", " ").title()}
-        entry["name_field"] = MERGED_NAME_FIELD if is_merged else None
+        entry["name_field"] = MERGED_NAME_FIELD if is_merged else "district" if is_outline else None
         if is_merged and default_format(layer_name):
             entry["format"] = default_format(layer_name)
         registry.append(entry)
         added.append(layer_name)
-        if not is_merged:
+        if not entry["name_field"]:
             needs_field.append(layer_name)
     write_registry(registry)
 

@@ -86,6 +86,21 @@
       }
     },
     {
+      "id": "community_college_district",
+      "label": "Community College District",
+      "name_field": "district"
+    },
+    {
+      "id": "community_college_trustee_area",
+      "label": "Community College Trustee Area",
+      "name_field": "district_name",
+      "format": "TA{}",
+      "must_match": {
+        "layer": "community_college_district",
+        "column": "district"
+      }
+    },
+    {
       "id": "scc_board_of_education_trustee_areas",
       "label": "Santa Clara County Board of Education Trustee Area",
       "name_field": "District",
