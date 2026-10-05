@@ -1,6 +1,6 @@
 # Coverage — Santa Clara County
 
-Updated 2026-10-01. What's loaded, what's still to source, and where the gaps are. How to add a map: [docs/adding-maps.md](docs/adding-maps.md).
+Updated 2026-10-05. What's loaded, what's still to source, and where the gaps are. How to add a map: [docs/adding-maps.md](docs/adding-maps.md).
 
 ## Complete, from Census data
 
@@ -39,11 +39,14 @@ All four community college districts — Foothill-De Anza, San José-Evergreen, 
 
   Sourced from Midpen's own GIS (`Ward_Boundary_(public)` on services2.arcgis.com/qmhndvC947rDNl6t). That layer's description still says "adopted in 2011", but its features carry the 2022 adoption date. Older copies circulating on county open-data portals are the 2011 map, which puts about 59 sq mi of the county in a different ward. If you ever re-download the map, check that `CENSUSYEAR` is 2020 or later.
 
-## Not started
+- **Loaded:** Santa Clara Valley Open Space Authority director districts, written `District 1`–`District 7` — the map adopted in 2022 from the 2020 Census, the Authority's "Final Plan (from C3)". The Authority covers most of the county outside Midpen: San José, Santa Clara, Campbell, Milpitas, Morgan Hill and most unincorporated land. So the two complement each other: an address gets a Midpen ward or an Open Space Authority district, almost never both. (Their maps overlap by a few hundredths of a square mile along the line they share, so an address right on it could, rarely, get both.)
 
-- Santa Clara Valley Open Space Authority
+  Sourced from the Authority's own GIS (the `Authority_Boundary` layer on services3.arcgis.com/kdBUV7ozB9Xo7h9c, which lists each district's current director). The loaded file matches it district for district: the same area to a thousandth of a square mile, and boundaries within about 1 m. It also matches the board-approved map on the Authority's [2022 redistricting page](https://news.openspaceauthority.org/redistricting2022).
 
-It isn't in Census data; it will come from the agency's GIS portal or a records request, the same way the council and trustee maps have.
+  Both open space columns are blank in about 39 sq mi of the county, and that's correct, not a gap in the maps:
+  - **the City of Gilroy**, about 16.5 sq mi, which the Authority's own map marks as outside its jurisdiction and which isn't in Midpen either;
+  - **about 19 sq mi of the Santa Cruz Mountains around Mount Umunhum and Loma Prieta**, which is inside Midpen's sphere of influence (land it could annex someday) but not yet part of either agency;
+  - thin slivers along the county line, about 3.6 sq mi in all, where the Authority's map and the county outline are drawn slightly differently.
 
 ## Known gaps in loaded maps
 

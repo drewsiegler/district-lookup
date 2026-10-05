@@ -27,6 +27,7 @@ def test_tully_road_the_original_example(layers):
     assert d["secondary_school_districts"] == "East Side Union High School District"
     assert d["scc_board_of_education_trustee_areas"] == "TA7"
     assert d["midpeninsula_regional_open_space_district"] is None  # east of Midpen's boundary
+    assert d["scvosa_director_districts"] == "District 7"
 
 
 @pytest.mark.parametrize("point, column, expected", [
@@ -44,9 +45,23 @@ def test_tully_road_the_original_example(layers):
     # Ward 2 on Midpen's 2011 map; the 2022 redistricting moved it to Ward 1.
     ("cupertino_city_hall", "midpeninsula_regional_open_space_district", "Ward 1"),
     ("stanford_campus", "midpeninsula_regional_open_space_district", "Ward 2"),
+    ("campbell_city_hall", "scvosa_director_districts", "District 4"),
+    ("morgan_hill_peak_ave", "scvosa_director_districts", "District 1"),
 ])
 def test_known_districts(layers, point, column, expected):
     assert at(layers, point)[column] == expected
+
+
+def test_open_space_agencies_split_the_county(layers):
+    """Midpen covers the northwest and the Open Space Authority most of the
+    rest, so an address gets one or the other. The City of Gilroy is outside
+    both."""
+    cupertino = at(layers, "cupertino_city_hall")
+    assert cupertino["midpeninsula_regional_open_space_district"] == "Ward 1"
+    assert cupertino["scvosa_director_districts"] is None
+    gilroy = at(layers, "gilroy_rosanna_st")
+    assert gilroy["midpeninsula_regional_open_space_district"] is None
+    assert gilroy["scvosa_director_districts"] is None
 
 
 def test_at_large_city_has_a_city_but_no_council_district(layers):

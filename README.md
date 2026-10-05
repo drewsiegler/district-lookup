@@ -1,6 +1,6 @@
 # District Lookup
 
-Give it a list of people and their addresses; it tells you every electoral district each person lives in — city council, county supervisor, Congress, State Senate and Assembly, school districts and trustee areas, County Board of Education, Midpeninsula Open Space wards — and hands the list back with those added as columns. A custom, growable version of what a registrar of voters' office uses internally, currently covering Santa Clara County.
+Give it a list of people and their addresses; it tells you every electoral district each person lives in — city council, county supervisor, Congress, State Senate and Assembly, school districts and trustee areas, County Board of Education, and the two open space districts (Midpeninsula wards, Santa Clara Valley Open Space Authority districts) — and hands the list back with those added as columns. A custom, growable version of what a registrar of voters' office uses internally, currently covering Santa Clara County.
 
 ## Your list stays private
 
@@ -77,9 +77,9 @@ The reasons:
 - `outside_coverage_area` — it was found, but outside the county. Either the address is wrong, or the person belongs on a different list.
 - `missing_council_district`, `missing_unified_trustee_area`, and the like — the person is inside a city or school district whose map is loaded, but that map has a gap right where they live, so the district needs looking up by hand. This is rare.
 
-A blank district on its own isn't an error. At-large cities have no council districts, unincorporated land has no city, the Midpeninsula Open Space District covers only the county's northwest, and some school districts' trustee-area maps aren't loaded yet — see [COVERAGE.md](COVERAGE.md) for what's in and what's still to come.
+A blank district on its own isn't an error. At-large cities have no council districts, unincorporated land has no city, the two open space agencies split the county between them (Midpeninsula the northwest, the Santa Clara Valley Open Space Authority most of the rest, Gilroy neither), and some school districts' trustee-area maps aren't loaded yet — see [COVERAGE.md](COVERAGE.md) for what's in and what's still to come.
 
-How districts are written: `city` is the city or town; `council_district` is the bare district number (Morgan Hill uses letters `A`–`D`); county `D2—Sup. Betty Duong`, Congress `US-CA16`, State Senate `SD15`, Assembly `AD25`, trustee areas `TA3` (County Board of Education too), Midpeninsula Open Space `Ward 1`.
+How districts are written: `city` is the city or town; `council_district` is the bare district number (Morgan Hill uses letters `A`–`D`); county `D2—Sup. Betty Duong`, Congress `US-CA16`, State Senate `SD15`, Assembly `AD25`, trustee areas `TA3` (County Board of Education too), Midpeninsula Open Space `Ward 1`, Santa Clara Valley Open Space Authority `District 1`.
 
 Boundaries change. Verify anything you'd act on against the county Registrar of Voters.
 

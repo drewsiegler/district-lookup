@@ -4,7 +4,7 @@ Guidance for AI coding agents working in this repo. The human docs are the sourc
 
 ## What this is
 
-A tool that runs on the user's own computer. It takes a list of people and addresses, geocodes each address with the free U.S. Census geocoder, and uses point-in-polygon matching to find every district the address falls in: council, supervisor, Congress, State Senate and Assembly, school districts and trustee areas, County Board of Education, and Midpen wards. It covers Santa Clara County. The users are community organizers, not developers, mostly on Macs. They use a browser page (`src/web.py`) or the command line (`src/main.py`).
+A tool that runs on the user's own computer. It takes a list of people and addresses, geocodes each address with the free U.S. Census geocoder, and uses point-in-polygon matching to find every district the address falls in: council, supervisor, Congress, State Senate and Assembly, school districts and trustee areas, County Board of Education, Midpen wards and Open Space Authority districts. It covers Santa Clara County. The users are community organizers, not developers, mostly on Macs. They use a browser page (`src/web.py`) or the command line (`src/main.py`).
 
 `src/` is flat modules, not a package: each entry point puts `src/` on `sys.path` and imports siblings directly (`import pipeline`). The project layout is at the end of docs/adding-maps.md.
 
@@ -67,7 +67,7 @@ To check whether a school board elects at-large or by trustee area, read that di
 
 ## Behavior worth preserving
 
-- A blank district is not an error. At-large cities, unincorporated land, Midpen covering only the northwest, and trustee maps that aren't loaded yet all produce blanks. Only a gap inside a loaded map goes to review as `missing_<layer>`.
+- A blank district is not an error. At-large cities, unincorporated land, each open space agency covering only part of the county, and trustee maps that aren't loaded yet all produce blanks. Only a gap inside a loaded map goes to review as `missing_<layer>`.
 - Council districts and trustee areas are filled in only inside the city or school district that drew them (`must_match`). They are never borrowed from a neighbor across a slightly different border.
 - The input's own columns are never overwritten. When a name collides, the added column gets a `_lookup` suffix; a mailing city and the official city disagreeing is real information.
 - Bad registry config stops the run at startup with an error naming the layer. It never writes bad values partway through a list.

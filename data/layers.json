@@ -97,6 +97,12 @@
       "label": "Midpeninsula Regional Open Space District Ward",
       "name_field": "WARDNUM",
       "format": "Ward {}"
+    },
+    {
+      "id": "scvosa_director_districts",
+      "label": "Santa Clara Valley Open Space Authority Director District",
+      "name_field": "DISTRICT",
+      "format": "District {}"
     }
   ]
 }
