@@ -102,7 +102,7 @@
       "id": "scvosa_director_districts",
       "label": "Santa Clara Valley Open Space Authority Director District",
       "name_field": "DISTRICT",
-      "format": "District {}"
+      "format": "D{}"
     }
   ]
 }
