@@ -96,7 +96,7 @@ Free to download, free to use, and free to adapt for another county. Donations a
 **The boundary data is not covered by that license.** The files in `data/raw_geojson/` come from public agencies, each with its own terms:
 
 - Census TIGER/Line files (`us_congress`, `ca_state_senate`, `ca_state_assembly`, the three school district layers, `city`) are U.S. government works, in the public domain.
-- City council, county supervisorial, trustee-area (including the County Board of Education's), Midpeninsula Open Space ward, and Santa Clara Valley Open Space Authority district maps come from each agency's GIS portal or public records request, and may carry their own attribution terms. Check with the source agency before redistributing.
+- City council, county supervisorial, trustee-area (including the County Board of Education's), Midpeninsula Open Space ward, Santa Clara Valley Open Space Authority district, and Valley Water board district maps come from each agency's GIS portal or public records request, and may carry their own attribution terms. Check with the source agency before redistributing.
 
 ## Trademark
 
