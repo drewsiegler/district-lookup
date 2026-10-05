@@ -18,8 +18,9 @@ The `city` column covers all 15 cities and towns. `council_district` is filled i
 
 Of the 31 K-12 districts tracked here, 14 elect their boards by trustee area and need a map; the other 17 elect at-large, where the district boundary is the whole answer.
 
-- **Loaded (6 of 14):** Campbell Union HSD, Fremont Union HSD, Los Gatos-Saratoga Joint Union HSD, Oak Grove SD, Alum Rock Union ESD, Gilroy USD
-- **Still needed — first trustee-area election November 3, 2026:** East Side Union HSD, Mountain View-Los Altos Union HSD. These are the time-sensitive ones. East Side Union publishes its adopted map with its transition resolution (linked from esuhsd.org/By-District-Trustee-Elections); Mountain View-Los Altos likely does the same. Either is probably faster than going through the county.
+- **Loaded (7 of 14):** Campbell Union HSD, Fremont Union HSD, Los Gatos-Saratoga Joint Union HSD, Oak Grove SD, Alum Rock Union ESD, Gilroy USD, Mountain View-Los Altos Union HSD
+- **Mountain View-Los Altos Union HSD** holds its first trustee-area election November 3, 2026, for Areas 1, 2 and 3. The loaded map is "Map C1", adopted by the board 5–0 on April 21, 2025 (Resolution 24/25-39). It matches the board-approved C1 drawing on [MVLA's trustee area page](https://www.mvla.net/trustee-area-election-information) area for area, and covers the district's Census outline exactly, so no part of the district comes back without an area.
+- **Still needed — first trustee-area election November 3, 2026:** East Side Union HSD. This is the time-sensitive one. East Side Union publishes its adopted map with its transition resolution (linked from esuhsd.org/By-District-Trustee-Elections), which is probably faster than going through the county.
 - **Still needed — already electing by trustee area:** Morgan Hill USD, San José USD, Santa Clara USD, Campbell Union SD, Moreland SD, Sunnyvale SD
 - **At-large, so no trustee map needed:** Milpitas USD, Palo Alto USD; Berryessa Union, Cambrian, Cupertino Union, Evergreen, Franklin-McKinley, Lakeside Joint, Loma Prieta Joint Union, Los Altos, Los Gatos Union, Luther Burbank, Mount Pleasant, Mountain View Whisman, Orchard, Saratoga Union and Union elementary districts
 

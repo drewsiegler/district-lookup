@@ -28,6 +28,7 @@ POINTS = {
     "morgan_hill_peak_ave": (37.12590150574, -121.661881922298),
     "cupertino_city_hall": (37.31923968861, -122.029158712914),
     "los_altos_city_hall": (37.381396700712, -122.113976377067),
+    "mountain_view_city_hall": (37.390033272844, -122.081436311181),
     "oak_grove_district_office": (37.232465839659, -121.786098911989),
     "san_francisco_city_hall": (37.778532096981, -122.418308756397),
     "stanford_campus": (37.4275, -122.1697),

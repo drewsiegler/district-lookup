@@ -43,6 +43,8 @@ def test_tully_road_the_original_example(layers):
     ("morgan_hill_peak_ave", "council_district", "C"),
     ("los_altos_city_hall", "council_district", "4"),
     ("cupertino_city_hall", "high_school_trustee_area", "TA1"),
+    ("mountain_view_city_hall", "high_school_trustee_area", "TA3"),
+    ("los_altos_city_hall", "high_school_trustee_area", "TA4"),
     ("oak_grove_district_office", "elementary_trustee_area", "TA5"),
     ("campbell_city_hall", "scc_board_of_education_trustee_areas", "TA3"),
     ("oak_grove_district_office", "scc_board_of_education_trustee_areas", "TA4"),
