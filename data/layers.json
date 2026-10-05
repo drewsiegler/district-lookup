@@ -118,6 +118,12 @@
       "label": "Santa Clara Valley Open Space Authority Director District",
       "name_field": "DISTRICT",
       "format": "D{}"
+    },
+    {
+      "id": "scv_water_board_districts",
+      "label": "Santa Clara Valley Water District Board District",
+      "name_field": "DISTRICT",
+      "format": "D{}"
     }
   ]
 }

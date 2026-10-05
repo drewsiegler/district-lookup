@@ -55,6 +55,10 @@ All four community college districts — Foothill-De Anza, San José-Evergreen, 
   - **about 19 sq mi of the Santa Cruz Mountains around Mount Umunhum and Loma Prieta**, which is inside Midpen's sphere of influence (land it could annex someday) but not yet part of either agency;
   - thin slivers along the county line, about 3.6 sq mi in all, where the Authority's map and the county outline are drawn slightly differently.
 
+- **Loaded:** Valley Water (Santa Clara Valley Water District) board districts, written `D1`–`D7` — the map adopted in 2022 from the 2020 Census, for the 2022–2030 elections. Valley Water covers the whole county, so every address in it gets a district, with no gaps.
+
+  The loaded file is identical to Valley Water's own GIS layer (`SCVWD_Board_of_Directors_Boundaries` on services2.arcgis.com/9KdAx8qBsHiGXOEw, which lists each district's current director), district for district.
+
 ## Known gaps in loaded maps
 
 People who fall in one of these are flagged for review rather than given a blank or wrong answer.

@@ -30,6 +30,7 @@ def test_tully_road_the_original_example(layers):
     assert d["scc_board_of_education_trustee_areas"] == "TA7"
     assert d["midpeninsula_regional_open_space_district"] is None  # east of Midpen's boundary
     assert d["scvosa_director_districts"] == "D7"
+    assert d["scv_water_board_districts"] == "D6"
     # San José-Evergreen's trustee map hasn't been loaded, so its college isn't known yet.
     assert d["community_college_district"] is None and d["community_college_trustee_area"] is None
 
@@ -54,6 +55,9 @@ def test_tully_road_the_original_example(layers):
     ("gilroy_rosanna_st", "community_college_district", "Gavilan Joint Community College District"),
     ("gilroy_rosanna_st", "community_college_trustee_area", "TA4"),
     ("morgan_hill_peak_ave", "community_college_trustee_area", "TA2"),
+    ("campbell_city_hall", "scv_water_board_districts", "D4"),
+    ("cupertino_city_hall", "scv_water_board_districts", "D5"),
+    ("stanford_campus", "scv_water_board_districts", "D7"),
 ])
 def test_known_districts(layers, point, column, expected):
     assert at(layers, point)[column] == expected

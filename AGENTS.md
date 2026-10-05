@@ -4,7 +4,7 @@ Guidance for AI coding agents working in this repo. The human docs are the sourc
 
 ## What this is
 
-A tool that runs on the user's own computer. It takes a list of people and addresses, geocodes each address with the free U.S. Census geocoder, and uses point-in-polygon matching to find every district the address falls in: council, supervisor, Congress, State Senate and Assembly, school and community college districts and their trustee areas, County Board of Education, Midpen wards and Open Space Authority districts. It covers Santa Clara County. The users are community organizers, not developers, mostly on Macs. They use a browser page (`src/web.py`) or the command line (`src/main.py`).
+A tool that runs on the user's own computer. It takes a list of people and addresses, geocodes each address with the free U.S. Census geocoder, and uses point-in-polygon matching to find every district the address falls in: council, supervisor, Congress, State Senate and Assembly, school and community college districts and their trustee areas, County Board of Education, Midpen wards, Open Space Authority districts and Valley Water board districts. It covers Santa Clara County. The users are community organizers, not developers, mostly on Macs. They use a browser page (`src/web.py`) or the command line (`src/main.py`).
 
 `src/` is flat modules, not a package: each entry point puts `src/` on `sys.path` and imports siblings directly (`import pipeline`). The project layout is at the end of docs/adding-maps.md.
 
