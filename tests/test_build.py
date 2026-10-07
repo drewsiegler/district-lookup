@@ -1,12 +1,15 @@
 """Helpers in the map-building script. That script needs the heavy mapping
 toolchain (requirements-build.txt), so these skip when it isn't installed."""
 
+import json
+import re
 import sys
 from pathlib import Path
 
 import pytest
+from shapely.geometry import MultiPolygon, Point, Polygon, box, mapping, shape
 
-pytest.importorskip("geopandas", reason="map-building tools not installed (requirements-build.txt)")
+gpd = pytest.importorskip("geopandas", reason="map-building tools not installed (requirements-build.txt)")
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 import build_gpkg  # noqa: E402
 
@@ -42,15 +45,82 @@ def test_json_safe_turns_timestamps_into_text():
     assert build_gpkg.json_safe(pd.Timestamp("2024-01-02")) == "2024-01-02 00:00:00"
 
 
-def test_round_coords_nested():
-    assert build_gpkg.round_coords([[[-121.123456789, 37.987654321]]]) == [[[-121.123457, 37.987654]]]
-
-
 def _layer(*polygons):
     import geopandas as gpd
     from shapely.geometry import box
     return gpd.GeoDataFrame({"name": [str(i) for i in range(len(polygons))]},
                             geometry=[box(*p) for p in polygons], crs="EPSG:4326")
+
+
+def _written_geometries(directory, layer_name):
+    text = (directory / f"{layer_name}.json").read_text(encoding="utf-8")
+    return text, [shape(f["geometry"]) for f in json.loads(text)["features"]]
+
+
+def _raw_file(tmp_path, *geometries):
+    path = tmp_path / "areas.geojson"
+    features = [{"type": "Feature", "properties": {"AREA": i + 1}, "geometry": mapping(g)}
+                for i, g in enumerate(geometries)]
+    path.write_text(json.dumps({"type": "FeatureCollection", "features": features}))
+    return path
+
+
+def test_coordinates_are_written_to_six_decimal_places(tmp_path, monkeypatch):
+    monkeypatch.setattr(build_gpkg, "RUNTIME_DIR", tmp_path)
+    build_gpkg.write_runtime_data({"a": _layer((-121.123456789, 37.987654321, -121.0, 38.0))})
+    text, [written] = _written_geometries(tmp_path, "a")
+    assert (-121.123457, 37.987654) in written.exterior.coords
+    assert not re.search(r"\.\d{7}", text)
+
+
+def test_snapping_to_six_decimals_keeps_shapes_valid(tmp_path, monkeypatch):
+    """A notch whose tip comes within 5 cm of the far edge. Rounding each point
+    on its own puts the tip on that edge, so the outline touches itself, as
+    happened in San José's council map. Snapping keeps it a valid shape."""
+    notched = Polygon([(-121.60, 37.0), (-121.59, 37.0), (-121.59, 37.01), (-121.5949, 37.01),
+                       (-121.595, 37.0000004), (-121.5951, 37.01), (-121.60, 37.01)])
+    rounded = Polygon([(round(x, 6), round(y, 6)) for x, y in notched.exterior.coords])
+    assert notched.is_valid and not rounded.is_valid
+
+    monkeypatch.setattr(build_gpkg, "RUNTIME_DIR", tmp_path)
+    frame = gpd.GeoDataFrame({"name": ["1"]}, geometry=[notched], crs="EPSG:4326")
+    build_gpkg.write_runtime_data({"a": frame})
+    text, [written] = _written_geometries(tmp_path, "a")
+    assert written.is_valid
+    assert written.area == pytest.approx(notched.area, rel=1e-4)
+    assert not re.search(r"\.\d{7}", text)
+
+
+def test_shapes_that_cross_themselves_are_repaired_on_load(tmp_path):
+    """A bow tie, an outline crossing itself, becomes the two triangles it
+    draws. Unrepaired, its area even comes out as zero."""
+    bow_tie = Polygon([(-121.6, 37.0), (-121.5, 37.1), (-121.5, 37.0), (-121.6, 37.1)])
+    square = box(-121.4, 37.0, -121.3, 37.1)
+    assert bow_tie.area == 0
+
+    gdf = build_gpkg.load_and_normalize(_raw_file(tmp_path, bow_tie, square))
+    assert gdf.geometry.is_valid.all()
+    repaired = gdf.geometry.iloc[0]
+    assert repaired.geom_type == "MultiPolygon" and len(repaired.geoms) == 2
+    assert repaired.area == pytest.approx(0.005)
+    assert gdf.geometry.iloc[1].equals_exact(square, 0)   # valid shapes are left alone
+
+
+@pytest.mark.parametrize("covered_twice", [
+    # parts that overlap, as in San José Unified's trustee areas
+    MultiPolygon([box(-121.6, 37.0, -121.5, 37.1), box(-121.57, 37.0, -121.47, 37.1)]),
+    # one outline drawn as a five-pointed star, which goes around its middle twice
+    Polygon([(-121.55, 37.1), (-121.579389, 37.009549), (-121.502447, 37.065451),
+             (-121.597553, 37.065451), (-121.520611, 37.009549)]),
+])
+def test_ground_a_shape_covers_twice_stays_inside_it(tmp_path, covered_twice):
+    """An address there is in the district. A repair that alternates inside and
+    outside at every line would make the star's middle a hole."""
+    assert not covered_twice.is_valid
+
+    repaired = build_gpkg.load_and_normalize(_raw_file(tmp_path, covered_twice)).geometry.iloc[0]
+    assert repaired.is_valid and repaired.geom_type == "Polygon"   # no stray lines
+    assert repaired.contains(Point(-121.55, 37.05))
 
 
 def test_layers_are_trimmed_to_the_county_plus_a_margin():

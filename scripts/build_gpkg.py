@@ -76,6 +76,9 @@ MERGED_NAME_FIELD = "district_name"
 CALIFORNIA_ALBERS = 3310  # equal-area, in meters, for buffering
 COVERAGE_MARGIN_METERS = 1000
 SLIVER_METERS = 10  # gaps between neighboring areas narrower than this are closed
+# What the app reads is written to 6 decimal places of a degree, ~10 cm: far finer
+# than any boundary line is drawn, and roughly half the file of full precision.
+GRID_DEGREES = 1e-6
 
 
 def default_format(group_name: str) -> str | None:
@@ -90,7 +93,25 @@ def load_and_normalize(path: Path) -> gpd.GeoDataFrame:
         gdf = gdf.to_crs(epsg=4326)
     # GeoPackage reserves "fid" for its own feature ID; ArcGIS exports often carry one.
     reserved = {c: f"source_{c.lower()}" for c in gdf.columns if c.lower() == "fid"}
-    return gdf.rename(columns=reserved)
+    return repair_invalid(gdf.rename(columns=reserved), path.name)
+
+
+def repair_invalid(gdf: gpd.GeoDataFrame, filename: str) -> gpd.GeoDataFrame:
+    """Fixes shapes that aren't valid polygons, such as an outline that crosses
+    itself or parts that overlap (San José Unified's trustee map has both).
+    Clipping and point-in-polygon tests can't be trusted near those spots.
+
+    The "structure" repair keeps all the ground a shape covers, even ground it
+    covers twice. The default "linework" repair alternates inside and outside
+    at every line, so ground an outline goes around twice becomes a hole, and
+    it can leave stray lines. Dropping collapsed pieces leaves only polygons."""
+    invalid = gdf.geometry.notna() & ~gdf.geometry.is_valid
+    if invalid.any():
+        gdf = gdf.copy()
+        gdf.loc[invalid, "geometry"] = gdf.geometry[invalid].make_valid(
+            method="structure", keep_collapsed=False)
+        print(f"  {filename}: repaired {invalid.sum()} invalid shape(s)")
+    return gdf
 
 
 def read_sources(section: str) -> dict:
@@ -172,14 +193,6 @@ def json_safe(value):
     return str(value)
 
 
-def round_coords(coords, places=6):
-    """~10cm precision, which is far finer than any boundary line is drawn and
-    roughly halves the file."""
-    if isinstance(coords[0], (int, float)):
-        return [round(float(c), places) for c in coords]
-    return [round_coords(c, places) for c in coords]
-
-
 def clip_to_coverage(layer_frames: dict, registry: list[dict]) -> dict:
     """Trims every layer to the area the tool covers (layers marked "coverage"
     in the registry, i.e. the county) plus COVERAGE_MARGIN_METERS. Statewide
@@ -208,15 +221,21 @@ def write_runtime_data(layer_frames: dict) -> None:
     Deliberately uncompressed, one feature per line, and byte-for-byte the
     same for the same input: git compresses text itself and stores only what
     changed, so adding a trustee map adds that layer's file to history, not a
-    fresh copy of every map."""
+    fresh copy of every map.
+
+    Coordinates are snapped to GRID_DEGREES rather than just rounded. Rounding
+    each point on its own can push an edge onto another one that passed within
+    a few centimeters of it, so the outline touches or crosses itself (it did
+    in San José's council map and the Open Space Authority's). Snapping
+    reworks the shape at that precision so it stays valid."""
     RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
     for layer_name, gdf in layer_frames.items():
+        records = gdf.drop(columns="geometry").to_dict("records")
         lines = []
-        for record, geometry in zip(gdf.drop(columns="geometry").to_dict("records"), gdf.geometry):
-            geo = mapping(geometry)
+        for record, geometry in zip(records, gdf.geometry.set_precision(GRID_DEGREES)):
             lines.append(json.dumps({
                 "properties": {k: json_safe(v) for k, v in record.items()},
-                "geometry": {**geo, "coordinates": round_coords(geo["coordinates"])},
+                "geometry": mapping(geometry),
             }, separators=(",", ":"), ensure_ascii=False))
         path = RUNTIME_DIR / f"{layer_name}.json"
         tmp = path.with_suffix(".building")

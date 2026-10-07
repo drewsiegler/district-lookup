@@ -10,7 +10,7 @@ For whoever adds district maps and keeps the tool running. Using it is covered i
 
 The build step (`scripts/build_gpkg.py`) turns the source files in `data/raw_geojson/` into two things:
 
-- `data/districts/` — one plain GeoJSON file per layer in lat/lon, trimmed to the county plus a 1 km margin. This is what the app reads, so a lookup needs only Shapely and the standard library; loading all layers takes about 0.15 seconds. The files are deliberately uncompressed and rebuild byte-for-byte identically, so git stores only the layers that actually changed — adding a trustee map adds roughly its own compressed size to the repo's history, tens of KB.
+- `data/districts/` — one plain GeoJSON file per layer in lat/lon, trimmed to the county plus a 1 km margin. Coordinates are snapped to 6 decimal places (about 10 cm) in a way that keeps every shape valid, and a source shape that isn't (an outline that crosses itself, or parts that overlap) is repaired first; the build names any file it repaired. This is what the app reads, so a lookup needs only Shapely and the standard library; loading all layers takes about 0.15 seconds. The files are deliberately uncompressed and rebuild byte-for-byte identically, so git stores only the layers that actually changed — adding a trustee map adds roughly its own compressed size to the repo's history, tens of KB.
 - `data/districts.gpkg` — the same layers as a GeoPackage, for opening in QGIS to eyeball boundaries. Not committed.
 
 ## Setup for adding maps

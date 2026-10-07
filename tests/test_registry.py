@@ -4,6 +4,7 @@ with a clear message, never write wrong values partway through a batch."""
 import json
 
 import pytest
+from shapely.validation import explain_validity
 
 import layers as layers_module
 from layers import check_must_match, load_layers, read_registry
@@ -35,6 +36,15 @@ def test_real_registry_is_consistent(layers):
         if layer["id"].endswith("_trustee_area"):
             assert all(v is None or v.startswith("TA") for v in layer["display"])
             assert layer["must_match"], f"{layer['id']} should be tied to the district it belongs to"
+
+
+def test_every_shipped_shape_is_valid(layers):
+    """An outline that crosses itself makes lookups near the crossing unreliable.
+    scripts/build_gpkg.py repairs and snaps shapes so this never ships."""
+    invalid = [(layer["id"], scope, name, explain_validity(g)) for layer in layers
+               for name, scope, g in zip(layer["display"], layer["scope"], layer["geometries"])
+               if not g.is_valid]
+    assert not invalid
 
 
 def test_unknown_name_field_is_refused(registry):
