@@ -30,6 +30,8 @@ POINTS = {
     "los_altos_city_hall": (37.381396700712, -122.113976377067),
     "mountain_view_city_hall": (37.390033272844, -122.081436311181),
     "oak_grove_district_office": (37.232465839659, -121.786098911989),
+    "san_jose_city_hall": (37.338163163635, -121.886224209159),
+    "san_jose_usd_district_office": (37.334527255176, -121.912415657398),
     "san_francisco_city_hall": (37.778532096981, -122.418308756397),
     "stanford_campus": (37.4275, -122.1697),
 }

@@ -18,10 +18,11 @@ The `city` column covers all 15 cities and towns. `council_district` is filled i
 
 Of the 31 K-12 districts tracked here, 14 elect their boards by trustee area and need a map; the other 17 elect at-large, where the district boundary is the whole answer.
 
-- **Loaded (7 of 14):** Campbell Union HSD, Fremont Union HSD, Los Gatos-Saratoga Joint Union HSD, Oak Grove SD, Alum Rock Union ESD, Gilroy USD, Mountain View-Los Altos Union HSD
+- **Loaded (8 of 14):** Campbell Union HSD, Fremont Union HSD, Los Gatos-Saratoga Joint Union HSD, Oak Grove SD, Alum Rock Union ESD, Gilroy USD, Mountain View-Los Altos Union HSD, San José USD
 - **Mountain View-Los Altos Union HSD** holds its first trustee-area election November 3, 2026, for Areas 1, 2 and 3. The loaded map is "Map C1", adopted by the board 5–0 on April 21, 2025 (Resolution 24/25-39). It matches the board-approved C1 drawing on [MVLA's trustee area page](https://www.mvla.net/trustee-area-election-information) area for area, and covers the district's Census outline exactly, so no part of the district comes back without an area.
 - **Still needed — first trustee-area election November 3, 2026:** East Side Union HSD. This is the time-sensitive one. East Side Union publishes its adopted map with its transition resolution (linked from esuhsd.org/By-District-Trustee-Elections), which is probably faster than going through the county.
-- **Still needed — already electing by trustee area:** Morgan Hill USD, San José USD, Santa Clara USD, Campbell Union SD, Moreland SD, Sunnyvale SD
+- **San José USD** elects five trustee areas; Areas 2 and 4 are on the November 3, 2026 ballot. The loaded map is drawn from the 2020 Census: counting 2020 Census population block by block, its five areas come out within 1.5% of each other, about 53,500 people each. (A map drawn from the 2010 Census would be far more uneven after a decade of growth.) SJUSD's website doesn't link the map, so its adoption date isn't recorded here; the Registrar's [district page](https://vote.santaclaracounty.gov/san-jose-unified-school-district) lists the current trustee for each area.
+- **Still needed — already electing by trustee area:** Morgan Hill USD, Santa Clara USD, Campbell Union SD, Moreland SD, Sunnyvale SD
 - **At-large, so no trustee map needed:** Milpitas USD, Palo Alto USD; Berryessa Union, Cambrian, Cupertino Union, Evergreen, Franklin-McKinley, Lakeside Joint, Loma Prieta Joint Union, Los Altos, Los Gatos Union, Luther Burbank, Mount Pleasant, Mountain View Whisman, Orchard, Saratoga Union and Union elementary districts
 
 ## Community college districts
@@ -66,6 +67,7 @@ People who fall in one of these are flagged for review rather than given a blank
 
 - **Gilroy USD** — the district's trustee-area map stops about 78 sq mi short of its eastern edge as the Census draws it: the rural land out toward Pacheco Pass. The County Board of Education's trustee map leaves out the same land too, but Gavilan College's trustee map includes it, as the Census does, so it's unclear which is right. Worth asking the district for a map covering its full territory if anyone on your lists lives out that way.
 - **San José** — about 1.3 sq mi inside the official city limits isn't covered by the city's own council map.
+- **San José USD** — about 0.3 sq mi inside the district, as the Census draws it, isn't covered by the district's trustee map: thin strips along its edges, the largest by the airport. About 480 people lived there in 2020.
 - **Other council maps** — a tenth of a square mile or less each; none in Sunnyvale or Los Altos.
 
 ## How election methods were verified

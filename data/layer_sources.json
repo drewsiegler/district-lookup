@@ -11,7 +11,9 @@
     ],
     "unified_trustee_area": [
       {"file": "gilroy_unified_school_district_trustee_areas.geojson", "name_field": "TRUSTEEARE",
-       "district": "Gilroy Unified School District"}
+       "district": "Gilroy Unified School District"},
+      {"file": "san_jose_usd_trustee_areas.geojson", "name_field": "TRUSTEE_AREA",
+       "district": "San Jose Unified School District"}
     ],
     "elementary_trustee_area": [
       {"file": "oak_grove_school_district_trustee_areas.geojson", "name_field": "AREA",

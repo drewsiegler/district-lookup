@@ -60,7 +60,7 @@ The full procedure is in docs/adding-maps.md. In short:
 4. Add a known-address test (above) and run the tests.
 5. Update COVERAGE.md, including its "Updated" date. For a new column, also update the README's district list and its "How districts are written" section.
 
-**Check a map's vintage before using it.** Outdated copies circulate on open-data portals: the 2011 Midpen wards nearly shipped in place of the 2022 map, which would have put about 59 sq mi of the county in the wrong ward. Confirm the adoption date or Census year from the source agency, and record the source and adoption date in COVERAGE.md.
+**Check a map's vintage before using it.** Outdated copies circulate on open-data portals: the 2011 Midpen wards nearly shipped in place of the 2022 map, which would have put about 59 sq mi of the county in the wrong ward. Confirm the adoption date or Census year from the source agency, and record the source and adoption date in COVERAGE.md. When the agency doesn't publish its map, count 2020 Census population per area from the PL 94-171 block file (www2.census.gov, under programs-surveys/decennial/2020/data/01-Redistricting_File--PL_94-171; the Census API now needs a key). Areas within a few percent of each other were drawn from the 2020 Census.
 
 Boundary data comes from free public sources only: Census TIGER, agency GIS portals, and public records requests. Don't propose paid data.
 
