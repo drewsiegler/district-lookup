@@ -19,7 +19,9 @@
       {"file": "oak_grove_school_district_trustee_areas.geojson", "name_field": "AREA",
        "extract": "Trustee Area C(\\d+)", "district": "Oak Grove Elementary School District"},
       {"file": "alum_rock_union_esd_trustee_areas.geojson", "name_field": "DISTRICT",
-       "district": "Alum Rock Union Elementary School District"}
+       "district": "Alum Rock Union Elementary School District"},
+      {"file": "campbell_union_sd_trustee_areas.geojson", "name_field": "TRUSTEE_AREA",
+       "district": "Campbell Union Elementary School District"}
     ],
     "high_school_trustee_area": [
       {"file": "campbell_union_hsd_trustee_areas.geojson", "name_field": "TRUSTEEARE",

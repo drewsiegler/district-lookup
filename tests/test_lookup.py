@@ -49,6 +49,7 @@ def test_tully_road_the_original_example(layers):
     ("mountain_view_city_hall", "high_school_trustee_area", "TA3"),
     ("los_altos_city_hall", "high_school_trustee_area", "TA4"),
     ("oak_grove_district_office", "elementary_trustee_area", "TA5"),
+    ("campbell_city_hall", "elementary_trustee_area", "TA3"),
     ("campbell_city_hall", "scc_board_of_education_trustee_areas", "TA3"),
     ("oak_grove_district_office", "scc_board_of_education_trustee_areas", "TA4"),
     ("stanford_campus", "scc_board_of_education_trustee_areas", "TA1"),
