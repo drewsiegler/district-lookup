@@ -32,6 +32,7 @@ POINTS = {
     "oak_grove_district_office": (37.232465839659, -121.786098911989),
     "san_jose_city_hall": (37.338163163635, -121.886224209159),
     "san_jose_usd_district_office": (37.334527255176, -121.912415657398),
+    "santa_clara_city_hall": (37.355947478214, -121.955621276545),
     "san_francisco_city_hall": (37.778532096981, -122.418308756397),
     "stanford_campus": (37.4275, -122.1697),
 }

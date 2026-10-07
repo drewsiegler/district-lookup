@@ -1,6 +1,6 @@
 # Coverage — Santa Clara County
 
-Updated 2026-10-05. What's loaded, what's still to source, and where the gaps are. How to add a map: [docs/adding-maps.md](docs/adding-maps.md).
+Updated 2026-10-07. What's loaded, what's still to source, and where the gaps are. How to add a map: [docs/adding-maps.md](docs/adding-maps.md).
 
 ## Complete, from Census data
 
@@ -18,24 +18,29 @@ The `city` column covers all 15 cities and towns. `council_district` is filled i
 
 Of the 31 K-12 districts tracked here, 14 elect their boards by trustee area and need a map; the other 17 elect at-large, where the district boundary is the whole answer.
 
-- **Loaded (9 of 14):** Campbell Union HSD, Fremont Union HSD, Los Gatos-Saratoga Joint Union HSD, Oak Grove SD, Alum Rock Union ESD, Gilroy USD, Mountain View-Los Altos Union HSD, San José USD, Campbell Union SD
+- **Loaded (11 of 14):** Campbell Union HSD, Fremont Union HSD, Los Gatos-Saratoga Joint Union HSD, Oak Grove SD, Alum Rock Union ESD, Gilroy USD, Mountain View-Los Altos Union HSD, San José USD, Campbell Union SD, East Side Union HSD, Santa Clara USD
 - **Mountain View-Los Altos Union HSD** holds its first trustee-area election November 3, 2026, for Areas 1, 2 and 3. The loaded map is "Map C1", adopted by the board 5–0 on April 21, 2025 (Resolution 24/25-39). It matches the board-approved C1 drawing on [MVLA's trustee area page](https://www.mvla.net/trustee-area-election-information) area for area, and covers the district's Census outline exactly, so no part of the district comes back without an area.
-- **Still needed — first trustee-area election November 3, 2026:** East Side Union HSD. This is the time-sensitive one. East Side Union publishes its adopted map with its transition resolution (linked from esuhsd.org/By-District-Trustee-Elections), which is probably faster than going through the county.
+- **East Side Union HSD** holds its first trustee-area election November 3, 2026, for Areas 1 (a short term), 2 and 4; Areas 1, 3 and 5 follow in 2028. The loaded map is the "Revised Map" adopted October 3, 2025 (Resolution 2025/2026-10), from [the district's trustee election page](https://www.esuhsd.org/By-District-Trustee-Elections). It matches the adopted map area for area, with one exception: it leaves out the business park east of Highway 101 around Hellyer Ave, Silver Creek Valley Rd and Dove Hill Rd, about 0.9 sq mi with 427 residents as of 2020 (see Known gaps below). The adopted map shows no gap there.
 - **San José USD** elects five trustee areas; Areas 2 and 4 are on the November 3, 2026 ballot. The loaded map is drawn from the 2020 Census: counting 2020 Census population block by block, its five areas come out within 1.5% of each other, about 53,500 people each. (A map drawn from the 2010 Census would be far more uneven after a decade of growth.) SJUSD's website doesn't link the map, so its adoption date isn't recorded here; the Registrar's [district page](https://vote.santaclaracounty.gov/san-jose-unified-school-district) lists the current trustee for each area.
 - **Campbell Union SD** elects five trustee areas; Areas 1, 4 and 5 are on the November 3, 2026 ballot. Its areas were drawn in 2019 ("Purple" map, Resolution 2019-20-22, November 21, 2019) and kept unchanged after the 2020 Census (Resolution 26-12-02-21, December 2, 2021), when the district's demographer found them still within 5.94% of equal population.
 
   **One neighborhood is in doubt.** The loaded file puts the area west of Highway 17 and south of I-280, around S Daniel Way and S Genevieve Ln down to Moorpark Ave, in **Area 2**. The district's adopted map (the exhibit to its 2019 resolution, and the approved-map viewer on [its trustee area page](https://www.campbellusd.org/cvra)) shows it in **Area 1**. That's about 0.12 sq mi and 419 residents as of 2020. Area 1 is on this November's ballot and Area 2 isn't, so confirm with the Registrar before telling anyone there which race they vote in. Elsewhere the two maps agree, apart from unpopulated slivers.
-- **Still needed — already electing by trustee area:** Morgan Hill USD, Santa Clara USD, Moreland SD, Sunnyvale SD
+- **Santa Clara USD** elects seven trustee areas; Areas 1, 3, 4 and 6 are on the November 3, 2026 ballot. The loaded map was redrawn from the 2020 Census: counting 2020 population block by block, its areas come out within 7.9% of each other. It also covers part of north Sunnyvale and north San José, which belong to the district.
+- **Still needed — already electing by trustee area:** Morgan Hill USD, Moreland SD, Sunnyvale SD
 - **At-large, so no trustee map needed:** Milpitas USD, Palo Alto USD; Berryessa Union, Cambrian, Cupertino Union, Evergreen, Franklin-McKinley, Lakeside Joint, Loma Prieta Joint Union, Los Altos, Los Gatos Union, Luther Burbank, Mount Pleasant, Mountain View Whisman, Orchard, Saratoga Union and Union elementary districts
 
 ## Community college districts
 
 All four community college districts — Foothill-De Anza, San José-Evergreen, West Valley-Mission and Gavilan Joint — elect by trustee area. The Census doesn't map community college districts, so the `community_college_district` column is drawn from each college's own trustee map. A college is named only once its trustee map is loaded; until then both college columns are blank for the people it serves.
 
-- **Loaded (1 of 4):** Gavilan Joint CCD — the trustee areas adopted February 8, 2022, from the 2020 Census, for elections through 2030. In this county it covers Gilroy, Morgan Hill, San Martin and the southern end of San José around Coyote Valley: the same ground as the Gilroy and Morgan Hill unified districts, to within about a square mile. Trustee Areas 5 and 7 lie entirely in San Benito County, so only `TA1`–`TA4` and `TA6` turn up here.
+- **Loaded (3 of 4):** Gavilan Joint CCD — the trustee areas adopted February 8, 2022, from the 2020 Census, for elections through 2030. In this county it covers Gilroy, Morgan Hill, San Martin and the southern end of San José around Coyote Valley: the same ground as the Gilroy and Morgan Hill unified districts, to within about a square mile. Trustee Areas 5 and 7 lie entirely in San Benito County, so only `TA1`–`TA4` and `TA6` turn up here.
 
   The loaded file matches San Benito County's published copy (`Gavilan_CC_District` on services2.arcgis.com/NjMFCzThTMQy3AJa) to within about 9 m, with identical populations: about 28,500 per area and 199,595 in all, which are 2020 Census figures. It also agrees with the adopted map on [Gavilan's redistricting page](https://www.gavilan.edu/administration/board/redistricting/redistricting_trustee_areas_2022.php).
-- **Still needed:** Foothill-De Anza, San José-Evergreen, West Valley-Mission
+- **Loaded:** Foothill-De Anza CCD — "Draft Map A", adopted February 14, 2022, which follows city limits wherever it can (from [the district's trustee area page](https://www.fhda.edu/trustee-areas/A-DraftMaps.html)). Areas 2 and 4 are on the November 3, 2026 ballot. It covers the Palo Alto Unified, Mountain View-Los Altos and Fremont Union districts: Palo Alto, Mountain View, Los Altos, Los Altos Hills, most of Sunnyvale and Cupertino, and parts of Saratoga, Santa Clara and west San José. The pocket of north Sunnyvale around Lakewood Village is Santa Clara Unified territory, so it belongs to West Valley-Mission and is correctly left out.
+- **Loaded:** San José-Evergreen CCD — the plan adopted January 25, 2022 (Resolution 012522-1), from the 2020 Census. Areas 2, 4 and 6 are on the November 3, 2026 ballot. The loaded file matches the adopted plan on the district's board page: counting 2020 population block by block, only 105 of its 887,238 residents land in a different area, all in blocks split by an area line. It covers the Milpitas Unified, San José Unified and East Side Union districts: Milpitas and about 60% of San José. The college shows as "San Jose-Evergreen Community College District" in results, without the accent, like the other San José names.
+
+  Its adopted plan leaves out the same Hellyer Ave pocket as East Side Union's map, so people there get no college named; they're already flagged for review by the high school column.
+- **Still needed:** West Valley-Mission (Campbell, Los Gatos, Saratoga, Monte Sereno, most of Santa Clara, and parts of San José, Sunnyvale and Cupertino)
 
 ## County Board of Education
 
@@ -71,6 +76,7 @@ People who fall in one of these are flagged for review rather than given a blank
 - **Gilroy USD** — the district's trustee-area map stops about 78 sq mi short of its eastern edge as the Census draws it: the rural land out toward Pacheco Pass. The County Board of Education's trustee map leaves out the same land too, but Gavilan College's trustee map includes it, as the Census does, so it's unclear which is right. Worth asking the district for a map covering its full territory if anyone on your lists lives out that way.
 - **San José** — about 1.3 sq mi inside the official city limits isn't covered by the city's own council map.
 - **San José USD** — about 0.3 sq mi inside the district, as the Census draws it, isn't covered by the district's trustee map: thin strips along its edges, the largest by the airport. About 480 people lived there in 2020.
+- **East Side Union HSD** — the loaded map leaves out the business park east of Highway 101 around Hellyer Ave, Silver Creek Valley Rd and Dove Hill Rd, about 0.9 sq mi with 427 residents as of 2020. The Census and the district's adopted map both put it in the district, so people there are flagged `missing_high_school_trustee_area`; look up their area by hand. San José-Evergreen's trustee map leaves out the same pocket.
 - **Other council maps** — a tenth of a square mile or less each; none in Sunnyvale or Los Altos.
 
 ## How election methods were verified

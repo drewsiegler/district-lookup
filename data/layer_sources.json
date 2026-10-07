@@ -13,7 +13,9 @@
       {"file": "gilroy_unified_school_district_trustee_areas.geojson", "name_field": "TRUSTEEARE",
        "district": "Gilroy Unified School District"},
       {"file": "san_jose_usd_trustee_areas.geojson", "name_field": "TRUSTEE_AREA",
-       "district": "San Jose Unified School District"}
+       "district": "San Jose Unified School District"},
+      {"file": "santa_clara_usd_trustee_areas.geojson", "name_field": "TRUSTEE_AREA",
+       "district": "Santa Clara Unified School District"}
     ],
     "elementary_trustee_area": [
       {"file": "oak_grove_school_district_trustee_areas.geojson", "name_field": "AREA",
@@ -31,11 +33,17 @@
       {"file": "los_gatos_saratoga_union_hsd_trustee_areas.geojson", "name_field": "DISTRICT",
        "district": "Los Gatos-Saratoga Joint Union School District"},
       {"file": "mvla_union_hsd_trustee_areas.geojson", "name_field": "TRUSTEE_AREA",
-       "district": "Mountain View-Los Altos Union School District"}
+       "district": "Mountain View-Los Altos Union School District"},
+      {"file": "east_side_union_hsd_trustee_areas.geojson", "name_field": "TRUSTEE_AREA",
+       "district": "East Side Union High School District"}
     ],
     "community_college_trustee_area": [
       {"file": "gavilan_jccd_trustee_areas.geojson", "name_field": "DISTRICT",
-       "district": "Gavilan Joint Community College District"}
+       "district": "Gavilan Joint Community College District"},
+      {"file": "foothill_de_anza_ccd_trustee_areas.geojson", "name_field": "TRUSTEE_AREA",
+       "district": "Foothill-De Anza Community College District"},
+      {"file": "san_jose_evergreen_ccd_trustee_areas.geojson", "name_field": "TRUSTEE_AREA",
+       "district": "San Jose-Evergreen Community College District"}
     ]
   },
   "district_outlines": {

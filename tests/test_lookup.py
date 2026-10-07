@@ -31,8 +31,9 @@ def test_tully_road_the_original_example(layers):
     assert d["midpeninsula_regional_open_space_district"] is None  # east of Midpen's boundary
     assert d["scvosa_director_districts"] == "D7"
     assert d["scv_water_board_districts"] == "D6"
-    # San José-Evergreen's trustee map hasn't been loaded, so its college isn't known yet.
-    assert d["community_college_district"] is None and d["community_college_trustee_area"] is None
+    assert d["high_school_trustee_area"] == "TA3"
+    assert d["community_college_district"] == "San Jose-Evergreen Community College District"
+    assert d["community_college_trustee_area"] == "TA4"
 
 
 @pytest.mark.parametrize("point, column, expected", [
@@ -43,6 +44,11 @@ def test_tully_road_the_original_example(layers):
     ("san_jose_city_hall", "council_district", "3"),
     ("san_jose_city_hall", "unified_trustee_area", "TA3"),
     ("san_jose_usd_district_office", "unified_trustee_area", "TA2"),
+    ("santa_clara_city_hall", "unified_trustee_area", "TA4"),
+    ("oak_grove_district_office", "high_school_trustee_area", "TA2"),
+    ("cupertino_city_hall", "community_college_district", "Foothill-De Anza Community College District"),
+    ("cupertino_city_hall", "community_college_trustee_area", "TA4"),
+    ("san_jose_city_hall", "community_college_trustee_area", "TA7"),
     ("morgan_hill_peak_ave", "council_district", "C"),
     ("los_altos_city_hall", "council_district", "4"),
     ("cupertino_city_hall", "high_school_trustee_area", "TA1"),
@@ -98,8 +104,13 @@ def test_outside_the_county_nothing_matches(layers):
 
 
 def test_district_without_a_trustee_map_yet_is_blank(layers):
-    # East Side Union HSD's map hasn't been loaded; Tully Rd is in it.
-    assert at(layers, "tully_rd_san_jose")["high_school_trustee_area"] is None
+    # Morgan Hill USD's trustee map hasn't been loaded; its city hall is in the district.
+    d = at(layers, "morgan_hill_peak_ave")
+    assert d["unified_school_districts"] == "Morgan Hill Unified School District"
+    assert d["unified_trustee_area"] is None
+    # Nor has West Valley-Mission's, so Campbell has no college named yet.
+    d = at(layers, "campbell_city_hall")
+    assert d["community_college_district"] is None and d["community_college_trustee_area"] is None
 
 
 # --- The must-match rule ---------------------------------------------------
