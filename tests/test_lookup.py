@@ -48,6 +48,7 @@ def test_tully_road_the_original_example(layers):
     ("santa_clara_city_hall", "council_district", "2—Cm. Raj Chahal"),
     ("morgan_hill_peak_ave", "unified_trustee_area", "TA3"),
     ("sunnyvale_city_hall", "elementary_trustee_area", "TA1"),
+    ("sunnyvale_city_hall", "council_district", "2—Cm. Alysa Cisneros"),
     ("moreland_district_office", "elementary_trustee_area", "TA3"),
     ("campbell_city_hall", "community_college_district", "West Valley-Mission Community College District"),
     ("campbell_city_hall", "community_college_trustee_area", "TA6"),

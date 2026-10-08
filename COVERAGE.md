@@ -14,7 +14,7 @@ The `City` column covers all 15 cities and towns. `Council District` is filled i
 
 - **Loaded:** San José, Santa Clara, Campbell, Morgan Hill, Sunnyvale, Gilroy, Los Altos
 - **Los Altos** switched to district elections in 2024. Its map, "F2a", was adopted October 22, 2024, and the first district elections are November 3, 2026, for Districts 2 and 4. The loaded file agrees with the district the city's own GIS assigns each parcel, at every one of 349 sample points checked, 115 of them within 25 m of a district line.
-- **Councilmembers named:** Campbell (`3—Cm. Dan Furtado`), Morgan Hill (`C—Cm. Soraida Iwanaga`), San José (`7—Cm. Bien Doan`), Santa Clara (`2—Cm. Raj Chahal`). Other cities' districts are the bare number until their councilmembers are added under `names` in `data/layers.json`, and the names need updating there when a seat changes hands. Mayors aren't included: they're elected citywide, not by district.
+- **Councilmembers named:** Campbell (`3—Cm. Dan Furtado`), Morgan Hill (`C—Cm. Soraida Iwanaga`), San José (`7—Cm. Bien Doan`), Santa Clara (`2—Cm. Raj Chahal`), Sunnyvale (`2—Cm. Alysa Cisneros`). Other cities' districts are the bare number until their councilmembers are added under `names` in `data/layers.json`, and the names need updating there when a seat changes hands. Mayors aren't included: they're elected citywide, not by district.
 - **At-large, so no council map needed:** Los Gatos, Milpitas, Mountain View, Los Altos Hills, Monte Sereno, Palo Alto, Cupertino, Saratoga
 
 ## School trustee areas

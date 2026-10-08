@@ -118,7 +118,7 @@ The columns added, in order:
 | Matched Address | `1660 TULLY RD, SAN JOSE, CA, 95122` | the address as the Census found it |
 | Lat, Lon | `37.3216`, `-121.8270` | its map coordinates |
 | City | `San Jose` | the official city or town; blank on unincorporated land |
-| Council District | `7` | Morgan Hill uses letters `A`–`D`; blank in at-large cities. Campbell's, Morgan Hill's, San José's and Santa Clara's come with the councilmember, like `3—Cm. Dan Furtado` |
+| Council District | `7` | Morgan Hill uses letters `A`–`D`; blank in at-large cities. Campbell's, Morgan Hill's, San José's, Santa Clara's and Sunnyvale's come with the councilmember, like `3—Cm. Dan Furtado` |
 | Supervisor District | `D2—Sup. Betty Duong` | |
 | US Congress | `US-CA16—Rep. Sam Liccardo` | |
 | CA State Senate | `SD15—Sen. Dave Cortese` | `SD10—Vacant` while that seat is empty |
