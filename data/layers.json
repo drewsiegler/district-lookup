@@ -191,7 +191,15 @@
       "agency": "Midpeninsula Regional Open Space District",
       "agency_header": "Open Space District",
       "name_field": "WARDNUM",
-      "format": "Ward {}"
+      "format": "Ward {}",
+      "names": {
+        "Ward 1": "Dir. Craig Gleason",
+        "Ward 2": "Dir. Yoriko Kishimoto",
+        "Ward 3": "Dir. Jed Cyr",
+        "Ward 4": "Dir. Curt Riffle",
+        "Ward 5": "Dir. Karen Holman",
+        "Ward 6": "Dir. Margaret MacNiven"
+      }
     },
     {
       "id": "scvosa_director_districts",

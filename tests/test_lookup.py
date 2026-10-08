@@ -67,8 +67,8 @@ def test_tully_road_the_original_example(layers):
     ("oak_grove_district_office", "scc_board_of_education_trustee_areas", "TA4"),
     ("stanford_campus", "scc_board_of_education_trustee_areas", "TA1"),
     # Ward 2 on Midpen's 2011 map; the 2022 redistricting moved it to Ward 1.
-    ("cupertino_city_hall", "midpeninsula_regional_open_space_district", "Ward 1"),
-    ("stanford_campus", "midpeninsula_regional_open_space_district", "Ward 2"),
+    ("cupertino_city_hall", "midpeninsula_regional_open_space_district", "Ward 1—Dir. Craig Gleason"),
+    ("stanford_campus", "midpeninsula_regional_open_space_district", "Ward 2—Dir. Yoriko Kishimoto"),
     ("campbell_city_hall", "scvosa_director_districts", "D4"),
     ("morgan_hill_peak_ave", "scvosa_director_districts", "D1"),
     ("gilroy_rosanna_st", "community_college_district", "Gavilan Joint Community College District"),
@@ -97,7 +97,7 @@ def test_open_space_agencies_split_the_county(layers):
     rest, so an address gets one or the other. The City of Gilroy is outside
     both."""
     cupertino = at(layers, "cupertino_city_hall")
-    assert cupertino["midpeninsula_regional_open_space_district"] == "Ward 1"
+    assert cupertino["midpeninsula_regional_open_space_district"] == "Ward 1—Dir. Craig Gleason"
     assert cupertino["scvosa_director_districts"] is None
     gilroy = at(layers, "gilroy_rosanna_st")
     assert gilroy["midpeninsula_regional_open_space_district"] is None
