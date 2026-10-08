@@ -12,13 +12,15 @@ Results are never saved anywhere on their own: the app window hands them over on
 
 Download the version for your computer from the **[latest release](https://github.com/drewsiegler/district-lookup/releases/latest)**; the release page says which file is which. Everything it needs is inside, district maps included, so there's nothing else to install.
 
-The apps aren't signed with paid developer certificates, so the first time you open one, your computer warns that it can't tell who made it. Here's how to get past that on each system. You only need to do it once per version.
+The apps aren't signed with paid developer certificates, so the first time you open one, your computer warns that it can't tell who made it. Here's how to get past that on each system. Usually you only need to do it once per version, though macOS 27 may ask every time.
 
 ### Mac
 
 1. Open the `.dmg` file and drag **District Lookup** into the Applications folder.
 2. Open it from Applications. macOS says it can't check it for malicious software.
 3. On **macOS 15 or later**, click **Done**, open **System Settings → Privacy & Security**, scroll down to the message about District Lookup, click **Open Anyway** and confirm. On **macOS 14 or earlier**, right-click District Lookup in Applications, choose **Open**, then click **Open** again.
+
+On **macOS 27**, it may ask again each time you open District Lookup, even after you've clicked **Open Anyway** before. Nothing is wrong with your copy: repeat step 3 when it asks.
 
 ### Windows
 
@@ -142,7 +144,7 @@ Boundaries change. Verify anything you'd act on against the county Registrar of 
 
 When a new version is out, usually because district maps have changed, a banner at the top of the lookup page says so, with a link to download it. The version you have is shown at the bottom of the page.
 
-Install the new version over the old one, the same way as the first time: on a Mac, drag it into Applications and choose **Replace**; on Windows, run the new installer; on a Chromebook or Linux, install the new `.deb`. Your earlier address lookups are kept, so the next lookup stays quick. Expect the first-open warning again, once, for each new version.
+Install the new version over the old one, the same way as the first time: on a Mac, drag it into Applications and choose **Replace**; on Windows, run the new installer; on a Chromebook or Linux, install the new `.deb`. Your earlier address lookups are kept, so the next lookup stays quick. Expect the first-open warning again for each new version, or on macOS 27 possibly each time you open it.
 
 Running from source, update with `git pull` in the `district-lookup` folder, or, if you downloaded a ZIP from GitHub, download the new one and replace the folder (move out any list you keep inside it first).
 
