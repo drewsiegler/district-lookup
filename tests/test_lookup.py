@@ -29,7 +29,7 @@ def test_tully_road_the_original_example(layers):
     assert d["secondary_school_districts"] == "East Side Union High School District"
     assert d["scc_board_of_education_trustee_areas"] == "TA7"
     assert d["midpeninsula_regional_open_space_district"] is None  # east of Midpen's boundary
-    assert d["scvosa_director_districts"] == "D7"
+    assert d["scvosa_director_districts"] == "D7—Dir. Kalvin Gill"
     assert d["scv_water_board_districts"] == "D6"
     assert d["high_school_trustee_area"] == "TA3"
     assert d["community_college_district"] == "San Jose-Evergreen Community College District"
@@ -69,8 +69,8 @@ def test_tully_road_the_original_example(layers):
     # Ward 2 on Midpen's 2011 map; the 2022 redistricting moved it to Ward 1.
     ("cupertino_city_hall", "midpeninsula_regional_open_space_district", "Ward 1—Dir. Craig Gleason"),
     ("stanford_campus", "midpeninsula_regional_open_space_district", "Ward 2—Dir. Yoriko Kishimoto"),
-    ("campbell_city_hall", "scvosa_director_districts", "D4"),
-    ("morgan_hill_peak_ave", "scvosa_director_districts", "D1"),
+    ("campbell_city_hall", "scvosa_director_districts", "D4—Dir. Kathy Sutherland"),
+    ("morgan_hill_peak_ave", "scvosa_director_districts", "D1—Dir. Alex Kennett"),
     ("gilroy_rosanna_st", "community_college_district", "Gavilan Joint Community College District"),
     ("gilroy_rosanna_st", "community_college_trustee_area", "TA4"),
     ("morgan_hill_peak_ave", "community_college_trustee_area", "TA2"),

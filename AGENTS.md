@@ -45,7 +45,7 @@ The runtime stays at `shapely` + `requests`: small pure wheels with nothing to c
 ## Generated files
 
 - `data/districts/*.json` is build output, committed so the app needs no GIS tools. Never hand-edit it; rebuild instead. The build is byte-for-byte deterministic, so after a rebuild `git status` should show changes only in the layers you touched. If other layers changed, stop and find out why.
-- `data/layers.json` is only partly generated. The build adds and removes entries, but `header`, `name_field`, `format`, `pattern`, `names`, `coverage`, `must_match`, `agency` and `agency_header` are hand-set and preserved. `names` holds officeholders (Congress, State Senate, Assembly, councilmembers by city, Midpen directors), so it goes stale after elections and vacancies. Output column order and headings follow this file, and a layer with `must_match` has to come after the layer it references.
+- `data/layers.json` is only partly generated. The build adds and removes entries, but `header`, `name_field`, `format`, `pattern`, `names`, `coverage`, `must_match`, `agency` and `agency_header` are hand-set and preserved. `names` holds officeholders (Congress, State Senate, Assembly, councilmembers by city, open space directors), so it goes stale after elections and vacancies. Output column order and headings follow this file, and a layer with `must_match` has to come after the layer it references.
 
 ## Adding or updating a district map
 

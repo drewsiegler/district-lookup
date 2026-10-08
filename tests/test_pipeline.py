@@ -139,7 +139,7 @@ def test_open_space_agencies_share_two_columns(layers, fake_geocoder):
     rows = by_name(written(outcome))
     assert {name: (r["Open Space District"], r["District/Ward"]) for name, r in rows.items()} == {
         "Midpen": ("Midpeninsula Regional Open Space District", "Ward 1—Dir. Craig Gleason"),
-        "Authority": ("Santa Clara Valley Open Space Authority", "D7"),
+        "Authority": ("Santa Clara Valley Open Space Authority", "D7—Dir. Kalvin Gill"),
         "Neither": ("", ""),
     }
 
@@ -158,7 +158,7 @@ def test_address_on_the_line_between_open_space_agencies_gets_both(layers, fake_
     row = written(run([{"name": "A", "address": "on the line"}], layers))[0]
     assert row["Open Space District"] == \
         "Midpeninsula Regional Open Space District; Santa Clara Valley Open Space Authority"
-    assert re.fullmatch(r"Ward \d—Dir\. [^;]+; D\d", row["District/Ward"])
+    assert re.fullmatch(r"Ward \d—Dir\. [^;]+; D\d—Dir\. [^;]+", row["District/Ward"])
 
 
 def test_rerunning_a_needs_review_file_gives_fresh_reasons(layers, fake_geocoder):

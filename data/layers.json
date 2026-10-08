@@ -208,7 +208,16 @@
       "agency": "Santa Clara Valley Open Space Authority",
       "agency_header": "Open Space District",
       "name_field": "DISTRICT",
-      "format": "D{}"
+      "format": "D{}",
+      "names": {
+        "D1": "Dir. Alex Kennett",
+        "D2": "Dir. Margie Matthews",
+        "D3": "Dir. Helen Chapman",
+        "D4": "Dir. Kathy Sutherland",
+        "D5": "Dir. Cathryn Ming Hyde",
+        "D6": "Dir. Lisanna Dominguez",
+        "D7": "Dir. Kalvin Gill"
+      }
     },
     {
       "id": "scv_water_board_districts",

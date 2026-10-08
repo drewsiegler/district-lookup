@@ -133,7 +133,7 @@ The columns added, in order:
 | College Trustee Area | `TA4` | |
 | County Board of Education | `TA7` | its trustee area |
 | Open Space District | `Midpeninsula Regional Open Space District` | or `Santa Clara Valley Open Space Authority` |
-| District/Ward | `Ward 1—Dir. Craig Gleason` | a Midpeninsula ward and its director, or an Open Space Authority district like `D7` |
+| District/Ward | `Ward 1—Dir. Craig Gleason` | a Midpeninsula ward, or an Open Space Authority district like `D7—Dir. Kalvin Gill`, with its director |
 | SCV Water District | `D6` | Valley Water board district |
 
 Boundaries change. Verify anything you'd act on against the county Registrar of Voters.
