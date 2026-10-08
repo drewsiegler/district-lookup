@@ -45,6 +45,7 @@ def test_tully_road_the_original_example(layers):
     ("san_jose_city_hall", "unified_trustee_area", "TA3"),
     ("san_jose_usd_district_office", "unified_trustee_area", "TA2"),
     ("santa_clara_city_hall", "unified_trustee_area", "TA4"),
+    ("santa_clara_city_hall", "council_district", "2—Cm. Raj Chahal"),
     ("morgan_hill_peak_ave", "unified_trustee_area", "TA3"),
     ("sunnyvale_city_hall", "elementary_trustee_area", "TA1"),
     ("moreland_district_office", "elementary_trustee_area", "TA3"),
