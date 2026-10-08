@@ -4,7 +4,7 @@ Give it a list of people and their addresses; it tells you every electoral distr
 
 ## Your list stays private
 
-Nothing is uploaded. The app runs on your own computer, and the page it opens is reachable only from that computer. The only thing that leaves the machine is the addresses themselves, sent to the free U.S. Census Bureau geocoder to turn them into map coordinates — no names, emails or phone numbers.
+Nothing is uploaded. The app runs on your own computer, and the page it opens is reachable only from that computer. The only thing that leaves the machine is the addresses themselves, sent to the free U.S. Census Bureau geocoder to turn them into map coordinates — no names, emails or phone numbers. When the app window opens it also asks GitHub whether a newer version is out; that check sends nothing about your list.
 
 Results are never saved anywhere on their own: the app window hands them over only as downloads, and the command line writes them next to your list rather than inside this folder.
 
@@ -25,11 +25,11 @@ That's about 58 MB, with nothing to compile. The prepared district maps are incl
 
 ### The app window
 
-Double-click **Start District Lookup.command** in Finder, or run `python src/web.py`. It opens a page in your browser: drop a file on it, pick one from Finder, or paste a list straight in, then click Start. When it's done you get two download buttons. Leave the small Terminal window open while you use it; closing it shuts the app down.
+Double-click **Start District Lookup.command** in Finder, or run `python src/web.py`. It opens a page in your browser: drop a file on it, pick one from your computer, or paste a list straight in, then click Start. When it's done you get two download buttons. Leave the small Terminal window open while you use it; closing it shuts the app down.
 
 Download before starting another lookup — the next one replaces the results.
 
-The first time you open the launcher, macOS may say it can't verify the developer. Right-click it, choose **Open**, then **Open** again. You only need to do that once.
+The first time you open the launcher, macOS may say it can't verify the developer. On macOS 14 or earlier, right-click it, choose **Open**, then **Open** again. On macOS 15 or later, open **System Settings → Privacy & Security**, scroll down and click **Open Anyway**. You only need to do that once.
 
 ### The command line
 
@@ -82,6 +82,12 @@ A blank district on its own isn't an error. At-large cities have no council dist
 How districts are written: `city` is the city or town; `council_district` is the bare district number (Morgan Hill uses letters `A`–`D`); county `D2—Sup. Betty Duong`, Congress `US-CA16`, State Senate `SD15`, Assembly `AD25`, school and community college districts by full name (`Gavilan Joint Community College District`), trustee areas `TA3` (County Board of Education too), Midpeninsula Open Space `Ward 1`, Santa Clara Valley Open Space Authority `D1`, Valley Water `D1`.
 
 Boundaries change. Verify anything you'd act on against the county Registrar of Voters.
+
+## Updating
+
+When a new version is out, usually because district maps have changed, a banner at the top of the app window says so, with a link to download it. The version you have is shown at the bottom of the window.
+
+If you got the project with git, update it by running `git pull` in the `district-lookup` folder. If you downloaded a ZIP from GitHub, download the new one and replace the folder; if you keep a list inside the folder, move it out first. The first lookup afterwards may take a little longer while it re-checks addresses with the Census.
 
 ## Maintaining it
 

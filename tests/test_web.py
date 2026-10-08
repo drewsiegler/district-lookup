@@ -76,3 +76,18 @@ def test_nothing_to_download_before_a_run(server):
     with pytest.raises(Exception) as caught:
         get(f"{server}/download/results")
     assert "404" in str(caught.value)
+
+
+def test_about_reports_the_version_and_any_newer_release(server, monkeypatch):
+    newer = {"version": "9.9.9", "url": "https://github.com/x/releases/tag/v9.9.9", "title": None}
+    monkeypatch.setattr(web, "update_info", {"checked": True, "update": newer})
+    about = json.loads(get(f"{server}/about")[2])
+    assert about["version"] == web.about.VERSION
+    assert about["checked"] and about["update"] == newer
+
+
+def test_update_check_records_its_answer(monkeypatch):
+    monkeypatch.setattr(web, "update_info", {"checked": False, "update": None})
+    monkeypatch.setattr(web.about, "check_for_update", lambda: None)  # offline, or already current
+    web.check_for_update()
+    assert web.update_info == {"checked": True, "update": None}

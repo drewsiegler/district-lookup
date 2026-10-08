@@ -63,6 +63,11 @@
            margin-top: 14px; overflow-wrap: anywhere; }
   .error { background: #fbeaea; color: #a52121; border-radius: 6px; padding: 12px 14px; font-size: 13px; }
   a.dl { display: inline-block; text-decoration: none; }
+  .update { background: var(--accent-soft); color: var(--ink); border-radius: 10px; padding: 12px 16px;
+            font-size: 14px; margin-bottom: 16px; overflow-wrap: anywhere; }
+  .update a { color: var(--accent); font-weight: 700; }
+  footer { margin-top: 28px; text-align: center; font-size: 12px; color: var(--muted); }
+  footer a { color: var(--muted); }
 </style>
 </head>
 <body>
@@ -75,10 +80,12 @@
     </div>
   </header>
 
+  <p class="update" id="update" hidden></p>
+
   <div class="card" id="input-card">
     <div id="drop">
       <strong>Drop a CSV or TXT file here</strong>
-      <span>or click to choose one from Finder</span>
+      <span>or click to choose one</span>
       <input type="file" id="file" accept=".csv,.txt,text/csv,text/plain" hidden>
     </div>
 
@@ -100,6 +107,8 @@
     <div id="finished" class="done" hidden></div>
     <div id="failed" hidden></div>
   </div>
+
+  <footer id="footer"></footer>
 </main>
 
 <script>
@@ -190,6 +199,28 @@ function finish(s) {
     <p class="paths">Nothing has been saved to disk. Download while this window is open — starting another lookup replaces these.</p>`;
   $("start").disabled = false;
 }
+
+// The version and donation link, and whether a newer version is out. The
+// server checks GitHub in the background as it starts, so ask again for a
+// little while if it hasn't heard back yet.
+function loadAbout(tries = 0) {
+  fetch("/about").then(r => r.json()).then(a => {
+    const donate = a.donate_url
+      ? ` · <a href="${escapeHtml(a.donate_url)}" target="_blank" rel="noopener">Support this project</a>` : "";
+    $("footer").innerHTML = `District Lookup ${escapeHtml(a.version)}${donate}`;
+    if (a.update) {
+      const u = a.update;
+      const title = u.title ? ` — ${escapeHtml(u.title)}` : "";
+      $("update").innerHTML = `A new version is out: <b>${escapeHtml(u.version)}</b>${title}. ` +
+        `You have ${escapeHtml(a.version)}. ` +
+        `<a href="${escapeHtml(u.url)}" target="_blank" rel="noopener">Download it</a>`;
+      $("update").hidden = false;
+    } else if (!a.checked && tries < 10) {
+      setTimeout(() => loadAbout(tries + 1), 1500);
+    }
+  }).catch(() => {});
+}
+loadAbout();
 
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c =>

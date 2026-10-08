@@ -4,8 +4,9 @@
 
 Everything stays on this machine — the server only listens on localhost, and
 your list is never uploaded anywhere. The only thing that leaves your computer
-is one address at a time going to the Census geocoder, exactly as the command
-line version does.
+is the addresses, going to the Census geocoder exactly as the command line
+version sends them, plus one question to GitHub when the window opens: is
+there a newer version? (See about.py.)
 """
 
 import json
@@ -18,6 +19,7 @@ from tempfile import TemporaryDirectory
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import about
 import pipeline
 from input_table import describe_roles, read_people
 from layers import load_layers
@@ -33,11 +35,19 @@ layers_cache = []
 # list of real people's addresses can't be left behind in the project folder
 # (or committed by accident). Downloading is how you get them out.
 last_outcome = {"results": None, "review": None}
+# Filled in by a background check when the app starts; the page asks for it.
+update_info = {"checked": False, "update": None}
 
 
 def update(**changes):
     with state_lock:
         state.update(changes)
+
+
+def check_for_update():
+    found = about.check_for_update()
+    with state_lock:
+        update_info.update(checked=True, update=found)
 
 
 def run_job(filename: str, text: str):
@@ -95,6 +105,11 @@ class Handler(BaseHTTPRequestHandler):
             with state_lock:
                 body = json.dumps(state).encode("utf-8")
             self.send(200, body, "application/json")
+        elif self.path == "/about":
+            with state_lock:
+                body = json.dumps({"version": about.VERSION, "donate_url": about.DONATE_URL,
+                                   **update_info}).encode("utf-8")
+            self.send(200, body, "application/json")
         elif self.path in ("/download/results", "/download/review"):
             which = "results" if self.path.endswith("results") else "review"
             with state_lock:
@@ -132,6 +147,7 @@ def main():
     print("Loading district maps…")
     layers_cache = load_layers()
     print(f"Loaded {len(layers_cache)} layer(s).")
+    threading.Thread(target=check_for_update, daemon=True).start()
 
     server = ThreadingHTTPServer((HOST, PORT), Handler)
     url = f"http://{HOST}:{PORT}/"

@@ -26,7 +26,7 @@ Tests and the build must pass before a change counts as done.
 
 - **Never open, print, copy or commit a real contact list or its results.** `data/people.csv` and every other `.csv` except `data/people_contacts_example.csv` hold real people's details. For sample input, use the example file or made-up rows at public buildings.
 - **Results never land in the project folder.** The app window keeps them in memory and hands them over only as downloads. The CLI writes them next to the input list. Keep it that way.
-- **The only thing that leaves the machine is addresses**, sent to the Census geocoder, never names, emails or phones. Don't add other network calls, analytics, error reporting, or CDN scripts or fonts. `src/web_page.html` stays self-contained.
+- **The only thing that leaves the machine is addresses**, sent to the Census geocoder, never names, emails or phones. The one other network call is the app window's update check (`src/about.py`): when it opens, it asks GitHub's API for the latest release's version number, sends nothing about the list, and shows nothing if it fails. Don't add other network calls, analytics, error reporting, or CDN scripts or fonts. `src/web_page.html` stays self-contained.
 - The web server binds to `127.0.0.1` only.
 - `data/geocode_cache.sqlite` (it holds addresses) and `*.gpkg` are gitignored. Don't force-add them.
 
@@ -80,6 +80,10 @@ To check whether a school board elects at-large or by trustee area, read that di
 ## Writing
 
 README.md, COVERAGE.md, page text and error messages are read by organizers. Use plain language, no jargon, and say what to do next. When code changes, update whichever of the three docs covers it, and put new material in the doc for its audience.
+
+## Versions and releases
+
+`VERSION` in `src/about.py` is the app's version, shown in the app window's footer. A release bumps it there and nowhere else, and is published on GitHub tagged `v` + VERSION (`v1.1.0`), so the update check can compare numbers. The release's title is shown in the app's update banner, so make it say what changed in plain words ("New Los Altos SD trustee areas"). Ask before publishing a release, like any push.
 
 ## Commits and boundaries
 

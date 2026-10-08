@@ -93,6 +93,10 @@ About 1.5 seconds, and no test touches the network: each one hands the app fixed
 - The command line defaults to `data/people.csv` if you don't give it a path. Every `.csv` in the project is gitignored, with `data/people_contacts_example.csv` deliberately allowed back in, so a real list can't be committed by accident.
 - If the launcher shows a generic script icon rather than the app icon, run `scripts/set_launcher_icon.sh` once. A custom file icon lives in the file's resource fork, which git doesn't carry across a clone.
 
+## Releasing a new version
+
+After adding or changing maps, bump `VERSION` in `src/about.py` (1.0.0 → 1.1.0), commit, push, and publish a release on GitHub tagged with the same number plus a `v` (`v1.1.0`). Give the release a plain-words title, like "New Los Altos SD trustee areas": everyone running an older copy sees that title in a banner at the top of the app window the next time they open it, with a link to the release.
+
 ## Project layout
 
 ```
@@ -115,6 +119,7 @@ district-lookup/
 │   └── set_launcher_icon.sh  # puts the app icon on the launcher in Finder
 ├── src/
 │   ├── web.py                # the app window (a page served to your browser)
+│   ├── about.py              # version number, update check, donation link
 │   ├── web_page.html         # that page
 │   ├── main.py               # the command line
 │   ├── pipeline.py           # the lookup itself, shared by the window and the command line
