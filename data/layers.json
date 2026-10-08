@@ -3,11 +3,13 @@
     {
       "id": "city",
       "label": "City / Town (Santa Clara County)",
+      "header": "City",
       "name_field": "NAME"
     },
     {
       "id": "council_district",
       "label": "City Council District",
+      "header": "Council District",
       "name_field": "district_name",
       "must_match": {
         "layer": "city",
@@ -17,6 +19,7 @@
     {
       "id": "santa_clara_county_supervisorial",
       "label": "Santa Clara County Supervisorial District",
+      "header": "Supervisor District",
       "name_field": "name",
       "pattern": "District (?P<num>\\d+)\\s*[—–-]\\s*Supervisor (?P<name>.+)",
       "format": "D{num}—Sup. {name}",
@@ -25,29 +28,34 @@
     {
       "id": "us_congress",
       "label": "U.S. Congressional District",
+      "header": "US Congress",
       "name_field": "CD119FP",
       "format": "US-CA{:02d}"
     },
     {
       "id": "ca_state_senate",
       "label": "CA State Senate District",
+      "header": "CA State Senate",
       "name_field": "SLDUST",
       "format": "SD{:02d}"
     },
     {
       "id": "ca_state_assembly",
       "label": "CA State Assembly District",
+      "header": "CA Assembly",
       "name_field": "SLDLST",
       "format": "AD{:02d}"
     },
     {
       "id": "unified_school_districts",
       "label": "Unified School District",
+      "header": "Unified School District",
       "name_field": "NAME"
     },
     {
       "id": "unified_trustee_area",
       "label": "Unified Trustee Area",
+      "header": "Unified Trustee Area",
       "name_field": "district_name",
       "format": "TA{}",
       "must_match": {
@@ -58,11 +66,13 @@
     {
       "id": "elementary_school_districts",
       "label": "Elementary School District",
+      "header": "Elementary School District",
       "name_field": "NAME"
     },
     {
       "id": "elementary_trustee_area",
       "label": "Elementary Trustee Area",
+      "header": "Primary Trustee Area",
       "name_field": "district_name",
       "format": "TA{}",
       "must_match": {
@@ -73,11 +83,13 @@
     {
       "id": "secondary_school_districts",
       "label": "High School District",
+      "header": "High School District",
       "name_field": "NAME"
     },
     {
       "id": "high_school_trustee_area",
       "label": "High School Trustee Area",
+      "header": "Secondary Trustee Area",
       "name_field": "district_name",
       "format": "TA{}",
       "must_match": {
@@ -88,11 +100,13 @@
     {
       "id": "community_college_district",
       "label": "Community College District",
+      "header": "Community College District",
       "name_field": "district"
     },
     {
       "id": "community_college_trustee_area",
       "label": "Community College Trustee Area",
+      "header": "College Trustee Area",
       "name_field": "district_name",
       "format": "TA{}",
       "must_match": {
@@ -103,6 +117,7 @@
     {
       "id": "scc_board_of_education_trustee_areas",
       "label": "Santa Clara County Board of Education Trustee Area",
+      "header": "County Board of Education",
       "name_field": "District",
       "pattern": "D(?P<num>\\d+)",
       "format": "TA{num}"
@@ -110,18 +125,25 @@
     {
       "id": "midpeninsula_regional_open_space_district",
       "label": "Midpeninsula Regional Open Space District Ward",
+      "header": "District/Ward",
+      "agency": "Midpeninsula Regional Open Space District",
+      "agency_header": "Open Space District",
       "name_field": "WARDNUM",
       "format": "Ward {}"
     },
     {
       "id": "scvosa_director_districts",
       "label": "Santa Clara Valley Open Space Authority Director District",
+      "header": "District/Ward",
+      "agency": "Santa Clara Valley Open Space Authority",
+      "agency_header": "Open Space District",
       "name_field": "DISTRICT",
       "format": "D{}"
     },
     {
       "id": "scv_water_board_districts",
       "label": "Santa Clara Valley Water District Board District",
+      "header": "SCV Water District",
       "name_field": "DISTRICT",
       "format": "D{}"
     }

@@ -45,7 +45,7 @@ The runtime stays at `shapely` + `requests`: small pure wheels with nothing to c
 ## Generated files
 
 - `data/districts/*.json` is build output, committed so the app needs no GIS tools. Never hand-edit it; rebuild instead. The build is byte-for-byte deterministic, so after a rebuild `git status` should show changes only in the layers you touched. If other layers changed, stop and find out why.
-- `data/layers.json` is only partly generated. The build adds and removes entries, but `name_field`, `format`, `pattern`, `coverage` and `must_match` are hand-set and preserved. Output column order follows this file, and a layer with `must_match` has to come after the layer it references.
+- `data/layers.json` is only partly generated. The build adds and removes entries, but `header`, `name_field`, `format`, `pattern`, `coverage`, `must_match`, `agency` and `agency_header` are hand-set and preserved. Output column order and headings follow this file, and a layer with `must_match` has to come after the layer it references.
 
 ## Adding or updating a district map
 
@@ -53,13 +53,13 @@ The full procedure is in docs/adding-maps.md. In short:
 
 1. Put the GeoJSON in `data/raw_geojson/`.
 2. A council or trustee-area map gets an entry in `data/layer_sources.json`:
-   - City names are spelled as in the `city` column (`"San Jose"`, no accent).
+   - City names are spelled as in the `City` column (`"San Jose"`, no accent).
    - School district names are spelled the way Census TIGER spells them, which differs from common usage. For example, "Los Gatos-Saratoga Joint Union School District" has no "High".
    - A split district's trustee map goes in the elementary or the high school group, never both.
    - The Census doesn't map community college districts, so the `community_college_district` column is drawn from the college trustee maps themselves (`district_outlines`). A college's `"district"` is its name as it appears in results.
-3. Run `python scripts/build_gpkg.py`. For a standalone layer, fill in `name_field` (and `format` if needed) in `data/layers.json`.
+3. Run `python scripts/build_gpkg.py`. For a standalone layer, fill in `name_field`, `header` (and `format` if needed) in `data/layers.json`.
 4. Add a known-address test (above) and run the tests.
-5. Update COVERAGE.md, including its "Updated" date. For a new column, also update the README's district list and its "How districts are written" section.
+5. Update COVERAGE.md, including its "Updated" date. For a new column, also update the README's district list and its table of columns.
 
 **Check a map's vintage before using it.** Outdated copies circulate on open-data portals: the 2011 Midpen wards nearly shipped in place of the 2022 map, which would have put about 59 sq mi of the county in the wrong ward. Confirm the adoption date or Census year from the source agency, and record the source and adoption date in COVERAGE.md. When the agency doesn't publish its map, count 2020 Census population per area from the PL 94-171 block file (www2.census.gov, under programs-surveys/decennial/2020/data/01-Redistricting_File--PL_94-171; the Census API now needs a key). Areas within a few percent of each other were drawn from the 2020 Census.
 
@@ -71,7 +71,8 @@ To check whether a school board elects at-large or by trustee area, read that di
 
 - A blank district is not an error. At-large cities, unincorporated land, each open space agency covering only part of the county, and trustee maps that aren't loaded yet all produce blanks. Only a gap inside a loaded map goes to review as `missing_<layer>`.
 - Council districts and trustee areas are filled in only inside the city or school district that drew them (`must_match`). They are never borrowed from a neighbor across a slightly different border.
-- The input's own columns are never overwritten. When a name collides, the added column gets a `_lookup` suffix; a mailing city and the official city disagreeing is real information.
+- The input's own columns are never overwritten. When a heading collides (ignoring case and punctuation), the added column gets a ` (Lookup)` suffix; a mailing city and the official city disagreeing is real information.
+- Output rows are keyed internally (layer ids, `matched_address`), apart from the headings written to the file, which come from `header` in `data/layers.json`. Two agencies that split an area (the open space agencies) share an agency column and a district column, set by `agency`/`agency_header` in `data/layers.json`.
 - Bad registry config stops the run at startup with an error naming the layer. It never writes bad values partway through a list.
 - The Census batch service reports some spurious misses, so unmatched addresses are retried one at a time. Keep that fallback.
 - Output CSVs are written `utf-8-sig` so Excel shows accents and the em dash correctly.

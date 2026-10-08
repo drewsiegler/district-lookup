@@ -79,7 +79,7 @@ def run_job(filename: str, text: str):
         update(status="done", done=len(people), message="", summary={
             "results": len(outcome["results"]),
             "review": len(outcome["review"]),
-            "reasons": sorted({r["review_reason"] for r in outcome["review"]}),
+            "reasons": outcome["reasons"],
         })
     except Exception as err:  # shown in the page rather than only the terminal
         message = str(err) or err.__class__.__name__

@@ -94,14 +94,14 @@ Alex Lee | 70 N First St, Campbell, CA 95008
 Two things worth knowing:
 
 - **Apartment and unit numbers are kept but not searched.** The geocoder often fails on an address that carries one, and it isn't needed to place someone on a map. `Street Address 2` still comes back untouched.
-- **Your columns are never overwritten.** If your list has its own `City` column, the official city is added beside it as `city_lookup`. A mailing city of "San Jose" can be unincorporated county land, so the two disagreeing is real information.
+- **Your columns are never overwritten.** If your list has its own `City` column, the official city is added beside it as `City (Lookup)`. A mailing city of "San Jose" can be unincorporated county land, so the two disagreeing is real information.
 
 ## What you get back
 
 Every column of your list comes back in its original order and spelling, with the district columns added on the end. Each person lands in exactly one of two files:
 
-- **results** — everyone placed inside the county, with `matched_address`, `lat`, `lon`, and a column per district type.
-- **needs review** — everyone who needs a human look first, with a `review_reason`, and `address_searched` showing exactly what was looked up (which usually shows what went wrong). Fix the address and run again, and that person moves to results.
+- **results** — everyone placed inside the county, with the address as the Census found it, its map coordinates, and the district columns listed further down.
+- **needs review** — everyone who needs a human look first, with a `Review Reason`, and `Address Searched` showing exactly what was looked up (which usually shows what went wrong). Fix the address and run again, and that person moves to results.
 
 The reasons:
 
@@ -111,7 +111,30 @@ The reasons:
 
 A blank district on its own isn't an error. At-large cities have no council districts, unincorporated land has no city, the two open space agencies split the county between them (Midpeninsula the northwest, the Santa Clara Valley Open Space Authority most of the rest, Gilroy neither), and school districts that elect their boards at-large have no trustee areas — see [COVERAGE.md](COVERAGE.md) for what's in and what's still to come.
 
-How districts are written: `city` is the city or town; `council_district` is the bare district number (Morgan Hill uses letters `A`–`D`); county `D2—Sup. Betty Duong`, Congress `US-CA16`, State Senate `SD15`, Assembly `AD25`, school and community college districts by full name (`Gavilan Joint Community College District`), trustee areas `TA3` (County Board of Education too), Midpeninsula Open Space `Ward 1`, Santa Clara Valley Open Space Authority `D1`, Valley Water `D1`.
+The columns added, in order:
+
+| Column | Written like | Notes |
+|---|---|---|
+| Matched Address | `1660 TULLY RD, SAN JOSE, CA, 95122` | the address as the Census found it |
+| Lat, Lon | `37.3216`, `-121.8270` | its map coordinates |
+| City | `San Jose` | the official city or town; blank on unincorporated land |
+| Council District | `7` | Morgan Hill uses letters `A`–`D`; blank in at-large cities |
+| Supervisor District | `D2—Sup. Betty Duong` | |
+| US Congress | `US-CA16` | |
+| CA State Senate | `SD15` | |
+| CA Assembly | `AD25` | |
+| Unified School District | `Santa Clara Unified School District` | |
+| Unified Trustee Area | `TA4` | |
+| Elementary School District | `Evergreen Elementary School District` | |
+| Primary Trustee Area | `TA5` | for the elementary school district |
+| High School District | `East Side Union High School District` | |
+| Secondary Trustee Area | `TA3` | for the high school district |
+| Community College District | `Gavilan Joint Community College District` | |
+| College Trustee Area | `TA4` | |
+| County Board of Education | `TA7` | its trustee area |
+| Open Space District | `Midpeninsula Regional Open Space District` | or `Santa Clara Valley Open Space Authority` |
+| District/Ward | `Ward 1` | a Midpeninsula ward, or an Open Space Authority district like `D7` |
+| SCV Water District | `D6` | Valley Water board district |
 
 Boundaries change. Verify anything you'd act on against the county Registrar of Voters.
 

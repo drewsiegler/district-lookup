@@ -1,10 +1,16 @@
 """Sorting people into results vs. needs-review, and what the output files
 look like."""
 
+import csv
+import io
+import re
 import sys
 
+import pytest
+from shapely import union_all
+
 import pipeline
-from conftest import POINTS
+from conftest import POINTS, largest_piece, layer_features
 
 ADDRESS_ROLES = {"street": "address"}
 
@@ -15,6 +21,13 @@ def run(rows, layers, columns=("name", "address"), roles=ADDRESS_ROLES):
 
 def by_name(rows):
     return {r["name"]: r for r in rows}
+
+
+def written(outcome, which="results"):
+    """The file as people see it, each row as {heading: value}."""
+    reader = csv.reader(io.StringIO(pipeline.csv_text(outcome, which)))
+    headings = next(reader)
+    return [dict(zip(headings, row)) for row in reader]
 
 
 def test_everyone_lands_in_exactly_one_file_with_the_right_reason(layers, fake_geocoder, gilroy_gap):
@@ -57,8 +70,7 @@ def test_at_large_and_unincorporated_are_not_flagged(layers, fake_geocoder):
 
 def test_review_rows_show_exactly_what_was_searched(layers, fake_geocoder):
     outcome = run([{"name": "Typo", "address": "1 Nowhere Ln, Xyz, CA"}], layers)
-    assert outcome["review"][0]["address_searched"] == "1 Nowhere Ln, Xyz, CA"
-    assert outcome["review_fieldnames"][:2] == ["review_reason", "address_searched"]
+    assert written(outcome, "review")[0]["Address Searched"] == "1 Nowhere Ln, Xyz, CA"
 
 
 def test_input_columns_come_through_untouched_and_first(layers, fake_geocoder):
@@ -69,25 +81,97 @@ def test_input_columns_come_through_untouched_and_first(layers, fake_geocoder):
            "State": "CA", "Zip": "95122", "Email": "maria@example.org"}
     outcome = run([row], layers, columns, roles)
 
-    assert outcome["fieldnames"][:len(columns)] == columns
-    result = outcome["results"][0]
+    assert outcome["headers"][:len(columns)] == columns
+    result = written(outcome)[0]
     assert {k: result[k] for k in columns} == row
     # Their own "City" survives; the official city is written beside it.
-    assert "city" not in outcome["fieldnames"]
-    assert result["city_lookup"] == "San Jose"
+    assert outcome["headers"].count("City") == 1
+    assert result["City (Lookup)"] == "San Jose"
 
 
-def test_unique_headers_ignores_case_and_punctuation():
-    mapping = pipeline.unique_headers(["city", "lat"], ["City", "LAT", "Email"])
-    assert mapping == {"city": "city_lookup", "lat": "lat_lookup"}
+def test_added_columns_are_named_apart_from_the_inputs_own():
+    named = pipeline.name_added_columns({"city": "City", "lat": "Lat", "lon": "Lon"},
+                                        ["CITY", "lat", "Email"])
+    assert named == {
+        "city": ("city", "City (Lookup)"),     # heading clashes, ignoring case
+        "lat": ("lat_lookup", "Lat (Lookup)"),  # the key would overwrite theirs too
+        "lon": ("lon", "Lon"),
+    }
 
 
-def test_csv_text_has_header_and_rows(layers, fake_geocoder):
+def test_output_headings(layers, fake_geocoder):
+    # People's spreadsheets and mail merges depend on these, so a change here
+    # should be deliberate.
     fake_geocoder["tully"] = POINTS["tully_rd_san_jose"]
-    text = pipeline.csv_text(run([{"name": "A", "address": "tully"}], layers), "results")
-    lines = text.splitlines()
-    assert lines[0].startswith("name,address,matched_address")
-    assert len(lines) == 2
+    outcome = run([{"name": "A", "address": "tully"}, {"name": "B", "address": "nowhere"}], layers)
+    results = pipeline.csv_text(outcome, "results").splitlines()[0].split(",")
+    assert results == [
+        "name", "address", "Matched Address", "Lat", "Lon", "City", "Council District",
+        "Supervisor District", "US Congress", "CA State Senate", "CA Assembly",
+        "Unified School District", "Unified Trustee Area",
+        "Elementary School District", "Primary Trustee Area",
+        "High School District", "Secondary Trustee Area",
+        "Community College District", "College Trustee Area",
+        "County Board of Education", "Open Space District", "District/Ward", "SCV Water District",
+    ]
+    review = pipeline.csv_text(outcome, "review").splitlines()[0].split(",")
+    assert review == ["Review Reason", "Address Searched"] + results
+
+
+def test_each_trustee_area_is_written_under_its_own_heading(layers, fake_geocoder):
+    fake_geocoder["tully"] = POINTS["tully_rd_san_jose"]
+    row = written(run([{"name": "A", "address": "tully"}], layers))[0]
+    assert {h: v for h, v in row.items() if h.endswith("Trustee Area")} == {
+        "Unified Trustee Area": "",  # no unified district here
+        "Primary Trustee Area": "",  # Evergreen Elementary elects at-large
+        "Secondary Trustee Area": "TA3",
+        "College Trustee Area": "TA4",
+    }
+
+
+def test_open_space_agencies_share_two_columns(layers, fake_geocoder):
+    fake_geocoder.update({"cupertino": POINTS["cupertino_city_hall"],
+                          "tully": POINTS["tully_rd_san_jose"],
+                          "gilroy": POINTS["gilroy_rosanna_st"]})
+    outcome = run([{"name": "Midpen", "address": "cupertino"},
+                   {"name": "Authority", "address": "tully"},
+                   {"name": "Neither", "address": "gilroy"}], layers)
+    rows = by_name(written(outcome))
+    assert {name: (r["Open Space District"], r["District/Ward"]) for name, r in rows.items()} == {
+        "Midpen": ("Midpeninsula Regional Open Space District", "Ward 1"),
+        "Authority": ("Santa Clara Valley Open Space Authority", "D7"),
+        "Neither": ("", ""),
+    }
+
+
+def test_address_on_the_line_between_open_space_agencies_gets_both(layers, fake_geocoder):
+    """The two open space maps overlap by a sliver along the line they share.
+    An address there is written with both agencies rather than losing one."""
+    midpen = union_all([g for _, _, g in
+                        layer_features(layers, "midpeninsula_regional_open_space_district")])
+    authority = union_all([g for _, _, g in layer_features(layers, "scvosa_director_districts")])
+    overlap = midpen.intersection(authority)
+    if overlap.area == 0:
+        pytest.skip("the open space maps no longer overlap")
+    point = largest_piece(overlap).representative_point()
+    fake_geocoder["on the line"] = (point.y, point.x)
+    row = written(run([{"name": "A", "address": "on the line"}], layers))[0]
+    assert row["Open Space District"] == \
+        "Midpeninsula Regional Open Space District; Santa Clara Valley Open Space Authority"
+    assert re.fullmatch(r"Ward \d; D\d", row["District/Ward"])
+
+
+def test_rerunning_a_needs_review_file_gives_fresh_reasons(layers, fake_geocoder):
+    # Fixing addresses in the needs-review file and running it again is the
+    # usual next step. Its old reason stays as it was, under this version's
+    # heading or 1.0.0's lowercase one; the new reason is written beside it.
+    for old_heading in ("Review Reason", "review_reason"):
+        row = {old_heading: "outside_coverage_area", "name": "A", "address": "still a typo"}
+        outcome = run([row], layers, [old_heading, "name", "address"])
+        assert outcome["reasons"] == ["unmatched_address"]
+        written_row = written(outcome, "review")[0]
+        assert written_row["Review Reason (Lookup)"] == "unmatched_address"
+        assert written_row[old_heading] == "outside_coverage_area"
 
 
 def test_written_files_open_correctly_in_excel(tmp_path, layers, fake_geocoder):

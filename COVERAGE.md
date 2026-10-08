@@ -1,6 +1,6 @@
 # Coverage — Santa Clara County
 
-Updated 2026-10-07. What's loaded, what's still to source, and where the gaps are. How to add a map: [docs/adding-maps.md](docs/adding-maps.md).
+Updated 2026-10-08. What's loaded, what's still to source, and where the gaps are. How to add a map: [docs/adding-maps.md](docs/adding-maps.md).
 
 ## Complete, from Census data
 
@@ -8,7 +8,7 @@ County supervisorial, U.S. Congress, CA State Senate, CA State Assembly, all 15 
 
 ## City council districts
 
-The `city` column covers all 15 cities and towns. `council_district` is filled in only for cities that elect by district:
+The `City` column covers all 15 cities and towns. `Council District` is filled in only for cities that elect by district:
 
 - **Loaded:** San José, Santa Clara, Campbell, Morgan Hill, Sunnyvale, Gilroy, Los Altos
 - **Los Altos** switched to district elections in 2024. Its map, "F2a", was adopted October 22, 2024, and the first district elections are November 3, 2026, for Districts 2 and 4. The loaded file agrees with the district the city's own GIS assigns each parcel, at every one of 349 sample points checked, 115 of them within 25 m of a district line.
@@ -34,7 +34,7 @@ Of the 31 K-12 districts tracked here, 14 elect their boards by trustee area and
 
 ## Community college districts
 
-All four community college districts — Foothill-De Anza, San José-Evergreen, West Valley-Mission and Gavilan Joint — elect by trustee area. The Census doesn't map community college districts, so the `community_college_district` column is drawn from each college's own trustee map. All four are loaded. The only land left with no college named is about 120 sq mi of the eastern hills in Patterson Joint Unified, a district run from Stanislaus County and served by a college there, plus the Hellyer Ave pocket below.
+All four community college districts — Foothill-De Anza, San José-Evergreen, West Valley-Mission and Gavilan Joint — elect by trustee area. The Census doesn't map community college districts, so the `Community College District` column is drawn from each college's own trustee map. All four are loaded. The only land left with no college named is about 120 sq mi of the eastern hills in Patterson Joint Unified, a district run from Stanislaus County and served by a college there, plus the Hellyer Ave pocket below.
 
 - **Loaded (4 of 4):** Gavilan Joint CCD — the trustee areas adopted February 8, 2022, from the 2020 Census, for elections through 2030. In this county it covers Gilroy, Morgan Hill, San Martin and the southern end of San José around Coyote Valley: the same ground as the Gilroy and Morgan Hill unified districts, to within about a square mile. Trustee Areas 5 and 7 lie entirely in San Benito County, so only `TA1`–`TA4` and `TA6` turn up here.
 
@@ -59,7 +59,7 @@ All four community college districts — Foothill-De Anza, San José-Evergreen, 
 
   Sourced from Midpen's own GIS (`Ward_Boundary_(public)` on services2.arcgis.com/qmhndvC947rDNl6t). That layer's description still says "adopted in 2011", but its features carry the 2022 adoption date. Older copies circulating on county open-data portals are the 2011 map, which puts about 59 sq mi of the county in a different ward. If you ever re-download the map, check that `CENSUSYEAR` is 2020 or later.
 
-- **Loaded:** Santa Clara Valley Open Space Authority director districts, written `D1`–`D7` — the map adopted in 2022 from the 2020 Census, the Authority's "Final Plan (from C3)". The Authority covers most of the county outside Midpen: San José, Santa Clara, Campbell, Milpitas, Morgan Hill and most unincorporated land. So the two complement each other: an address gets a Midpen ward or an Open Space Authority district, almost never both. (Their maps overlap by a few hundredths of a square mile along the line they share, so an address right on it could, rarely, get both.)
+- **Loaded:** Santa Clara Valley Open Space Authority director districts, written `D1`–`D7` — the map adopted in 2022 from the 2020 Census, the Authority's "Final Plan (from C3)". The Authority covers most of the county outside Midpen: San José, Santa Clara, Campbell, Milpitas, Morgan Hill and most unincorporated land. So the two complement each other: an address gets a Midpen ward or an Open Space Authority district, almost never both. They share two columns in results: `Open Space District` names the agency, and `District/Ward` holds its ward or district. (Their maps overlap by about 0.04 sq mi along the line they share, so an address right on it could, rarely, get both. Then both are written, Midpen first, separated by a semicolon.)
 
   Sourced from the Authority's own GIS (the `Authority_Boundary` layer on services3.arcgis.com/kdBUV7ozB9Xo7h9c, which lists each district's current director). The loaded file matches it district for district: the same area to a thousandth of a square mile, and boundaries within about 1 m. It also matches the board-approved map on the Authority's [2022 redistricting page](https://news.openspaceauthority.org/redistricting2022).
 

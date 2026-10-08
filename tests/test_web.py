@@ -56,6 +56,7 @@ def test_pasted_list_runs_and_downloads_from_memory(server, fake_geocoder, tmp_p
 
     assert state["status"] == "done"
     assert state["summary"]["results"] == 1 and state["summary"]["review"] == 1
+    assert state["summary"]["reasons"] == ["unmatched_address"]
 
     _, headers, body = get(f"{server}/download/results")
     assert 'filename="results.csv"' in headers["Content-Disposition"]

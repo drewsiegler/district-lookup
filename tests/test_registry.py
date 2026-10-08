@@ -69,6 +69,24 @@ def test_must_match_layer_listed_below_is_refused(registry):
         load_layers()
 
 
+def test_heading_defaults_to_the_label(registry):
+    registry(lambda es: entry(es, "ca_state_senate").pop("header"))
+    senate = next(layer for layer in load_layers() if layer["id"] == "ca_state_senate")
+    assert senate["header"] == "CA State Senate District"
+
+
+def test_agency_without_its_column_heading_is_refused(registry):
+    registry(lambda es: entry(es, "scvosa_director_districts").pop("agency_header"))
+    with pytest.raises(ValueError, match="'scvosa_director_districts': set agency and agency_header"):
+        load_layers()
+
+
+def test_agencies_sharing_columns_have_to_share_the_heading(registry):
+    registry(lambda es: entry(es, "scvosa_director_districts").update(header="District"))
+    with pytest.raises(ValueError, match="has to match: 'District/Ward', not 'District'"):
+        load_layers()
+
+
 def test_layer_missing_from_built_data_asks_for_a_rebuild(registry):
     registry(lambda es: es.append({"id": "not_built_yet", "name_field": "X"}))
     with pytest.raises(ValueError, match="Re-run scripts/build_gpkg.py"):

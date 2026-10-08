@@ -1,6 +1,11 @@
 """The lookup itself, shared by the command line (main.py) and the app
 window (web.py): geocode each person's address, find their districts, and
 sort them into results / needs-review.
+
+Each row is a dict keyed by column: the input's own column names, then a key
+for each column this tool adds (a layer id, "matched_address"). The headings
+written to the file are kept apart from those keys. They're set in
+data/layers.json, so rewording one changes the file and nothing else.
 """
 
 import csv
@@ -12,20 +17,72 @@ from input_table import build_address, normalize
 from layers import coverage_layer_ids
 from lookup import lookup_point
 
+# Headings for the columns added besides the districts, by key.
+MATCH_COLUMNS = {"matched_address": "Matched Address", "lat": "Lat", "lon": "Lon"}
+REVIEW_COLUMNS = {"review_reason": "Review Reason", "address_searched": "Address Searched"}
 
-def unique_headers(keys: list[str], source_columns: list[str]) -> dict[str, str]:
-    """Output headers for the columns this tool adds, suffixed where the input
-    file already uses that name. Ignores case and punctuation when comparing,
-    so a contact list's "City" column doesn't sit next to a bare "city"."""
-    taken = {normalize(header) for header in source_columns}
-    mapping = {}
-    for key in keys:
-        header = key
-        while normalize(header) in taken:
-            header += "_lookup"
-        mapping[key] = header
-        taken.add(normalize(header))
-    return mapping
+
+def shared_keys(layer: dict) -> tuple[str, str]:
+    """Keys of the two columns a layer shares with the other agencies under its
+    agency_header: which agency, then its district."""
+    return f"agency:{layer['agency_header']}", f"district:{layer['agency_header']}"
+
+
+def district_columns(layers: list[dict]) -> dict[str, str]:
+    """{key: heading} for the district columns, in registry order. Each layer
+    gets its own column, keyed by its id, except agencies that split an area
+    between them (the two open space agencies): they share two columns."""
+    columns = {}
+    for layer in layers:
+        if layer["agency"]:
+            agency_key, district_key = shared_keys(layer)
+            columns.setdefault(agency_key, layer["agency_header"])
+            columns.setdefault(district_key, layer["header"])
+        else:
+            columns[layer["id"]] = layer["header"]
+    return columns
+
+
+def district_values(layers: list[dict], districts: dict) -> dict:
+    """{key: value} for one address's district columns."""
+    values = {}
+    for layer in layers:
+        value = districts.get(layer["id"])
+        if not layer["agency"]:
+            values[layer["id"]] = value
+            continue
+        agency_key, district_key = shared_keys(layer)
+        values.setdefault(agency_key, None)
+        values.setdefault(district_key, None)
+        if value:
+            # Neighboring agencies' maps can overlap by a sliver along the line
+            # they share (the open space maps by about 0.04 sq mi). An address
+            # right on it gets both, in registry order, rather than one dropped.
+            values[agency_key] = "; ".join(filter(None, [values[agency_key], layer["agency"]]))
+            values[district_key] = "; ".join(filter(None, [values[district_key], value]))
+    return values
+
+
+def name_added_columns(columns: dict[str, str],
+                       source_columns: list[str]) -> dict[str, tuple[str, str]]:
+    """{column: (key, heading)} for the columns this tool adds, kept apart from
+    the input's own. A heading gets " (Lookup)" where the input already uses
+    that name, ignoring case and punctuation, so a contact list's "City" column
+    and the official city both survive under names that tell them apart. A key
+    gets "_lookup" where it's exactly an input column's name, so neither value
+    overwrites the other."""
+    taken_keys = set(source_columns)
+    taken_headings = {normalize(header) for header in source_columns}
+    named = {}
+    for column, heading in columns.items():
+        key = column
+        while key in taken_keys:
+            key += "_lookup"
+        taken_keys.add(key)
+        while normalize(heading) in taken_headings:
+            heading += " (Lookup)"
+        named[column] = (key, heading)
+    return named
 
 
 def review_reason_for(layers: list[dict], coverage_ids: list[str], districts: dict) -> str | None:
@@ -45,13 +102,14 @@ def run(people: list[dict], source_columns: list[str], roles: dict, layers: list
     progress in distinct addresses — the only slow step; the district lookups
     that follow take a fraction of a millisecond each. Returns the rows and
     headers for both output files."""
-    layer_columns = [layer["id"] for layer in layers]
     coverage_ids = coverage_layer_ids(layers)
     # The input's own columns come through untouched; anything this tool adds
-    # gets a "_lookup" suffix where the input already uses that name, so a
-    # contact list's own "city" column and the official city both survive.
-    added = unique_headers(["matched_address", "lat", "lon"] + layer_columns, source_columns)
-    fieldnames = source_columns + list(added.values())
+    # is named so it can't collide with them (see name_added_columns).
+    added_columns = MATCH_COLUMNS | district_columns(layers)
+    named = name_added_columns(REVIEW_COLUMNS | added_columns, source_columns)
+    key = {column: named_key for column, (named_key, _) in named.items()}
+    fieldnames = source_columns + [key[column] for column in added_columns]
+    headers = source_columns + [named[column][1] for column in added_columns]
 
     addresses = [build_address(person, roles) for person in people]
     cache_conn = _get_cache_conn()
@@ -64,9 +122,9 @@ def run(people: list[dict], source_columns: list[str], roles: dict, layers: list
     for person, address in zip(people, addresses):
         geo = geocoded.get(address, UNMATCHED)
         row = dict(person)
-        row[added["matched_address"]] = geo["matched_address"]
-        row[added["lat"]] = geo["lat"]
-        row[added["lon"]] = geo["lon"]
+        row[key["matched_address"]] = geo["matched_address"]
+        row[key["lat"]] = geo["lat"]
+        row[key["lon"]] = geo["lon"]
 
         if not geo["matched"]:
             reason, districts = "unmatched_address", {}
@@ -74,19 +132,22 @@ def run(people: list[dict], source_columns: list[str], roles: dict, layers: list
             districts = lookup_point(layers, geo["lat"], geo["lon"]) if layers else {}
             reason = review_reason_for(layers, coverage_ids, districts)
 
-        for col in layer_columns:
-            row[added[col]] = districts.get(col)
+        for column, value in district_values(layers, districts).items():
+            row[key[column]] = value
 
         if reason:
-            review.append({"review_reason": reason, "address_searched": address, **row})
+            review.append({key["review_reason"]: reason, key["address_searched"]: address, **row})
         else:
             results.append(row)
 
     return {
         "fieldnames": fieldnames,
-        "review_fieldnames": ["review_reason", "address_searched"] + fieldnames,
+        "headers": headers,
+        "review_fieldnames": [key[column] for column in REVIEW_COLUMNS] + fieldnames,
+        "review_headers": [named[column][1] for column in REVIEW_COLUMNS] + headers,
         "results": results,
         "review": review,
+        "reasons": sorted({row[key["review_reason"]] for row in review}),
     }
 
 
@@ -94,12 +155,12 @@ def csv_text(outcome: dict, which: str) -> str:
     """One output file as text. The app window keeps results in memory and
     hands them over as a download, so a list of real people's addresses is
     never written anywhere on its own."""
-    fields = outcome["fieldnames"] if which == "results" else outcome["review_fieldnames"]
-    rows = outcome[which]
+    prefix = "" if which == "results" else "review_"
+    fields, headers = outcome[f"{prefix}fieldnames"], outcome[f"{prefix}headers"]
     buffer = io.StringIO()
     writer = csv.DictWriter(buffer, fieldnames=fields, lineterminator="\r\n")
-    writer.writeheader()
-    writer.writerows(rows)
+    writer.writerow(dict(zip(fields, headers)))  # headings, not the keys behind them
+    writer.writerows(outcome[which])
     return buffer.getvalue()
 
 

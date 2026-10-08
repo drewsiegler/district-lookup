@@ -9,8 +9,16 @@ are the maintainer's tools for preparing maps, not the app's for using them,
 which keeps the app small enough to hand to someone without Python installed.
 
 Registry entry fields:
-    id          layer name (also the output column name)
+    id          layer name, used in the code, the tests and review reasons
+                (missing_<id>)
     label       human-readable description
+    header      optional output column heading; defaults to label
+    agency, agency_header
+                optional, set together, for agencies that split an area between
+                them, each with its own map. Layers with the same agency_header
+                share two columns instead of one each: agency_header names the
+                agency (the agency value), then header holds its district.
+                (The two open space agencies are written this way.)
     name_field  attribute holding the district's name or number
     format      optional output template; "{}" is the value, "{:02d}" zero-pads
                 a number to two digits (e.g. "SD{:02d}" turns "015" into "SD15")
@@ -127,10 +135,18 @@ def load_layers() -> list[dict]:
             check_must_match(layer_id, available, attributes, must_match, loaded)
             scope = [clean_value(props.get(must_match["column"])) for props in attributes]
 
+        label = entry.get("label", layer_id)
+        header = entry.get("header") or label
+        agency, agency_header = entry.get("agency"), entry.get("agency_header")
+        check_agency(layer_id, header, agency, agency_header, loaded)
+
         geometries = [shape(f["geometry"]) for f in features]
         loaded.append({
             "id": layer_id,
-            "label": entry.get("label", layer_id),
+            "label": label,
+            "header": header,
+            "agency": agency,
+            "agency_header": agency_header,
             "coverage": bool(entry.get("coverage")),
             "must_match": must_match,
             # The jurisdictions this layer actually holds a map for, so main.py
@@ -162,6 +178,22 @@ def check_must_match(layer_id: str, available: list[str], attributes: list[dict]
         raise ValueError(
             f"Layer '{layer_id}': {column} {unknown} doesn't match any value in "
             f"'{other_id}' (check spelling). Known values: {sorted(known)}"
+        )
+
+
+def check_agency(layer_id: str, header: str, agency: str | None, agency_header: str | None,
+                 loaded: list[dict]) -> None:
+    if bool(agency) != bool(agency_header):
+        raise ValueError(
+            f"Layer '{layer_id}': set agency and agency_header together in {REGISTRY_PATH.name}, "
+            f"or neither."
+        )
+    sharing = next((layer for layer in loaded if agency_header
+                    and layer["agency_header"] == agency_header), None)
+    if sharing and sharing["header"] != header:
+        raise ValueError(
+            f"Layer '{layer_id}': shares the '{agency_header}' column with '{sharing['id']}', "
+            f"so its header has to match: '{sharing['header']}', not '{header}'."
         )
 
 
