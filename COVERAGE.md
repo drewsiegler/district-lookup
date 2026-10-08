@@ -6,6 +6,8 @@ Updated 2026-10-08. What's loaded, what's still to source, and where the gaps ar
 
 County supervisorial, U.S. Congress, CA State Senate, CA State Assembly, all 15 cities and towns (official city limits), and every unified, elementary and high school district's overall boundary.
 
+Congressional districts are written with their representative, `US-CA16—Rep. Sam Liccardo`, like the supervisors. The Census map doesn't name representatives, so the four who represent the county (Districts 16–19) are listed by hand under `names` in `data/layers.json`, and need updating there when a new one takes office. Districts 13–15 touch the county only in slivers along its edge, about a hundredth of a square mile each, where the Census draws the line slightly differently; an address there gets the district number alone.
+
 ## City council districts
 
 The `City` column covers all 15 cities and towns. `Council District` is filled in only for cities that elect by district:

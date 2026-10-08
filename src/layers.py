@@ -25,6 +25,11 @@ Registry entry fields:
     pattern     optional regex with named groups, for pulling pieces out of a
                 longer value; format then refers to the groups by name
                 (e.g. "D{num}—Sup. {name}")
+    names       optional {value as written: name}, for maps that don't carry the
+                officeholder. The name is added after an em dash, the way the
+                county's map gives its supervisors: "US-CA16" becomes
+                "US-CA16—Rep. Sam Liccardo". A value with no name listed is
+                written as it is.
     coverage    optional true: this layer's footprint is the whole area the
                 tool covers (see main.py's outside_coverage_area check)
     must_match  optional {"layer": <id of an earlier layer>, "column": <attribute
@@ -89,6 +94,18 @@ def format_value(value, fmt: str | None = None, pattern: str | None = None) -> s
     return fmt.format(int(text) if text.isdigit() else text)
 
 
+def add_names(layer_id: str, values: list[str | None], names: dict[str, str]) -> list[str | None]:
+    """Each value with its name from the registry's names, if it has one. A name
+    for a value the map doesn't have is a typo, so it stops the run."""
+    unknown = sorted(set(names) - set(values))
+    if unknown:
+        raise ValueError(
+            f"Layer '{layer_id}': there's a name for {unknown}, but its map has no such "
+            f"value (check spelling). Its values: {sorted(v for v in set(values) if v)}"
+        )
+    return [f"{value}—{names[value]}" if value in names else value for value in values]
+
+
 def read_layer_features(layer_id: str) -> list[dict]:
     path = RUNTIME_DIR / f"{layer_id}.json"
     if not path.exists():
@@ -128,6 +145,7 @@ def load_layers() -> list[dict]:
             display = [format_value(props.get(name_field), fmt, pattern) for props in attributes]
         except (ValueError, KeyError, IndexError) as err:
             raise ValueError(f"Layer '{layer_id}': can't apply format {fmt!r}: {err}") from err
+        display = add_names(layer_id, display, entry.get("names") or {})
 
         must_match = entry.get("must_match")
         scope = [None] * len(features)

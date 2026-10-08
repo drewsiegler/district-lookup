@@ -120,7 +120,7 @@ The columns added, in order:
 | City | `San Jose` | the official city or town; blank on unincorporated land |
 | Council District | `7` | Morgan Hill uses letters `A`–`D`; blank in at-large cities |
 | Supervisor District | `D2—Sup. Betty Duong` | |
-| US Congress | `US-CA16` | |
+| US Congress | `US-CA16—Rep. Sam Liccardo` | |
 | CA State Senate | `SD15` | |
 | CA Assembly | `AD25` | |
 | Unified School District | `Santa Clara Unified School District` | |

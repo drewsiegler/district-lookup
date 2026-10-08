@@ -2,7 +2,7 @@
 
 import pytest
 
-from layers import clean_value, format_value
+from layers import add_names, clean_value, format_value
 
 
 @pytest.mark.parametrize("value, expected", [
@@ -45,3 +45,14 @@ def test_value_that_does_not_fit_its_format_raises():
 def test_value_that_does_not_match_its_pattern_raises():
     with pytest.raises(ValueError, match="doesn't match pattern"):
         format_value("Area 2", "D{num}", r"District (?P<num>\d+)")
+
+
+def test_names_follow_their_value_with_an_em_dash():
+    names = {"US-CA16": "Rep. Sam Liccardo"}
+    assert add_names("us_congress", ["US-CA16", "US-CA13", None], names) == \
+        ["US-CA16—Rep. Sam Liccardo", "US-CA13", None]  # no name listed: written as it is
+
+
+def test_name_for_a_value_the_map_does_not_have_raises():
+    with pytest.raises(ValueError, match=r"'us_congress': there's a name for \['US-CA61'\]"):
+        add_names("us_congress", ["US-CA16"], {"US-CA61": "Rep. Sam Liccardo"})

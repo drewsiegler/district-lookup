@@ -69,6 +69,12 @@ def test_must_match_layer_listed_below_is_refused(registry):
         load_layers()
 
 
+def test_misspelled_name_is_refused(registry):
+    registry(lambda es: entry(es, "us_congress")["names"].update({"CA16": "Rep. Sam Liccardo"}))
+    with pytest.raises(ValueError, match=r"there's a name for \['CA16'\].*'US-CA16'"):
+        load_layers()
+
+
 def test_heading_defaults_to_the_label(registry):
     registry(lambda es: entry(es, "ca_state_senate").pop("header"))
     senate = next(layer for layer in load_layers() if layer["id"] == "ca_state_senate")

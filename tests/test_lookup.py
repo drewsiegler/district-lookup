@@ -22,7 +22,7 @@ def test_tully_road_the_original_example(layers):
     assert d["city"] == "San Jose"
     assert d["council_district"] == "7"
     assert d["santa_clara_county_supervisorial"] == "D2—Sup. Betty Duong"
-    assert d["us_congress"] == "US-CA16"
+    assert d["us_congress"] == "US-CA16—Rep. Sam Liccardo"
     assert d["ca_state_senate"] == "SD15"
     assert d["ca_state_assembly"] == "AD25"
     assert d["elementary_school_districts"] == "Evergreen Elementary School District"
@@ -73,6 +73,9 @@ def test_tully_road_the_original_example(layers):
     ("gilroy_rosanna_st", "community_college_trustee_area", "TA4"),
     ("morgan_hill_peak_ave", "community_college_trustee_area", "TA2"),
     ("campbell_city_hall", "scv_water_board_districts", "D4"),
+    ("santa_clara_city_hall", "us_congress", "US-CA17—Rep. Ro Khanna"),
+    ("san_jose_city_hall", "us_congress", "US-CA18—Rep. Zoe Lofgren"),
+    ("oak_grove_district_office", "us_congress", "US-CA19—Rep. Jimmy Panetta"),
     ("cupertino_city_hall", "scv_water_board_districts", "D5"),
     ("stanford_campus", "scv_water_board_districts", "D7"),
 ])

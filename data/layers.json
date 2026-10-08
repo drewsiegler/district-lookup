@@ -30,7 +30,13 @@
       "label": "U.S. Congressional District",
       "header": "US Congress",
       "name_field": "CD119FP",
-      "format": "US-CA{:02d}"
+      "format": "US-CA{:02d}",
+      "names": {
+        "US-CA16": "Rep. Sam Liccardo",
+        "US-CA17": "Rep. Ro Khanna",
+        "US-CA18": "Rep. Zoe Lofgren",
+        "US-CA19": "Rep. Jimmy Panetta"
+      }
     },
     {
       "id": "ca_state_senate",
