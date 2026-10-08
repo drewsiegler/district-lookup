@@ -182,7 +182,16 @@
       "header": "County Board of Education",
       "name_field": "District",
       "pattern": "D(?P<num>\\d+)",
-      "format": "TA{num}"
+      "format": "TA{num}",
+      "names": {
+        "TA1": "Trustee Jessica Speiser",
+        "TA2": "Trustee Tara Sreekrishnan",
+        "TA3": "Trustee Don Rocha",
+        "TA4": "Trustee Jorge Pacheco, Jr.",
+        "TA5": "Trustee Victoria Chon",
+        "TA6": "Trustee Maimona Afzal Berta",
+        "TA7": "Trustee Raeena Lari"
+      }
     },
     {
       "id": "midpeninsula_regional_open_space_district",

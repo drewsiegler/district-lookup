@@ -27,7 +27,7 @@ def test_tully_road_the_original_example(layers):
     assert d["ca_state_assembly"] == "AD25—Asm. Ash Kalra"
     assert d["elementary_school_districts"] == "Evergreen Elementary School District"
     assert d["secondary_school_districts"] == "East Side Union High School District"
-    assert d["scc_board_of_education_trustee_areas"] == "TA7"
+    assert d["scc_board_of_education_trustee_areas"] == "TA7—Trustee Raeena Lari"
     assert d["midpeninsula_regional_open_space_district"] is None  # east of Midpen's boundary
     assert d["scvosa_director_districts"] == "D7—Dir. Kalvin Gill"
     assert d["scv_water_board_districts"] == "D6"
@@ -63,9 +63,10 @@ def test_tully_road_the_original_example(layers):
     ("los_altos_city_hall", "high_school_trustee_area", "TA4"),
     ("oak_grove_district_office", "elementary_trustee_area", "TA5"),
     ("campbell_city_hall", "elementary_trustee_area", "TA3"),
-    ("campbell_city_hall", "scc_board_of_education_trustee_areas", "TA3"),
-    ("oak_grove_district_office", "scc_board_of_education_trustee_areas", "TA4"),
-    ("stanford_campus", "scc_board_of_education_trustee_areas", "TA1"),
+    ("campbell_city_hall", "scc_board_of_education_trustee_areas", "TA3—Trustee Don Rocha"),
+    ("oak_grove_district_office", "scc_board_of_education_trustee_areas",
+     "TA4—Trustee Jorge Pacheco, Jr."),
+    ("stanford_campus", "scc_board_of_education_trustee_areas", "TA1—Trustee Jessica Speiser"),
     # Ward 2 on Midpen's 2011 map; the 2022 redistricting moved it to Ward 1.
     ("cupertino_city_hall", "midpeninsula_regional_open_space_district", "Ward 1—Dir. Craig Gleason"),
     ("stanford_campus", "midpeninsula_regional_open_space_district", "Ward 2—Dir. Yoriko Kishimoto"),

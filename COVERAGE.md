@@ -50,7 +50,7 @@ All four community college districts — Foothill-De Anza, San José-Evergreen, 
 
 ## County Board of Education
 
-- **Loaded:** Santa Clara County Board of Education trustee areas, written `TA1`–`TA7` — the map approved January 10, 2022, drawn from the 2020 Census. It matches SCCOE's own published map, "Santa Clara County Board of Education Trustee Areas (2022)" on ArcGIS Online, exactly.
+- **Loaded:** Santa Clara County Board of Education trustee areas, written `TA1`–`TA7` with their trustee (`TA7—Trustee Raeena Lari`, listed by hand under `names` in `data/layers.json`) — the map approved January 10, 2022, drawn from the 2020 Census. It matches SCCOE's own published map, "Santa Clara County Board of Education Trustee Areas (2022)" on ArcGIS Online, exactly.
 
   It covers the whole county except two stretches of mostly empty eastern hills, where the column is blank:
   - about 119 sq mi in Patterson Joint Unified, a school district run from Stanislaus County and so outside this board's territory;
