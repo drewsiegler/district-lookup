@@ -121,8 +121,8 @@ The columns added, in order:
 | Council District | `7` | Morgan Hill uses letters `A`–`D`; blank in at-large cities |
 | Supervisor District | `D2—Sup. Betty Duong` | |
 | US Congress | `US-CA16—Rep. Sam Liccardo` | |
-| CA State Senate | `SD15` | |
-| CA Assembly | `AD25` | |
+| CA State Senate | `SD15—Sen. Dave Cortese` | `SD10—Vacant` while that seat is empty |
+| CA Assembly | `AD25—Asm. Ash Kalra` | |
 | Unified School District | `Santa Clara Unified School District` | |
 | Unified Trustee Area | `TA4` | |
 | Elementary School District | `Evergreen Elementary School District` | |

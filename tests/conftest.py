@@ -29,6 +29,7 @@ POINTS = {
     "moreland_district_office": (37.286824142167, -121.98560609869),
     "cupertino_city_hall": (37.31923968861, -122.029158712914),
     "los_altos_city_hall": (37.381396700712, -122.113976377067),
+    "milpitas_city_hall": (37.432556459265, -121.898678549646),
     "mountain_view_city_hall": (37.390033272844, -122.081436311181),
     "oak_grove_district_office": (37.232465839659, -121.786098911989),
     "san_jose_city_hall": (37.338163163635, -121.886224209159),

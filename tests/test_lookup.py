@@ -23,8 +23,8 @@ def test_tully_road_the_original_example(layers):
     assert d["council_district"] == "7"
     assert d["santa_clara_county_supervisorial"] == "D2—Sup. Betty Duong"
     assert d["us_congress"] == "US-CA16—Rep. Sam Liccardo"
-    assert d["ca_state_senate"] == "SD15"
-    assert d["ca_state_assembly"] == "AD25"
+    assert d["ca_state_senate"] == "SD15—Sen. Dave Cortese"
+    assert d["ca_state_assembly"] == "AD25—Asm. Ash Kalra"
     assert d["elementary_school_districts"] == "Evergreen Elementary School District"
     assert d["secondary_school_districts"] == "East Side Union High School District"
     assert d["scc_board_of_education_trustee_areas"] == "TA7"
@@ -76,6 +76,13 @@ def test_tully_road_the_original_example(layers):
     ("santa_clara_city_hall", "us_congress", "US-CA17—Rep. Ro Khanna"),
     ("san_jose_city_hall", "us_congress", "US-CA18—Rep. Zoe Lofgren"),
     ("oak_grove_district_office", "us_congress", "US-CA19—Rep. Jimmy Panetta"),
+    ("santa_clara_city_hall", "ca_state_senate", "SD10—Vacant"),
+    ("stanford_campus", "ca_state_senate", "SD13—Sen. Josh Becker"),
+    ("stanford_campus", "ca_state_assembly", "AD23—Asm. Marc Berman"),
+    ("milpitas_city_hall", "ca_state_assembly", "AD24—Asm. Alex Lee"),
+    ("cupertino_city_hall", "ca_state_assembly", "AD26—Asm. Patrick Ahrens"),
+    ("morgan_hill_peak_ave", "ca_state_assembly", "AD28—Asm. Gail Pellerin"),
+    ("gilroy_rosanna_st", "ca_state_assembly", "AD29—Asm. Robert Rivas"),
     ("cupertino_city_hall", "scv_water_board_districts", "D5"),
     ("stanford_campus", "scv_water_board_districts", "D7"),
 ])

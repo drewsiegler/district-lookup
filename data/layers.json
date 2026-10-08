@@ -43,14 +43,27 @@
       "label": "CA State Senate District",
       "header": "CA State Senate",
       "name_field": "SLDUST",
-      "format": "SD{:02d}"
+      "format": "SD{:02d}",
+      "names": {
+        "SD10": "Vacant",
+        "SD13": "Sen. Josh Becker",
+        "SD15": "Sen. Dave Cortese"
+      }
     },
     {
       "id": "ca_state_assembly",
       "label": "CA State Assembly District",
       "header": "CA Assembly",
       "name_field": "SLDLST",
-      "format": "AD{:02d}"
+      "format": "AD{:02d}",
+      "names": {
+        "AD23": "Asm. Marc Berman",
+        "AD24": "Asm. Alex Lee",
+        "AD25": "Asm. Ash Kalra",
+        "AD26": "Asm. Patrick Ahrens",
+        "AD28": "Asm. Gail Pellerin",
+        "AD29": "Asm. Robert Rivas"
+      }
     },
     {
       "id": "unified_school_districts",
