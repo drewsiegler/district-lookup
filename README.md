@@ -130,7 +130,7 @@ The columns added, in order:
 | High School District | `East Side Union High School District` | |
 | Secondary Trustee Area | `TA3` | for the high school district |
 | Community College District | `Gavilan Joint Community College District` | |
-| College Trustee Area | `TA4` | Foothill-De Anza's, San José-Evergreen's and West Valley-Mission's come with the trustee, like `TA4—Trustee Pearl Cheng` |
+| College Trustee Area | `TA4—Trustee Pearl Cheng` | |
 | County Board of Education | `TA7—Trustee Raeena Lari` | its trustee area and trustee |
 | Open Space District | `Midpeninsula Regional Open Space District` | or `Santa Clara Valley Open Space Authority` |
 | District/Ward | `Ward 1—Dir. Craig Gleason` | a Midpeninsula ward, or an Open Space Authority district like `D7—Dir. Kalvin Gill`, with its director |
