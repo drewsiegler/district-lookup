@@ -28,8 +28,9 @@ from lookup import lookup_point
 
 URL = f"http://{web.HOST}:{web.PORT}/"
 # San José City Hall, where the Census geocoder places it (tests/conftest.py).
+# Only columns that carry no officeholder's name, so an election never breaks it.
 SELF_TEST_POINT = (37.338163163635, -121.886224209159)
-SELF_TEST_EXPECTED = {"city": "San Jose", "council_district": "3",
+SELF_TEST_EXPECTED = {"city": "San Jose", "unified_school_districts": "San Jose Unified School District",
                       "unified_trustee_area": "TA3", "scv_water_board_districts": "D2"}
 
 

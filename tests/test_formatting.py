@@ -60,10 +60,10 @@ def test_name_for_a_value_the_map_does_not_have_raises():
 
 def test_names_on_a_must_match_layer_go_under_each_place():
     # Every city numbers its council districts from 1, so Campbell's names
-    # mustn't land on San Jose's districts of the same number.
+    # mustn't land on Santa Clara's districts of the same number.
     names = {"Campbell": {"3": "Cm. Dan Furtado"}}
-    assert add_names("council_district", ["3", "3", None], names, ["Campbell", "San Jose", "Gilroy"]) \
-        == ["3—Cm. Dan Furtado", "3", None]
+    assert add_names("council_district", ["3", "3", None], names,
+                     ["Campbell", "Santa Clara", "Gilroy"]) == ["3—Cm. Dan Furtado", "3", None]
 
 
 def test_names_on_a_must_match_layer_without_a_place_are_refused():

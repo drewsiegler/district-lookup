@@ -20,7 +20,7 @@ def at(layers, name):
 def test_tully_road_the_original_example(layers):
     d = at(layers, "tully_rd_san_jose")
     assert d["city"] == "San Jose"
-    assert d["council_district"] == "7"
+    assert d["council_district"] == "7—Cm. Bien Doan"
     assert d["santa_clara_county_supervisorial"] == "D2—Sup. Betty Duong"
     assert d["us_congress"] == "US-CA16—Rep. Sam Liccardo"
     assert d["ca_state_senate"] == "SD15—Sen. Dave Cortese"
@@ -41,7 +41,7 @@ def test_tully_road_the_original_example(layers):
     ("campbell_city_hall", "high_school_trustee_area", "TA3"),
     ("gilroy_rosanna_st", "council_district", "5"),
     ("gilroy_rosanna_st", "unified_trustee_area", "TA7"),
-    ("san_jose_city_hall", "council_district", "3"),
+    ("san_jose_city_hall", "council_district", "3—Cm. Anthony Tordillos"),
     ("san_jose_city_hall", "unified_trustee_area", "TA3"),
     ("san_jose_usd_district_office", "unified_trustee_area", "TA2"),
     ("santa_clara_city_hall", "unified_trustee_area", "TA4"),
