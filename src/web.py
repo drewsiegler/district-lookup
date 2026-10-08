@@ -16,17 +16,19 @@ import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from urllib.request import urlopen
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import about
 import pipeline
+from app_paths import ROOT
 from input_table import describe_roles, read_people
 from layers import load_layers
 
 HOST, PORT = "127.0.0.1", 8734
-PAGE = (Path(__file__).resolve().parent / "web_page.html").read_text(encoding="utf-8")
-ICON_PATH = Path(__file__).resolve().parent.parent / "assets" / "AppIcon.png"
+PAGE = (ROOT / "src" / "web_page.html").read_text(encoding="utf-8")
+ICON_PATH = ROOT / "assets" / "AppIcon.png"
 
 state = {"status": "idle", "done": 0, "total": 0, "message": "", "summary": None, "error": None}
 state_lock = threading.Lock()
@@ -35,6 +37,8 @@ layers_cache = []
 # list of real people's addresses can't be left behind in the project folder
 # (or committed by accident). Downloading is how you get them out.
 last_outcome = {"results": None, "review": None}
+# Which of those have been downloaded, so quitting can warn before losing them.
+downloaded = set()
 # Filled in by a background check when the app starts; the page asks for it.
 update_info = {"checked": False, "update": None}
 
@@ -71,6 +75,7 @@ def run_job(filename: str, text: str):
         with state_lock:
             last_outcome["results"] = pipeline.csv_text(outcome, "results")
             last_outcome["review"] = pipeline.csv_text(outcome, "review")
+            downloaded.clear()
         update(status="done", done=len(people), message="", summary={
             "results": len(outcome["results"]),
             "review": len(outcome["review"]),
@@ -117,6 +122,8 @@ class Handler(BaseHTTPRequestHandler):
             if text is None:
                 self.send(404, b"nothing to download yet", "text/plain")
                 return
+            with state_lock:
+                downloaded.add(which)
             filename = "results.csv" if which == "results" else "needs_review.csv"
             self.send(200, text.encode("utf-8-sig"), "text/csv", {
                 "Content-Disposition": f'attachment; filename="{filename}"',
@@ -142,18 +149,61 @@ class Handler(BaseHTTPRequestHandler):
         self.send(200, b'{"started": true}', "application/json")
 
 
-def main():
+def busy() -> bool:
+    with state_lock:
+        return state["status"] == "running"
+
+
+def unsaved_results() -> bool:
+    """Results that exist only in memory and haven't been downloaded yet."""
+    with state_lock:
+        return last_outcome["results"] is not None and "results" not in downloaded
+
+
+class Server(ThreadingHTTPServer):
+    # Python marks its servers' ports as reusable, which on Windows would let a
+    # second copy of the app listen on the same port alongside the first.
+    allow_reuse_address = sys.platform != "win32"
+
+
+def already_running(port: int = PORT) -> bool:
+    """Whether the port is held by another copy of District Lookup."""
+    try:
+        with urlopen(f"http://{HOST}:{port}/about", timeout=2) as response:
+            return "version" in json.loads(response.read())
+    except (OSError, ValueError):
+        return False
+
+
+def start(port: int = PORT) -> Server | None:
+    """Takes the port, loads the maps, and starts the update check. Returns None
+    if another copy of the app already has the port, so the caller can just
+    open that one's page; raises OSError if something else has it."""
     global layers_cache
+    try:
+        server = Server((HOST, port), Handler)
+    except OSError:
+        if already_running(port):
+            return None
+        raise
     print("Loading district maps…")
     layers_cache = load_layers()
     print(f"Loaded {len(layers_cache)} layer(s).")
     threading.Thread(target=check_for_update, daemon=True).start()
+    return server
 
-    server = ThreadingHTTPServer((HOST, PORT), Handler)
+
+def main():
     url = f"http://{HOST}:{PORT}/"
+    server = start()
+    if server is None:
+        print(f"District Lookup is already running at {url}; opening it.")
+        webbrowser.open(url)
+        return
     print(f"\nDistrict Lookup is running at {url}")
     print("Leave this window open while you use it. Press Control-C when you're done.\n")
-    webbrowser.open(url)
+    if "--no-browser" not in sys.argv:
+        webbrowser.open(url)
     try:
         server.serve_forever()
     except KeyboardInterrupt:

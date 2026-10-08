@@ -10,7 +10,37 @@ Results are never saved anywhere on their own: the app window hands them over on
 
 ## Install
 
-Needs Python 3:
+Download the version for your computer from the **[latest release](https://github.com/drewsiegler/district-lookup/releases/latest)**; the release page says which file is which. Everything it needs is inside, district maps included, so there's nothing else to install.
+
+The apps aren't signed with paid developer certificates, so the first time you open one, your computer warns that it can't tell who made it. Here's how to get past that on each system. You only need to do it once per version.
+
+### Mac
+
+1. Open the `.dmg` file and drag **District Lookup** into the Applications folder.
+2. Open it from Applications. macOS says it can't check it for malicious software.
+3. On **macOS 15 or later**, click **Done**, open **System Settings → Privacy & Security**, scroll down to the message about District Lookup, click **Open Anyway** and confirm. On **macOS 14 or earlier**, right-click District Lookup in Applications, choose **Open**, then click **Open** again.
+
+### Windows
+
+1. Run the file ending `windows-setup.exe`.
+2. If Windows says "Windows protected your PC", click **More info**, then **Run anyway**.
+3. Click through the installer. It installs just for you, so it doesn't ask for an administrator password, and puts District Lookup in the Start menu.
+
+### Chromebook
+
+District Lookup runs in the Chromebook's built-in Linux, which is off until you turn it on. Some school- and work-managed Chromebooks don't allow it.
+
+1. Turn on Linux: **Settings → About ChromeOS → Developers → Linux development environment → Set up**. It takes a few minutes.
+2. Download the `.deb` file for your Chromebook, double-click it in the **Files** app, and choose **Install**.
+3. Open **District Lookup** from the launcher's **Linux apps** folder. Your lookup page opens in Chrome.
+
+### Linux
+
+On Debian, Ubuntu and similar systems, install the `.deb` (double-click it, or run `sudo apt install ./district-lookup_*.deb`) and open District Lookup from your apps. On other systems, unpack the `.tar.gz` and run `district-lookup` inside it.
+
+### From source
+
+For developers, or anyone who'd rather run the code directly. Needs Python 3:
 
 ```bash
 cd district-lookup
@@ -19,19 +49,21 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-That's about 58 MB, with nothing to compile. The prepared district maps are included, so you can start straight away.
+That's about 58 MB, with nothing to compile. Then double-click **Start District Lookup.command** in Finder, or run `python src/web.py`. Instead of the small window the installed app shows, a Terminal window stays open while it runs; closing it shuts District Lookup down. If macOS won't open the launcher the first time, use the same steps as for the Mac app above.
 
 ## Look up a list
 
 ### The app window
 
-Double-click **Start District Lookup.command** in Finder, or run `python src/web.py`. It opens a page in your browser: drop a file on it, pick one from your computer, or paste a list straight in, then click Start. When it's done you get two download buttons. Leave the small Terminal window open while you use it; closing it shuts the app down.
+Open **District Lookup**. A small window says it's running, and your lookup page opens in your web browser: drop a file on it, pick one from your computer, or paste a list straight in, then click Start. When it's done you get two download buttons.
+
+Keep the small window open while you use it. Closing it, or clicking **Quit**, shuts District Lookup down; if you haven't downloaded your results yet, it asks first, since they aren't saved anywhere else. If you close the browser tab by mistake, click **Open the lookup page** in the small window to get it back.
 
 Download before starting another lookup — the next one replaces the results.
 
-The first time you open the launcher, macOS may say it can't verify the developer. On macOS 14 or earlier, right-click it, choose **Open**, then **Open** again. On macOS 15 or later, open **System Settings → Privacy & Security**, scroll down and click **Open Anyway**. You only need to do that once.
-
 ### The command line
+
+From source only:
 
 ```bash
 python src/main.py path/to/list.csv
@@ -85,9 +117,11 @@ Boundaries change. Verify anything you'd act on against the county Registrar of 
 
 ## Updating
 
-When a new version is out, usually because district maps have changed, a banner at the top of the app window says so, with a link to download it. The version you have is shown at the bottom of the window.
+When a new version is out, usually because district maps have changed, a banner at the top of the lookup page says so, with a link to download it. The version you have is shown at the bottom of the page.
 
-If you got the project with git, update it by running `git pull` in the `district-lookup` folder. If you downloaded a ZIP from GitHub, download the new one and replace the folder; if you keep a list inside the folder, move it out first. The first lookup afterwards may take a little longer while it re-checks addresses with the Census.
+Install the new version over the old one, the same way as the first time: on a Mac, drag it into Applications and choose **Replace**; on Windows, run the new installer; on a Chromebook or Linux, install the new `.deb`. Your earlier address lookups are kept, so the next lookup stays quick. Expect the first-open warning again, once, for each new version.
+
+Running from source, update with `git pull` in the `district-lookup` folder, or, if you downloaded a ZIP from GitHub, download the new one and replace the folder (move out any list you keep inside it first).
 
 ## Support this project
 

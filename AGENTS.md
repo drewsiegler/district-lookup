@@ -17,6 +17,7 @@ Python 3.10 or newer. Work inside the repo's `.venv` (`source .venv/bin/activate
 - One test file: `python -m pytest tests/test_lookup.py`
 - Rebuild maps: `pip install -r requirements-build.txt`, then `python scripts/build_gpkg.py`. `tests/test_build.py` skips unless these build dependencies are installed.
 - Run the app window: `python src/web.py` (serves on 127.0.0.1:8734). CLI: `python src/main.py path/to/list.csv`
+- Build the installed app locally: `pip install -r requirements-package.txt`, then `python -m PyInstaller --noconfirm --clean packaging/district_lookup.spec`. Check it with `"dist/District Lookup.app/Contents/MacOS/District Lookup" --self-test` (macOS) or the equivalent executable elsewhere.
 
 No linter or formatter is configured, so match the surrounding style: type hints on signatures, lines kept to about 100–110 characters, and module docstrings that explain why the code works the way it does.
 
@@ -32,7 +33,7 @@ Tests and the build must pass before a change counts as done.
 
 ## Dependencies
 
-The runtime stays at `shapely` + `requests`: small pure wheels with nothing to compile, so the app can later be bundled into a Mac app for people who don't have Python. GeoPandas, GDAL, pyogrio and pandas belong only in `requirements-build.txt` and `scripts/`. Never import them from `src/`. **Ask before adding any dependency**, to any requirements file.
+The runtime stays at `shapely` + `requests`: small pure wheels with nothing to compile, so PyInstaller can bundle it into apps for people who don't have Python. The installed app's small window uses Tk from the standard library (`tkinter`), imported only inside `src/launcher.py`. PyInstaller belongs only in `requirements-package.txt`. GeoPandas, GDAL, pyogrio and pandas belong only in `requirements-build.txt` and `scripts/`. Never import them from `src/`. **Ask before adding any dependency**, to any requirements file.
 
 ## Tests
 
@@ -81,9 +82,18 @@ To check whether a school board elects at-large or by trustee area, read that di
 
 README.md, COVERAGE.md, page text and error messages are read by organizers. Use plain language, no jargon, and say what to do next. When code changes, update whichever of the three docs covers it, and put new material in the doc for its audience.
 
+## Installed apps
+
+`.github/workflows/build-apps.yml` builds the Mac (Apple silicon and Intel), Windows, and Linux/Chromebook (x64 and ARM) apps on GitHub's machines with `packaging/district_lookup.spec`. It installs each one and runs `--self-test`, and for a `v*` tag it makes a draft release. The apps are unsigned on purpose (no paid certificates), so don't add signing steps without asking.
+
+- The installed app starts at `src/launcher.py`: a small Tk window stands in for the Terminal, and closing it quits, after a warning if results haven't been downloaded. Running from source (`src/web.py`) keeps the Terminal behavior.
+- `src/app_paths.py` decides where files are. Read-only files come from the project folder, or from inside the app when installed. The geocode cache stays in `data/` from source, but an installed app keeps it in the per-user app data folder, so updates don't wipe it.
+- Anything the app reads at runtime must be listed in `datas` in the spec, or installed apps won't have it.
+- A second launch finds the first copy on its port (`web.already_running`) and just opens its page.
+
 ## Versions and releases
 
-`VERSION` in `src/about.py` is the app's version, shown in the app window's footer. A release bumps it there and nowhere else, and is published on GitHub tagged `v` + VERSION (`v1.1.0`), so the update check can compare numbers. The release's title is shown in the app's update banner, so make it say what changed in plain words ("New Los Altos SD trustee areas"). Ask before publishing a release, like any push.
+`VERSION` in `src/about.py` is the app's version, shown in the app window's footer. A release bumps it there and nowhere else, and is published on GitHub tagged `v` + VERSION (`v1.1.0`), so the update check can compare numbers. The release's title is shown in the app's update banner, so make it say what changed in plain words ("New Los Altos SD trustee areas"). Ask before pushing a version tag or publishing a release, like any push. The steps are in docs/adding-maps.md.
 
 ## Commits and boundaries
 

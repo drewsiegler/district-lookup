@@ -33,9 +33,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import pipeline
 from input_table import describe_roles, read_people
+from app_paths import DATA_DIR
 from layers import load_layers
-
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 
 def main():

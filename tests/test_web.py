@@ -92,3 +92,27 @@ def test_update_check_records_its_answer(monkeypatch):
     monkeypatch.setattr(web.about, "check_for_update", lambda: None)  # offline, or already current
     web.check_for_update()
     assert web.update_info == {"checked": True, "update": None}
+
+
+def test_a_second_copy_finds_the_first_instead_of_starting(server):
+    port = int(server.rsplit(":", 1)[1])
+    assert web.already_running(port)
+    assert web.start(port) is None  # the caller then just opens the running copy's page
+
+
+def test_nothing_running_on_a_free_port():
+    import socket
+    with socket.socket() as probe:
+        probe.bind(("127.0.0.1", 0))
+        free_port = probe.getsockname()[1]
+    assert not web.already_running(free_port)
+
+
+def test_quitting_warns_only_until_results_are_downloaded(server, fake_geocoder, monkeypatch):
+    monkeypatch.setattr(web, "downloaded", set())
+    assert not web.unsaved_results()
+    fake_geocoder["1660 Tully Rd, San Jose, CA 95122"] = POINTS["tully_rd_san_jose"]
+    run_and_wait(server, "pasted list", "1660 Tully Rd, San Jose, CA 95122\n")
+    assert web.unsaved_results()
+    get(f"{server}/download/results")
+    assert not web.unsaved_results()

@@ -31,12 +31,12 @@ Registry entry fields:
 import json
 import math
 import re
-from pathlib import Path
 
 from shapely import STRtree
 from shapely.geometry import shape
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+from app_paths import DATA_DIR
+
 GPKG_PATH = DATA_DIR / "districts.gpkg"
 RUNTIME_DIR = DATA_DIR / "districts"
 REGISTRY_PATH = DATA_DIR / "layers.json"

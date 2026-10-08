@@ -13,14 +13,15 @@ import csv
 import io
 import sqlite3
 import time
-from pathlib import Path
 
 import requests
+
+from app_paths import cache_path
 
 ONE_ADDRESS_URL = "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress"
 BATCH_URL = "https://geocoding.geo.census.gov/geocoder/locations/addressbatch"
 BENCHMARK = "Public_AR_Current"
-CACHE_PATH = Path(__file__).resolve().parent.parent / "data" / "geocode_cache.sqlite"
+CACHE_PATH = cache_path()
 # Small enough that progress moves every few seconds; the service allows 10,000.
 BATCH_SIZE = 250
 REQUEST_DELAY_SECONDS = 0.2  # courtesy pause between one-at-a-time retries

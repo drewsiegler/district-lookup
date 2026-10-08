@@ -16,3 +16,8 @@ data/geocode_cache.sqlite
 # doesn't carry a new multi-megabyte copy in its history on every rebuild;
 # data/districts/ (what the app reads) is committed instead.
 *.gpkg
+
+# PyInstaller's output when the installed app is built locally
+# (packaging/district_lookup.spec); releases are built by GitHub instead.
+/build/
+/dist/

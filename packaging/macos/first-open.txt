@@ -1,0 +1,23 @@
+Installing District Lookup
+
+1. Drag "District Lookup" onto the Applications folder in this window.
+2. Open it from your Applications folder.
+
+The first time, macOS says it can't check District Lookup for malicious
+software, because the app isn't signed with a paid Apple developer account.
+To open it anyway:
+
+  macOS 15 (Sequoia) or later:
+    Click Done. Open System Settings > Privacy & Security, scroll down to
+    the message about District Lookup, and click Open Anyway. Confirm with
+    your password, then click Open Anyway once more.
+
+  macOS 14 (Sonoma) or earlier:
+    Right-click (or Control-click) District Lookup in Applications, choose
+    Open, then click Open in the message that appears.
+
+You only need to do this once per version. After that it opens like any
+other app: a small window says it's running, and your lookup page opens in
+your web browser.
+
+The source code is public: https://github.com/drewsiegler/district-lookup

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=District Lookup
+Comment=Find every electoral district for a list of addresses
+Exec=/opt/district-lookup/district-lookup
+Icon=district-lookup
+Terminal=false
+Categories=Office;Utility;
+StartupWMClass=district-lookup

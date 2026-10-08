@@ -1,0 +1,132 @@
+# Builds the downloadable apps on GitHub's own machines, one per system.
+#
+# - Pushing a version tag (v1.2.3) builds them all and makes a DRAFT release
+#   with every file attached. Nobody sees it until it's published by hand from
+#   the Releases page, and the app's update banner only notices published ones.
+# - "Run workflow" on the Actions tab builds them without releasing anything;
+#   the files are under that run's Artifacts, for trying a build out first.
+#
+# Every build is installed and runs its self-test (src/launcher.py) before it's
+# kept, so a release can't go out with an app that doesn't start.
+name: Build the apps
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: "Mac (Apple silicon)", runner: macos-15 }
+          - { name: "Mac (Intel)", runner: macos-15-intel }
+          - { name: "Windows", runner: windows-2022 }
+          - { name: "Linux and Chromebook (x64)", runner: ubuntu-22.04 }
+          - { name: "Linux and Chromebook (ARM)", runner: ubuntu-22.04-arm }
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Check the tag matches the app's version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          version=$(sed -n 's/^VERSION = "\(.*\)"/\1/p' src/about.py)
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME doesn't match VERSION = \"$version\" in src/about.py"
+            exit 1
+          fi
+
+      - name: Install
+        run: python -m pip install -r requirements-dev.txt -r requirements-package.txt
+
+      - name: Check the app window's toolkit (Tk) is there
+        run: python -c "import tkinter; print('Tk', tkinter.TkVersion)"
+
+      - name: Run the tests
+        run: python -m pytest
+
+      - name: Build the app
+        run: python -m PyInstaller --noconfirm --clean packaging/district_lookup.spec
+
+      - name: Package and self-test (Mac)
+        if: runner.os == 'macOS'
+        run: |
+          packaging/macos/build_dmg.sh dist
+          mnt=$(mktemp -d)
+          hdiutil attach -nobrowse -readonly -mountpoint "$mnt" dist/*.dmg
+          "$mnt/District Lookup.app/Contents/MacOS/District Lookup" --self-test
+          hdiutil detach "$mnt"
+
+      - name: Package and self-test (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        timeout-minutes: 15
+        run: |
+          $version = (Select-String -Path src\about.py -Pattern '^VERSION = "(.*)"').Matches[0].Groups[1].Value
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress }
+          & $iscc /DAppVersion=$version packaging\windows\district_lookup.iss
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          $setup = (Get-ChildItem dist\*-windows-setup.exe).FullName
+          $p = Start-Process $setup -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES' -Wait -PassThru
+          if ($p.ExitCode) { throw "installer exited with $($p.ExitCode)" }
+          $app = "$env:LOCALAPPDATA\Programs\District Lookup\District Lookup.exe"
+          $p = Start-Process $app -ArgumentList '--self-test' -Wait -PassThru
+          if ($p.ExitCode) { throw "self-test failed (exit $($p.ExitCode))" }
+          Write-Output "Installed app passed its self-test"
+
+      - name: Package and self-test (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          packaging/linux/build_linux.sh dist
+          sudo apt-get update -q
+          sudo apt-get install -y ./dist/*.deb
+          district-lookup --self-test
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.runner }}
+          path: |
+            dist/*.dmg
+            dist/*-windows-setup.exe
+            dist/*.deb
+            dist/*.tar.gz
+          if-no-files-found: error
+
+  release:
+    name: Draft release
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Make a draft release with every app attached
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* --draft \
+            --title "District Lookup ${GITHUB_REF_NAME#v}" \
+            --notes-file packaging/release-notes.md

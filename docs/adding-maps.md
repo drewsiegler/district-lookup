@@ -95,7 +95,22 @@ About 1.5 seconds, and no test touches the network: each one hands the app fixed
 
 ## Releasing a new version
 
-After adding or changing maps, bump `VERSION` in `src/about.py` (1.0.0 → 1.1.0), commit, push, and publish a release on GitHub tagged with the same number plus a `v` (`v1.1.0`). Give the release a plain-words title, like "New Los Altos SD trustee areas": everyone running an older copy sees that title in a banner at the top of the app window the next time they open it, with a link to the release.
+After adding or changing maps:
+
+1. Bump `VERSION` in `src/about.py` (1.0.0 → 1.1.0), commit, and push.
+2. Tag that commit with the same number plus a `v`, and push the tag:
+   ```bash
+   git tag v1.1.0
+   git push origin v1.1.0
+   ```
+3. GitHub builds the apps for Mac (Apple silicon and Intel), Windows, and Linux/Chromebook (x64 and ARM), installs each one and runs its self-test, then makes a **draft** release with all of them attached. That takes about 15 minutes; watch it on the repo's **Actions** tab. If the tag doesn't match `VERSION`, the build stops and says so.
+4. On the **Releases** page, open the draft, give it a plain-words title like "New Los Altos SD trustee areas", add a line about what changed above the download notes, and publish it.
+
+Everyone running an older copy sees that title in a banner at the top of the lookup page the next time they open it, with a link to the release. Nobody sees a draft, so nothing reaches anyone until step 4.
+
+To try a build without releasing anything, open **Actions → Build the apps → Run workflow**. The finished files are under that run's **Artifacts**.
+
+The builds are set up in `packaging/` and `.github/workflows/build-apps.yml`. They're unsigned: there's no Apple Developer or Windows code-signing certificate, which is why the README walks people past the first-open warnings. If a file the app reads at runtime is ever added, list it in `datas` in `packaging/district_lookup.spec` too, or the installed apps won't have it; the self-test catches a missing map, page or icon.
 
 ## Project layout
 
@@ -104,7 +119,8 @@ district-lookup/
 ├── Start District Lookup.command   # double-click in Finder to open the app window
 ├── assets/
 │   ├── AppIcon.icns         # every size, 16–1024 px: for the Mac app bundle and the launcher's Finder icon
-│   └── AppIcon.png          # 256 px, for the app window's header and browser tab
+│   ├── AppIcon.ico          # the same for Windows, 16–256 px
+│   └── AppIcon.png          # 256 px, for the lookup page's header, browser tab, and Linux
 ├── data/
 │   ├── raw_geojson/          # source boundary files, one .geojson per map
 │   ├── layer_sources.json    # which council / trustee-area files feed each shared column, and which columns are drawn from their outlines
@@ -114,13 +130,21 @@ district-lookup/
 │   ├── geocode_cache.sqlite  # cached address -> lat/lon lookups (not committed)
 │   └── people_contacts_example.csv   # input template
 ├── docs/adding-maps.md      # this file
+├── packaging/
+│   ├── district_lookup.spec  # PyInstaller recipe for the installed app, every system
+│   ├── macos/                # .dmg script and its "opening it the first time" note
+│   ├── windows/              # Inno Setup installer script
+│   ├── linux/                # .deb and .tar.gz script, desktop entry
+│   └── release-notes.md      # "which file do I download?" text for each release
 ├── scripts/
 │   ├── build_gpkg.py         # raw_geojson/ -> districts/ + .gpkg + registry
 │   └── set_launcher_icon.sh  # puts the app icon on the launcher in Finder
 ├── src/
-│   ├── web.py                # the app window (a page served to your browser)
-│   ├── about.py              # version number, update check, donation link
+│   ├── launcher.py           # the installed app's start: its small window, and the build's self-test
+│   ├── web.py                # the lookup page, served to your browser
 │   ├── web_page.html         # that page
+│   ├── about.py              # version number, update check, donation link
+│   ├── app_paths.py          # where files are, from source or installed
 │   ├── main.py               # the command line
 │   ├── pipeline.py           # the lookup itself, shared by the window and the command line
 │   ├── input_table.py        # reads the input list in whatever shape it arrives
@@ -129,10 +153,13 @@ district-lookup/
 │   └── lookup.py             # point-in-polygon matching
 ├── tests/                   # python -m pytest; no network needed
 ├── COVERAGE.md              # which maps are in, which are still needed
-├── .github/FUNDING.yml      # puts a Ko-fi "Sponsor" button on the GitHub page
+├── .github/
+│   ├── FUNDING.yml           # puts a Ko-fi "Sponsor" button on the GitHub page
+│   └── workflows/build-apps.yml  # builds the apps and drafts a release for each version tag
 ├── AGENTS.md                # guidance for AI coding agents working on this repo
 ├── CLAUDE.md                # points Claude at AGENTS.md
 ├── requirements.txt         # what the app needs: shapely, requests
 ├── requirements-build.txt   # what adding maps needs: geopandas, GDAL, pandas
-└── requirements-dev.txt     # what running the tests needs: pytest
+├── requirements-dev.txt     # what running the tests needs: pytest
+└── requirements-package.txt # what building the apps needs: PyInstaller
 ```

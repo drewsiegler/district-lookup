@@ -1,0 +1,4 @@
+# For turning the app into downloadable apps (packaging/). Only the release
+# build uses these; nothing here ends up as a separate install for anyone.
+-r requirements.txt
+pyinstaller>=6.22,<7
