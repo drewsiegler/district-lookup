@@ -33,7 +33,7 @@ def test_tully_road_the_original_example(layers):
     assert d["scv_water_board_districts"] == "D6"
     assert d["high_school_trustee_area"] == "TA3"
     assert d["community_college_district"] == "San Jose-Evergreen Community College District"
-    assert d["community_college_trustee_area"] == "TA4"
+    assert d["community_college_trustee_area"] == "TA4—Trustee Maria Fuentes"
 
 
 @pytest.mark.parametrize("point, column, expected", [
@@ -61,7 +61,9 @@ def test_tully_road_the_original_example(layers):
     ("los_altos_city_hall", "community_college_trustee_area", "TA3—Trustee Peter Landsberger"),
     ("cupertino_city_hall", "community_college_trustee_area", "TA4—Trustee Pearl Cheng"),
     ("stanford_campus", "community_college_trustee_area", "TA5—Trustee Terry Godfrey"),
-    ("san_jose_city_hall", "community_college_trustee_area", "TA7"),
+    ("milpitas_city_hall", "community_college_trustee_area", "TA1—Trustee Marsha Grilli"),
+    ("oak_grove_district_office", "community_college_trustee_area", "TA5—Trustee Dr. Buu Thai"),
+    ("san_jose_city_hall", "community_college_trustee_area", "TA7—Trustee Clay Hale"),
     ("morgan_hill_peak_ave", "council_district", "C—Cm. Soraida Iwanaga"),
     ("los_altos_city_hall", "council_district", "4"),
     ("cupertino_city_hall", "high_school_trustee_area", "TA1"),

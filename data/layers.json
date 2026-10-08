@@ -176,6 +176,15 @@
         "column": "district"
       },
       "names": {
+        "San Jose-Evergreen Community College District": {
+          "TA1": "Trustee Marsha Grilli",
+          "TA2": "Trustee Karen Martinez",
+          "TA3": "Trustee Tony Alexander",
+          "TA4": "Trustee Maria Fuentes",
+          "TA5": "Trustee Dr. Buu Thai",
+          "TA6": "Trustee Dr. Jeffrey Lease",
+          "TA7": "Trustee Clay Hale"
+        },
         "Foothill-De Anza Community College District": {
           "TA1": "Trustee Laura Casas",
           "TA2": "Trustee Alexander Gvatua",

@@ -125,7 +125,7 @@ def test_each_trustee_area_is_written_under_its_own_heading(layers, fake_geocode
         "Unified Trustee Area": "",  # no unified district here
         "Primary Trustee Area": "",  # Evergreen Elementary elects at-large
         "Secondary Trustee Area": "TA3",
-        "College Trustee Area": "TA4",
+        "College Trustee Area": "TA4—Trustee Maria Fuentes",
     }
 
 
