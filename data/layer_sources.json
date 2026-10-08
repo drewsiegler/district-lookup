@@ -15,7 +15,9 @@
       {"file": "san_jose_usd_trustee_areas.geojson", "name_field": "TRUSTEE_AREA",
        "district": "San Jose Unified School District"},
       {"file": "santa_clara_usd_trustee_areas.geojson", "name_field": "TRUSTEE_AREA",
-       "district": "Santa Clara Unified School District"}
+       "district": "Santa Clara Unified School District"},
+      {"file": "morgan_hill_usd_trustee_areas.geojson", "name_field": "TRUSTEE_AREA",
+       "district": "Morgan Hill Unified School District"}
     ],
     "elementary_trustee_area": [
       {"file": "oak_grove_school_district_trustee_areas.geojson", "name_field": "AREA",
@@ -23,7 +25,11 @@
       {"file": "alum_rock_union_esd_trustee_areas.geojson", "name_field": "DISTRICT",
        "district": "Alum Rock Union Elementary School District"},
       {"file": "campbell_union_sd_trustee_areas.geojson", "name_field": "TRUSTEE_AREA",
-       "district": "Campbell Union Elementary School District"}
+       "district": "Campbell Union Elementary School District"},
+      {"file": "moreland_sd_trustee_areas.geojson", "name_field": "TRUSTEE_AREA",
+       "district": "Moreland School District"},
+      {"file": "sunnyvale_sd_trustee_areas.geojson", "name_field": "TRUSTEE_AREA",
+       "district": "Sunnyvale Elementary School District"}
     ],
     "high_school_trustee_area": [
       {"file": "campbell_union_hsd_trustee_areas.geojson", "name_field": "TRUSTEEARE",
@@ -43,7 +49,9 @@
       {"file": "foothill_de_anza_ccd_trustee_areas.geojson", "name_field": "TRUSTEE_AREA",
        "district": "Foothill-De Anza Community College District"},
       {"file": "san_jose_evergreen_ccd_trustee_areas.geojson", "name_field": "TRUSTEE_AREA",
-       "district": "San Jose-Evergreen Community College District"}
+       "district": "San Jose-Evergreen Community College District"},
+      {"file": "west_valley_mission_ccd_trustee_areas.geojson", "name_field": "TRUSTEE_AREA",
+       "district": "West Valley-Mission Community College District"}
     ]
   },
   "district_outlines": {

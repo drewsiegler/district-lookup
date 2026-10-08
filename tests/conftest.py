@@ -26,6 +26,7 @@ POINTS = {
     "campbell_city_hall": (37.288195597821, -121.944759236182),
     "gilroy_rosanna_st": (37.004937716141, -121.572038269657),
     "morgan_hill_peak_ave": (37.12590150574, -121.661881922298),
+    "moreland_district_office": (37.286824142167, -121.98560609869),
     "cupertino_city_hall": (37.31923968861, -122.029158712914),
     "los_altos_city_hall": (37.381396700712, -122.113976377067),
     "mountain_view_city_hall": (37.390033272844, -122.081436311181),
@@ -33,6 +34,7 @@ POINTS = {
     "san_jose_city_hall": (37.338163163635, -121.886224209159),
     "san_jose_usd_district_office": (37.334527255176, -121.912415657398),
     "santa_clara_city_hall": (37.355947478214, -121.955621276545),
+    "sunnyvale_city_hall": (37.371773195548, -122.037610913645),
     "san_francisco_city_hall": (37.778532096981, -122.418308756397),
     "stanford_campus": (37.4275, -122.1697),
 }

@@ -45,6 +45,11 @@ def test_tully_road_the_original_example(layers):
     ("san_jose_city_hall", "unified_trustee_area", "TA3"),
     ("san_jose_usd_district_office", "unified_trustee_area", "TA2"),
     ("santa_clara_city_hall", "unified_trustee_area", "TA4"),
+    ("morgan_hill_peak_ave", "unified_trustee_area", "TA3"),
+    ("sunnyvale_city_hall", "elementary_trustee_area", "TA1"),
+    ("moreland_district_office", "elementary_trustee_area", "TA3"),
+    ("campbell_city_hall", "community_college_district", "West Valley-Mission Community College District"),
+    ("campbell_city_hall", "community_college_trustee_area", "TA6"),
     ("oak_grove_district_office", "high_school_trustee_area", "TA2"),
     ("cupertino_city_hall", "community_college_district", "Foothill-De Anza Community College District"),
     ("cupertino_city_hall", "community_college_trustee_area", "TA4"),
@@ -103,14 +108,14 @@ def test_outside_the_county_nothing_matches(layers):
     assert not any(at(layers, "san_francisco_city_hall").values())
 
 
-def test_district_without_a_trustee_map_yet_is_blank(layers):
-    # Morgan Hill USD's trustee map hasn't been loaded; its city hall is in the district.
-    d = at(layers, "morgan_hill_peak_ave")
-    assert d["unified_school_districts"] == "Morgan Hill Unified School District"
+def test_at_large_school_district_has_no_trustee_area(layers):
+    # Cupertino Union and Palo Alto Unified elect their boards at-large.
+    d = at(layers, "cupertino_city_hall")
+    assert d["elementary_school_districts"] == "Cupertino Union Elementary School District"
+    assert d["elementary_trustee_area"] is None
+    d = at(layers, "stanford_campus")
+    assert d["unified_school_districts"] == "Palo Alto Unified School District"
     assert d["unified_trustee_area"] is None
-    # Nor has West Valley-Mission's, so Campbell has no college named yet.
-    d = at(layers, "campbell_city_hall")
-    assert d["community_college_district"] is None and d["community_college_trustee_area"] is None
 
 
 # --- The must-match rule ---------------------------------------------------
