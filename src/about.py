@@ -19,7 +19,7 @@ VERSION = "1.0.0"
 REPO = "drewsiegler/district-lookup"
 RELEASES_PAGE = f"https://github.com/{REPO}/releases/latest"
 LATEST_RELEASE_API = f"https://api.github.com/repos/{REPO}/releases/latest"
-DONATE_URL = None  # the app window's footer shows a "Support this project" link once this is set
+DONATE_URL = "https://ko-fi.com/andrewsiegler"  # the app window's "Support this project" link
 
 
 def parse_version(text: str | None) -> tuple[int, int, int] | None:

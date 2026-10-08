@@ -89,6 +89,14 @@ When a new version is out, usually because district maps have changed, a banner 
 
 If you got the project with git, update it by running `git pull` in the `district-lookup` folder. If you downloaded a ZIP from GitHub, download the new one and replace the folder; if you keep a list inside the folder, move it out first. The first lookup afterwards may take a little longer while it re-checks addresses with the Census.
 
+## Support this project
+
+District Lookup is free and always will be. If it saves you or your organization time and you'd like to chip in, you can leave a tip at **[ko-fi.com/andrewsiegler](https://ko-fi.com/andrewsiegler)**; you don't need an account. The same link is at the bottom of the app window.
+
+Donations go to Drew Siegler (Andrew Siegler on Ko-fi), who builds and maintains the tool. They help cover time spent sourcing maps and keeping them current. It's a personal project, not a nonprofit, so donations aren't tax-deductible, and they're never required.
+
+Not in a position to give? Telling other organizers about it, or [reporting a wrong district](https://github.com/drewsiegler/district-lookup/issues), helps just as much.
+
 ## Maintaining it
 
 Adding or updating district maps, how it works under the hood, and running the tests: [docs/adding-maps.md](docs/adding-maps.md).

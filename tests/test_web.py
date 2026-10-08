@@ -83,6 +83,7 @@ def test_about_reports_the_version_and_any_newer_release(server, monkeypatch):
     monkeypatch.setattr(web, "update_info", {"checked": True, "update": newer})
     about = json.loads(get(f"{server}/about")[2])
     assert about["version"] == web.about.VERSION
+    assert about["donate_url"] == web.about.DONATE_URL
     assert about["checked"] and about["update"] == newer
 
 

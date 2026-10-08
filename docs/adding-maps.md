@@ -129,6 +129,7 @@ district-lookup/
 │   └── lookup.py             # point-in-polygon matching
 ├── tests/                   # python -m pytest; no network needed
 ├── COVERAGE.md              # which maps are in, which are still needed
+├── .github/FUNDING.yml      # puts a Ko-fi "Sponsor" button on the GitHub page
 ├── AGENTS.md                # guidance for AI coding agents working on this repo
 ├── CLAUDE.md                # points Claude at AGENTS.md
 ├── requirements.txt         # what the app needs: shapely, requests
