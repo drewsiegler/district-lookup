@@ -28,9 +28,10 @@ from lookup import lookup_point
 
 URL = f"http://{web.HOST}:{web.PORT}/"
 # San José City Hall, where the Census geocoder places it (tests/conftest.py).
-# Only columns that carry no officeholder's name, so an election never breaks it.
 SELF_TEST_POINT = (37.338163163635, -121.886224209159)
-SELF_TEST_EXPECTED = {"city": "San Jose", "unified_school_districts": "San Jose Unified School District",
+# Districts only. Whatever follows an em dash is an officeholder's name
+# ("3—Cm. Anthony Tordillos"), which an election changes; the maps don't.
+SELF_TEST_EXPECTED = {"city": "San Jose", "council_district": "3",
                       "unified_trustee_area": "TA3", "scv_water_board_districts": "D2"}
 
 
@@ -40,7 +41,7 @@ def self_test() -> int:
     crashing: on Windows a crash pops up a dialog that would stall the build."""
     try:
         districts = lookup_point(load_layers(), *SELF_TEST_POINT)
-        got = {column: districts.get(column) for column in SELF_TEST_EXPECTED}
+        got = {column: (districts.get(column) or "").split("—")[0] for column in SELF_TEST_EXPECTED}
         ok = got == SELF_TEST_EXPECTED and "District Lookup" in web.PAGE and web.ICON_PATH.exists()
     except Exception as err:
         got, ok = repr(err), False

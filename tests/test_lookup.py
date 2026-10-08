@@ -30,7 +30,7 @@ def test_tully_road_the_original_example(layers):
     assert d["scc_board_of_education_trustee_areas"] == "TA7—Trustee Raeena Lari"
     assert d["midpeninsula_regional_open_space_district"] is None  # east of Midpen's boundary
     assert d["scvosa_director_districts"] == "D7—Dir. Kalvin Gill"
-    assert d["scv_water_board_districts"] == "D6"
+    assert d["scv_water_board_districts"] == "D6—Dir. Tony Estremera"
     assert d["high_school_trustee_area"] == "TA3"
     assert d["community_college_district"] == "San Jose-Evergreen Community College District"
     assert d["community_college_trustee_area"] == "TA4—Trustee Maria Fuentes"
@@ -83,7 +83,10 @@ def test_tully_road_the_original_example(layers):
     ("gilroy_rosanna_st", "community_college_district", "Gavilan Joint Community College District"),
     ("gilroy_rosanna_st", "community_college_trustee_area", "TA4—Trustee Lorena Tariba"),
     ("morgan_hill_peak_ave", "community_college_trustee_area", "TA2—Trustee Alicia M. Cortez"),
-    ("campbell_city_hall", "scv_water_board_districts", "D4"),
+    ("gilroy_rosanna_st", "scv_water_board_districts", "D1—Dir. John L. Varela"),
+    ("san_jose_city_hall", "scv_water_board_districts", "D2—Dir. Shiloh Ballard"),
+    ("milpitas_city_hall", "scv_water_board_districts", "D3—Dir. Richard P. Santos"),
+    ("campbell_city_hall", "scv_water_board_districts", "D4—Dir. Jim Beall"),
     ("santa_clara_city_hall", "us_congress", "US-CA17—Rep. Ro Khanna"),
     ("san_jose_city_hall", "us_congress", "US-CA18—Rep. Zoe Lofgren"),
     ("oak_grove_district_office", "us_congress", "US-CA19—Rep. Jimmy Panetta"),
@@ -94,8 +97,8 @@ def test_tully_road_the_original_example(layers):
     ("cupertino_city_hall", "ca_state_assembly", "AD26—Asm. Patrick Ahrens"),
     ("morgan_hill_peak_ave", "ca_state_assembly", "AD28—Asm. Gail Pellerin"),
     ("gilroy_rosanna_st", "ca_state_assembly", "AD29—Asm. Robert Rivas"),
-    ("cupertino_city_hall", "scv_water_board_districts", "D5"),
-    ("stanford_campus", "scv_water_board_districts", "D7"),
+    ("cupertino_city_hall", "scv_water_board_districts", "D5—Dir. Nai Hsueh"),
+    ("stanford_campus", "scv_water_board_districts", "D7—Dir. Rebecca Eisenberg"),
 ])
 def test_known_districts(layers, point, column, expected):
     assert at(layers, point)[column] == expected

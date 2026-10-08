@@ -268,7 +268,16 @@
       "label": "Santa Clara Valley Water District Board District",
       "header": "SCV Water District",
       "name_field": "DISTRICT",
-      "format": "D{}"
+      "format": "D{}",
+      "names": {
+        "D1": "Dir. John L. Varela",
+        "D2": "Dir. Shiloh Ballard",
+        "D3": "Dir. Richard P. Santos",
+        "D4": "Dir. Jim Beall",
+        "D5": "Dir. Nai Hsueh",
+        "D6": "Dir. Tony Estremera",
+        "D7": "Dir. Rebecca Eisenberg"
+      }
     }
   ]
 }

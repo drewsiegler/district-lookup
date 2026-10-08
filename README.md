@@ -134,7 +134,7 @@ The columns added, in order:
 | County Board of Education | `TA7—Trustee Raeena Lari` | its trustee area and trustee |
 | Open Space District | `Midpeninsula Regional Open Space District` | or `Santa Clara Valley Open Space Authority` |
 | District/Ward | `Ward 1—Dir. Craig Gleason` | a Midpeninsula ward, or an Open Space Authority district like `D7—Dir. Kalvin Gill`, with its director |
-| SCV Water District | `D6` | Valley Water board district |
+| SCV Water District | `D6—Dir. Tony Estremera` | Valley Water board district and its director |
 
 Boundaries change. Verify anything you'd act on against the county Registrar of Voters.
 
