@@ -14,6 +14,15 @@
       "must_match": {
         "layer": "city",
         "column": "city"
+      },
+      "names": {
+        "Campbell": {
+          "1": "Cm. Terry Hines",
+          "2": "Cm. Sergio Lopez",
+          "3": "Cm. Dan Furtado",
+          "4": "Cm. Elliot Scozzola",
+          "5": "Cm. Anne Bybee"
+        }
       }
     },
     {

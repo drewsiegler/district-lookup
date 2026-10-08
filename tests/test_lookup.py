@@ -37,7 +37,7 @@ def test_tully_road_the_original_example(layers):
 
 
 @pytest.mark.parametrize("point, column, expected", [
-    ("campbell_city_hall", "council_district", "3"),
+    ("campbell_city_hall", "council_district", "3—Cm. Dan Furtado"),
     ("campbell_city_hall", "high_school_trustee_area", "TA3"),
     ("gilroy_rosanna_st", "council_district", "5"),
     ("gilroy_rosanna_st", "unified_trustee_area", "TA7"),

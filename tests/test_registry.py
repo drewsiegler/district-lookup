@@ -75,6 +75,13 @@ def test_misspelled_name_is_refused(registry):
         load_layers()
 
 
+def test_council_names_for_a_misspelled_city_are_refused(registry):
+    registry(lambda es: entry(es, "council_district")["names"].update(
+        {"Cambell": {"3": "Cm. Dan Furtado"}}))
+    with pytest.raises(ValueError, match=r"there's a name for \['Cambell 3'\].*'Campbell 3'"):
+        load_layers()
+
+
 def test_heading_defaults_to_the_label(registry):
     registry(lambda es: entry(es, "ca_state_senate").pop("header"))
     senate = next(layer for layer in load_layers() if layer["id"] == "ca_state_senate")

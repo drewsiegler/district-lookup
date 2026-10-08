@@ -29,7 +29,9 @@ Registry entry fields:
                 officeholder. The name is added after an em dash, the way the
                 county's map gives its supervisors: "US-CA16" becomes
                 "US-CA16—Rep. Sam Liccardo". A value with no name listed is
-                written as it is.
+                written as it is. On a must_match layer the names go under each
+                jurisdiction, since every city numbers its own council districts
+                from 1: {"Campbell": {"3": "Cm. Dan Furtado"}}.
     coverage    optional true: this layer's footprint is the whole area the
                 tool covers (see main.py's outside_coverage_area check)
     must_match  optional {"layer": <id of an earlier layer>, "column": <attribute
@@ -94,16 +96,31 @@ def format_value(value, fmt: str | None = None, pattern: str | None = None) -> s
     return fmt.format(int(text) if text.isdigit() else text)
 
 
-def add_names(layer_id: str, values: list[str | None], names: dict[str, str]) -> list[str | None]:
-    """Each value with its name from the registry's names, if it has one. A name
-    for a value the map doesn't have is a typo, so it stops the run."""
-    unknown = sorted(set(names) - set(values))
+def add_names(layer_id: str, values: list[str | None], names: dict,
+              scope: list[str | None] | None = None) -> list[str | None]:
+    """Each value with its name from the registry's names, if it has one. With a
+    scope (the must_match jurisdiction of each value), names are looked up
+    under that jurisdiction first. A name for a value the map doesn't have is a
+    typo, so it stops the run."""
+    if scope is None:
+        keys, table = values, names
+    else:
+        flat = [by_value for by_value in names.values() if not isinstance(by_value, dict)]
+        if flat:
+            raise ValueError(
+                f"Layer '{layer_id}': list names under each place they belong to, "
+                f'like {{"Campbell": {{"3": "Cm. Dan Furtado"}}}}.'
+            )
+        keys = [f"{place} {value}" if value else None for place, value in zip(scope, values)]
+        table = {f"{place} {value}": name
+                 for place, by_value in names.items() for value, name in by_value.items()}
+    unknown = sorted(set(table) - set(keys))
     if unknown:
         raise ValueError(
             f"Layer '{layer_id}': there's a name for {unknown}, but its map has no such "
-            f"value (check spelling). Its values: {sorted(v for v in set(values) if v)}"
+            f"value (check spelling). Its values: {sorted(k for k in set(keys) if k)}"
         )
-    return [f"{value}—{names[value]}" if value in names else value for value in values]
+    return [f"{value}—{table[key]}" if key in table else value for key, value in zip(keys, values)]
 
 
 def read_layer_features(layer_id: str) -> list[dict]:
@@ -145,13 +162,14 @@ def load_layers() -> list[dict]:
             display = [format_value(props.get(name_field), fmt, pattern) for props in attributes]
         except (ValueError, KeyError, IndexError) as err:
             raise ValueError(f"Layer '{layer_id}': can't apply format {fmt!r}: {err}") from err
-        display = add_names(layer_id, display, entry.get("names") or {})
 
         must_match = entry.get("must_match")
         scope = [None] * len(features)
         if must_match:
             check_must_match(layer_id, available, attributes, must_match, loaded)
             scope = [clean_value(props.get(must_match["column"])) for props in attributes]
+        display = add_names(layer_id, display, entry.get("names") or {},
+                            scope if must_match else None)
 
         label = entry.get("label", layer_id)
         header = entry.get("header") or label
