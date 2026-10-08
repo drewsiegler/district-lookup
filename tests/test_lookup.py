@@ -54,7 +54,7 @@ def test_tully_road_the_original_example(layers):
     ("cupertino_city_hall", "community_college_district", "Foothill-De Anza Community College District"),
     ("cupertino_city_hall", "community_college_trustee_area", "TA4"),
     ("san_jose_city_hall", "community_college_trustee_area", "TA7"),
-    ("morgan_hill_peak_ave", "council_district", "C"),
+    ("morgan_hill_peak_ave", "council_district", "C—Cm. Soraida Iwanaga"),
     ("los_altos_city_hall", "council_district", "4"),
     ("cupertino_city_hall", "high_school_trustee_area", "TA1"),
     ("mountain_view_city_hall", "high_school_trustee_area", "TA3"),
