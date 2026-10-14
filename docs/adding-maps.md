@@ -120,7 +120,7 @@ Each release also carries `SHA256SUMS.txt`, listing every file's checksum, and a
 
 ### Signing the Mac apps
 
-The Windows and Linux builds are unsigned (there's no paid certificate), which is why the README walks people past the first-open warnings. The Mac builds are unsigned too until an Apple Developer ID is set up. After that, the workflow signs both Mac apps and has Apple notarize them on every build, with nothing more to do at release time. To set it up, once:
+The Windows and Linux builds are unsigned (there's no paid certificate), which is why the README walks Windows users past the first-open warning. The Mac builds are signed with an Apple Developer ID and notarized by Apple, starting with version 1.1.1. The workflow does it on every build, with nothing to do at release time. If it ever needs setting up again (a new certificate after five years, say, or a new maintainer), these are the steps:
 
 1. Enroll in the [Apple Developer Program](https://developer.apple.com/programs/enroll/) as an Individual ($99 a year). Your Apple Account needs two-factor authentication turned on, and approval usually takes a day or two. The certificate, and so the signed apps, carry your legal name.
 2. Make a **Developer ID Application** certificate. Not "Apple Development" or "Mac App Distribution", which are for other things.
@@ -141,9 +141,8 @@ The Windows and Linux builds are unsigned (there's no paid certificate), which i
    | `APPLE_APP_PASSWORD` | the app-specific password |
 
 7. Try it without releasing anything: **Actions → Build the apps → Run workflow**. The Mac jobs now include **Set up the signing certificate** and **Notarize** steps. Notarization usually takes a few minutes, and the step ends with Gatekeeper's verdict, which should read `source=Notarized Developer ID`. If Apple rejects the app, the step prints Apple's log naming each file it objected to. Download a `.dmg` from the run's **Artifacts** and open it: macOS should only ask whether you're sure you want to open an app downloaded from the internet.
-8. Before the first signed release, update the README's Install section and `packaging/release-notes.md`, which still say the Mac apps aren't signed. The note inside the disk image switches by itself.
 
-The membership is yearly, but apps already signed keep opening after it lapses; renewing is only needed to sign new versions. With a lapsed membership, notarization fails and the build stops. To release unsigned again instead, delete the `MACOS_CERT_P12` secret.
+The membership is yearly, but apps already signed keep opening after it lapses; renewing is only needed to sign new versions. With a lapsed membership, notarization fails and the build stops. To release unsigned again instead, delete the `MACOS_CERT_P12` secret and put the Mac first-open steps back in the README's Install section and `packaging/release-notes.md`. The note inside the disk image switches by itself.
 
 ## Project layout
 

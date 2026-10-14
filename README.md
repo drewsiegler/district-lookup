@@ -12,15 +12,14 @@ Results are never saved anywhere on their own: the app window hands them over on
 
 Download the version for your computer from the **[latest release](https://github.com/drewsiegler/district-lookup/releases/latest)**; the release page says which file is which. Everything it needs is inside, district maps included, so there's nothing else to install.
 
-The apps aren't signed with paid developer certificates, so the first time you open one, your computer warns that it can't tell who made it. Here's how to get past that on each system. Usually you only need to do it once per version, though macOS 27 may ask every time.
+The Mac app is signed by its developer and checked by Apple, so it opens like any other app you download. The Windows app isn't signed with a paid developer certificate yet, so the first time you open it, Windows warns that it can't tell who made it; the steps below get past that.
 
 ### Mac
 
 1. Open the `.dmg` file and drag **District Lookup** into the Applications folder.
-2. Open it from Applications. macOS says it can't check it for malicious software.
-3. On **macOS 15 or later**, click **Done**, open **System Settings → Privacy & Security**, scroll down to the message about District Lookup, click **Open Anyway** and confirm. On **macOS 14 or earlier**, right-click District Lookup in Applications, choose **Open**, then click **Open** again.
+2. Open it from Applications. The first time, macOS asks whether you're sure you want to open an app downloaded from the internet. Click **Open**.
 
-On **macOS 27**, it may ask again each time you open District Lookup, even after you've clicked **Open Anyway** before. Nothing is wrong with your copy: repeat step 3 when it asks.
+Versions before 1.1.1 weren't signed, so macOS made you click **Open Anyway** in **System Settings → Privacy & Security**, and on macOS 27 it could ask every time. Installing the latest version ends that.
 
 ### Windows
 
@@ -51,7 +50,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-That's about 58 MB, with nothing to compile. Then double-click **Start District Lookup.command** in Finder, or run `python src/web.py`. Instead of the small window the installed app shows, a Terminal window stays open while it runs; closing it shuts District Lookup down. If macOS won't open the launcher the first time, use the same steps as for the Mac app above.
+That's about 58 MB, with nothing to compile. Then double-click **Start District Lookup.command** in Finder, or run `python src/web.py`. Instead of the small window the installed app shows, a Terminal window stays open while it runs; closing it shuts District Lookup down. The launcher isn't signed like the app, so if macOS won't open it the first time: on **macOS 15 or later**, open **System Settings → Privacy & Security**, scroll down to the message about it and click **Open Anyway**; on **macOS 14 or earlier**, right-click it, choose **Open**, then click **Open** again.
 
 ## Look up a list
 
@@ -144,7 +143,7 @@ Boundaries change. Verify anything you'd act on against the county Registrar of 
 
 When a new version is out, usually because district maps have changed, a banner at the top of the lookup page says so, with a link to download it. The version you have is shown at the bottom of the page.
 
-Install the new version over the old one, the same way as the first time: on a Mac, drag it into Applications and choose **Replace**; on Windows, run the new installer; on a Chromebook or Linux, install the new `.deb`. Your earlier address lookups are kept, so the next lookup stays quick. Expect the first-open warning again for each new version, or on macOS 27 possibly each time you open it.
+Install the new version over the old one, the same way as the first time: on a Mac, drag it into Applications and choose **Replace**; on Windows, run the new installer; on a Chromebook or Linux, install the new `.deb`. Your earlier address lookups are kept, so the next lookup stays quick. Each new version asks once when you first open it, like the first time: on a Mac, click **Open**; on Windows, click **More info**, then **Run anyway**.
 
 Running from source, update with `git pull` in the `district-lookup` folder, or, if you downloaded a ZIP from GitHub, download the new one and replace the folder (move out any list you keep inside it first).
 
