@@ -6,13 +6,13 @@ Give it a list of people and their addresses; it tells you every electoral distr
 
 Nothing is uploaded. The app runs on your own computer, and the page it opens is reachable only from that computer. The only thing that leaves the machine is the addresses themselves, sent to the free U.S. Census Bureau geocoder to turn them into map coordinates — no names, emails or phone numbers. When the app window opens it also asks GitHub whether a newer version is out; that check sends nothing about your list.
 
-Results are never saved anywhere on their own: the app window hands them over only as downloads, and the command line writes them next to your list rather than inside this folder.
+Results are never saved anywhere on their own: the app window hands them over only as downloads, and the command line writes them next to your list rather than inside this folder. The [privacy policy](PRIVACY.md) has the details, including where saved address lookups are kept and how to clear them.
 
 ## Install
 
 Download the version for your computer from the **[latest release](https://github.com/drewsiegler/district-lookup/releases/latest)**; the release page says which file is which. Everything it needs is inside, district maps included, so there's nothing else to install.
 
-The Mac app is signed by its developer and checked by Apple, so it opens like any other app you download. The Windows app isn't signed with a paid developer certificate yet, so the first time you open it, Windows warns that it can't tell who made it; the steps below get past that.
+The Mac app is signed by its developer and checked by Apple, so it opens like any other app you download. The Windows app isn't signed with a paid developer certificate yet, so the first time you open it, Windows warns that it can't tell who made it; the steps below get past that. The [code signing policy](CODE_SIGNING.md) explains how the downloads are built and signed, and how to check one.
 
 ### Mac
 

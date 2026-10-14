@@ -29,6 +29,7 @@ Tests and the build must pass before a change counts as done.
 - **Results never land in the project folder.** The app window keeps them in memory and hands them over only as downloads. The CLI writes them next to the input list. Keep it that way.
 - **The only thing that leaves the machine is addresses**, sent to the Census geocoder, never names, emails or phones. The one other network call is the app window's update check (`src/about.py`): when it opens, it asks GitHub's API for the latest release's version number, sends nothing about the list, and shows nothing if it fails. Don't add other network calls, analytics, error reporting, or CDN scripts or fonts. `src/web_page.html` stays self-contained.
 - The web server binds to `127.0.0.1` only.
+- PRIVACY.md tells users exactly what leaves their computer and what's kept on it. Update it with any change to either.
 - `data/geocode_cache.sqlite` (it holds addresses) and `*.gpkg` are gitignored. Don't force-add them.
 
 ## Dependencies
@@ -85,7 +86,7 @@ README.md, COVERAGE.md, page text and error messages are read by organizers. Use
 
 ## Installed apps
 
-`.github/workflows/build-apps.yml` builds the Mac (Apple silicon and Intel), Windows, and Linux/Chromebook (x64 and ARM) apps on GitHub's machines with `packaging/district_lookup.spec`. It installs each one and runs `--self-test`, and for a `v*` tag it makes a draft release with a `SHA256SUMS.txt` and a build attestation. The Mac apps are signed and notarized, since 1.1.1, with the Apple Developer ID kept in the repo's secrets (docs/adding-maps.md, "Signing the Mac apps"); without those secrets they'd build unsigned. `MACOS_SIGN_IDENTITY` in the environment is the switch: the spec and `packaging/macos/build_dmg.sh` sign only when it's set. Windows and Linux stay unsigned (no paid certificates), so ask before adding other signing steps.
+`.github/workflows/build-apps.yml` builds the Mac (Apple silicon and Intel), Windows, and Linux/Chromebook (x64 and ARM) apps on GitHub's machines with `packaging/district_lookup.spec`. It installs each one and runs `--self-test`, and for a `v*` tag it makes a draft release with a `SHA256SUMS.txt` and a build attestation. The Mac apps are signed and notarized, since 1.1.1, with the Apple Developer ID kept in the repo's secrets (docs/adding-maps.md, "Signing the Mac apps"); without those secrets they'd build unsigned. `MACOS_SIGN_IDENTITY` in the environment is the switch: the spec and `packaging/macos/build_dmg.sh` sign only when it's set. Windows and Linux stay unsigned (no paid certificates), so ask before adding other signing steps. CODE_SIGNING.md describes what's signed and how releases are built, for users and for SignPath's free Windows signing, which needs it; keep it current.
 
 - The installed app starts at `src/launcher.py`: a small Tk window stands in for the Terminal, and closing it quits, after a warning if results haven't been downloaded. Running from source (`src/web.py`) keeps the Terminal behavior.
 - `src/app_paths.py` decides where files are. Read-only files come from the project folder, or from inside the app when installed. The geocode cache stays in `data/` from source, but an installed app keeps it in the per-user app data folder, so updates don't wipe it.

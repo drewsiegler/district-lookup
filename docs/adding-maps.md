@@ -185,6 +185,8 @@ district-lookup/
 │   └── lookup.py             # point-in-polygon matching
 ├── tests/                   # python -m pytest; no network needed
 ├── COVERAGE.md              # which maps are in, which are still needed
+├── PRIVACY.md               # what leaves the computer and what's kept on it
+├── CODE_SIGNING.md          # which downloads are signed and how releases are built
 ├── .github/
 │   ├── FUNDING.yml           # puts a Ko-fi "Sponsor" button on the GitHub page
 │   └── workflows/build-apps.yml  # builds the apps and drafts a release for each version tag
