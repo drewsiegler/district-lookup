@@ -114,7 +114,36 @@ Everyone running an older copy sees that title in a banner at the top of the loo
 
 To try a build without releasing anything, open **Actions → Build the apps → Run workflow**. The finished files are under that run's **Artifacts**.
 
-The builds are set up in `packaging/` and `.github/workflows/build-apps.yml`. They're unsigned: there's no Apple Developer or Windows code-signing certificate, which is why the README walks people past the first-open warnings. If a file the app reads at runtime is ever added, list it in `datas` in `packaging/district_lookup.spec` too, or the installed apps won't have it; the self-test catches a missing map, page or icon.
+The builds are set up in `packaging/` and `.github/workflows/build-apps.yml`. If a file the app reads at runtime is ever added, list it in `datas` in `packaging/district_lookup.spec` too, or the installed apps won't have it; the self-test catches a missing map, page, icon or window toolkit.
+
+Each release also carries `SHA256SUMS.txt`, listing every file's checksum, and a GitHub attestation recording that this repo's workflow built the files. Anyone can check a download with `gh attestation verify <file> --repo drewsiegler/district-lookup`.
+
+### Signing the Mac apps
+
+The Windows and Linux builds are unsigned (there's no paid certificate), which is why the README walks people past the first-open warnings. The Mac builds are unsigned too until an Apple Developer ID is set up. After that, the workflow signs both Mac apps and has Apple notarize them on every build, with nothing more to do at release time. To set it up, once:
+
+1. Enroll in the [Apple Developer Program](https://developer.apple.com/programs/enroll/) as an Individual ($99 a year). Your Apple Account needs two-factor authentication turned on, and approval usually takes a day or two. The certificate, and so the signed apps, carry your legal name.
+2. Make a **Developer ID Application** certificate. Not "Apple Development" or "Mac App Distribution", which are for other things.
+   - In Keychain Access (open it with Spotlight), choose **Keychain Access → Certificate Assistant → Request a Certificate From a Certificate Authority**, fill in your email, and save the request to disk.
+   - At developer.apple.com, under **Certificates, IDs & Profiles → Certificates**, click **+**, choose **Developer ID Application**, and upload the request.
+   - Download the certificate and double-click it to add it to your keychain.
+3. In Keychain Access, under **My Certificates**, right-click **Developer ID Application: *your name*** and choose **Export**. Save it as a `.p12` file with a strong password. Keep the file and its password somewhere safe, such as a password manager: they sign apps as you, and the certificate lasts five years.
+4. Make an app-specific password at [account.apple.com](https://account.apple.com) under **Sign-In and Security → App-Specific Passwords**. Notarization signs in with it instead of your real password.
+5. Find your Team ID (10 characters) at developer.apple.com under **Account → Membership details**.
+6. In the repo on GitHub, open **Settings → Secrets and variables → Actions** and add five repository secrets:
+
+   | Secret | What goes in it |
+   |---|---|
+   | `MACOS_CERT_P12` | the `.p12` file as text: `base64 -i YourFile.p12 \| pbcopy` copies it, then paste |
+   | `MACOS_CERT_PASSWORD` | the `.p12` file's password |
+   | `APPLE_ID` | the email of the Apple Account you enrolled with |
+   | `APPLE_TEAM_ID` | the Team ID |
+   | `APPLE_APP_PASSWORD` | the app-specific password |
+
+7. Try it without releasing anything: **Actions → Build the apps → Run workflow**. The Mac jobs now include **Set up the signing certificate** and **Notarize** steps. Notarization usually takes a few minutes, and the step ends with Gatekeeper's verdict, which should read `source=Notarized Developer ID`. If Apple rejects the app, the step prints Apple's log naming each file it objected to. Download a `.dmg` from the run's **Artifacts** and open it: macOS should only ask whether you're sure you want to open an app downloaded from the internet.
+8. Before the first signed release, update the README's Install section and `packaging/release-notes.md`, which still say the Mac apps aren't signed. The note inside the disk image switches by itself.
+
+The membership is yearly, but apps already signed keep opening after it lapses; renewing is only needed to sign new versions. With a lapsed membership, notarization fails and the build stops. To release unsigned again instead, delete the `MACOS_CERT_P12` secret.
 
 ## Project layout
 
@@ -136,7 +165,7 @@ district-lookup/
 ├── docs/adding-maps.md      # this file
 ├── packaging/
 │   ├── district_lookup.spec  # PyInstaller recipe for the installed app, every system
-│   ├── macos/                # .dmg script and its "opening it the first time" note
+│   ├── macos/                # .dmg script and its "opening it the first time" notes, unsigned and signed
 │   ├── windows/              # Inno Setup installer script
 │   ├── linux/                # .deb and .tar.gz script, desktop entry
 │   └── release-notes.md      # "which file do I download?" text for each release

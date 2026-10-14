@@ -1,0 +1,14 @@
+Installing District Lookup
+
+1. Drag "District Lookup" onto the Applications folder in this window.
+2. Open it from your Applications folder.
+
+The first time, macOS asks whether you're sure you want to open an app
+downloaded from the internet. Click Open. District Lookup is signed with an
+Apple developer certificate and checked by Apple, so that's the only question
+it asks.
+
+After that it opens like any other app: a small window says it's running,
+and your lookup page opens in your web browser.
+
+The source code is public: https://github.com/drewsiegler/district-lookup

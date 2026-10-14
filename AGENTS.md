@@ -85,7 +85,7 @@ README.md, COVERAGE.md, page text and error messages are read by organizers. Use
 
 ## Installed apps
 
-`.github/workflows/build-apps.yml` builds the Mac (Apple silicon and Intel), Windows, and Linux/Chromebook (x64 and ARM) apps on GitHub's machines with `packaging/district_lookup.spec`. It installs each one and runs `--self-test`, and for a `v*` tag it makes a draft release. The apps are unsigned on purpose (no paid certificates), so don't add signing steps without asking.
+`.github/workflows/build-apps.yml` builds the Mac (Apple silicon and Intel), Windows, and Linux/Chromebook (x64 and ARM) apps on GitHub's machines with `packaging/district_lookup.spec`. It installs each one and runs `--self-test`, and for a `v*` tag it makes a draft release with a `SHA256SUMS.txt` and a build attestation. The Mac apps are signed and notarized once the Apple Developer ID secrets are in the repo (docs/adding-maps.md, "Signing the Mac apps"); without them they're built unsigned, as before. `MACOS_SIGN_IDENTITY` in the environment is the switch: the spec and `packaging/macos/build_dmg.sh` sign only when it's set. Windows and Linux stay unsigned (no paid certificates), so ask before adding other signing steps.
 
 - The installed app starts at `src/launcher.py`: a small Tk window stands in for the Terminal, and closing it quits, after a warning if results haven't been downloaded. Running from source (`src/web.py`) keeps the Terminal behavior.
 - `src/app_paths.py` decides where files are. Read-only files come from the project folder, or from inside the app when installed. The geocode cache stays in `data/` from source, but an installed app keeps it in the per-user app data folder, so updates don't wipe it.

@@ -8,6 +8,12 @@
 #
 # Every build is installed and runs its self-test (src/launcher.py) before it's
 # kept, so a release can't go out with an app that doesn't start.
+#
+# The Mac apps are signed and notarized by Apple once the Developer ID
+# certificate is in the repo's secrets (docs/adding-maps.md explains setting it
+# up); until then they're built unsigned, exactly as before. Windows and Linux
+# builds are unsigned. Each release also lists every file's SHA-256 checksum and
+# records an attestation, so anyone can check a download came from this repo.
 name: Build the apps
 
 on:
@@ -22,7 +28,7 @@ jobs:
   build:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 30
+    timeout-minutes: 60  # Apple's notarization usually takes minutes, occasionally much longer
     strategy:
       fail-fast: false
       matrix:
@@ -35,6 +41,11 @@ jobs:
     defaults:
       run:
         shell: bash
+    env:
+      # "true" once the certificate is saved as a secret. Only "Run workflow"
+      # and version tags start this workflow, so nothing gets signed unless
+      # someone with write access to the repo asked for a build.
+      MAC_SIGNING: ${{ secrets.MACOS_CERT_P12 != '' }}
     steps:
       - uses: actions/checkout@v7
 
@@ -60,6 +71,34 @@ jobs:
       - name: Run the tests
         run: python -m pytest
 
+      # A throwaway keychain holds the certificate for this run only. Setting
+      # MACOS_SIGN_IDENTITY is what makes the build and build_dmg.sh sign.
+      - name: Set up the signing certificate (Mac)
+        if: runner.os == 'macOS' && env.MAC_SIGNING == 'true'
+        env:
+          MACOS_CERT_P12: ${{ secrets.MACOS_CERT_P12 }}
+          MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+        run: |
+          keychain="$RUNNER_TEMP/signing.keychain-db"
+          keychain_password=$(openssl rand -base64 24)
+          security create-keychain -p "$keychain_password" "$keychain"
+          security set-keychain-settings -lut 3600 "$keychain"
+          security unlock-keychain -p "$keychain_password" "$keychain"
+          echo "$MACOS_CERT_P12" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          security import "$RUNNER_TEMP/cert.p12" -k "$keychain" -P "$MACOS_CERT_PASSWORD" \
+            -T /usr/bin/codesign
+          rm "$RUNNER_TEMP/cert.p12"
+          security set-key-partition-list -S apple-tool:,apple: -k "$keychain_password" "$keychain" \
+            > /dev/null
+          security list-keychains -d user -s "$keychain"
+          identity=$(security find-identity -v -p codesigning "$keychain" \
+            | awk '/"Developer ID Application: / { print $2; exit }')
+          if [ -z "$identity" ]; then
+            echo "::error::MACOS_CERT_P12 doesn't hold a Developer ID Application certificate"
+            exit 1
+          fi
+          echo "MACOS_SIGN_IDENTITY=$identity" >> "$GITHUB_ENV"
+
       - name: Build the app
         run: python -m PyInstaller --noconfirm --clean packaging/district_lookup.spec
 
@@ -71,6 +110,41 @@ jobs:
           hdiutil attach -nobrowse -readonly -mountpoint "$mnt" dist/*.dmg
           "$mnt/District Lookup.app/Contents/MacOS/District Lookup" --self-test
           hdiutil detach "$mnt"
+
+      # After the self-test, so a broken app is never sent to Apple. Stapling
+      # attaches Apple's approval to the disk image, so it opens without a
+      # warning even offline. The last check is Gatekeeper's own verdict.
+      - name: Notarize (Mac)
+        if: runner.os == 'macOS' && env.MAC_SIGNING == 'true'
+        timeout-minutes: 45
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+        run: |
+          dmg=$(ls dist/*.dmg)
+          auth=(--apple-id "$APPLE_ID" --team-id "$APPLE_TEAM_ID" --password "$APPLE_APP_PASSWORD")
+          answer() { python -c "import json, sys; print(json.load(sys.stdin).get('$1', ''))" <<< "$result"; }
+          result=$(xcrun notarytool submit "$dmg" "${auth[@]}" --wait --timeout 40m --output-format json) \
+            || true
+          echo "$result"
+          status=$(answer status || true)
+          if [ "$status" != "Accepted" ]; then
+            id=$(answer id || true)
+            if [ -n "$id" ]; then xcrun notarytool log "$id" "${auth[@]}" || true; fi
+            echo "::error::Apple didn't notarize the app (${status:-no answer}). The reason is above."
+            exit 1
+          fi
+          xcrun stapler staple "$dmg"
+          spctl --assess --type open --context context:primary-signature --verbose=2 "$dmg"
+          mnt=$(mktemp -d)
+          hdiutil attach -nobrowse -readonly -mountpoint "$mnt" "$dmg"
+          spctl --assess --type execute --verbose=2 "$mnt/District Lookup.app"
+          hdiutil detach "$mnt"
+
+      - name: Remove the signing certificate (Mac)
+        if: always() && runner.os == 'macOS' && env.MAC_SIGNING == 'true'
+        run: security delete-keychain "$RUNNER_TEMP/signing.keychain-db" || true
 
       - name: Package and self-test (Windows)
         if: runner.os == 'Windows'
@@ -115,6 +189,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write  # these three let actions/attest sign and record the attestation
+      attestations: write
+      artifact-metadata: write
     steps:
       - uses: actions/checkout@v7
 
@@ -122,6 +199,17 @@ jobs:
         with:
           path: dist
           merge-multiple: true
+
+      - name: List every file's checksum
+        working-directory: dist
+        run: sha256sum -- * | tee SHA256SUMS.txt
+
+      # Lets anyone confirm a download was built here, from this repo's code:
+      #   gh attestation verify <file> --repo drewsiegler/district-lookup
+      - name: Record where the files were built
+        uses: actions/attest@v4
+        with:
+          subject-checksums: dist/SHA256SUMS.txt
 
       - name: Make a draft release with every app attached
         env:

@@ -4,6 +4,13 @@
 # the app reads (the prepared maps, the page, the icon) into dist/District Lookup/,
 # and on macOS into dist/District Lookup.app. The per-system scripts beside this
 # file then wrap that in a .dmg, an installer or a .deb.
+#
+# With MACOS_SIGN_IDENTITY set to a "Developer ID Application" certificate in the
+# keychain, PyInstaller signs the Mac app with it, every bundled library included,
+# using the hardened runtime that Apple's notarization requires. The release
+# workflow sets it once the certificate is in the repo's secrets (docs/adding-maps.md).
+# Unset, the app is signed ad hoc: it runs, but macOS warns that it can't check it.
+import os
 import sys
 from pathlib import Path
 
@@ -36,6 +43,7 @@ exe = EXE(
     exclude_binaries=True,
     name=EXE_NAME,
     console=False,  # the app shows its own small window instead of a terminal
+    codesign_identity=os.environ.get("MACOS_SIGN_IDENTITY") or None,
     icon=str(ROOT / "assets" / ("AppIcon.icns" if sys.platform == "darwin" else "AppIcon.ico")),
 )
 coll = COLLECT(exe, a.binaries, a.datas, name=NAME)

@@ -16,4 +16,6 @@ These apps aren't signed with paid developer certificates, so your computer will
 
 To update, download the new version and install it over the old one. Your saved address lookups are kept.
 
+To check a download is genuine, compare it with `SHA256SUMS.txt`, or run `gh attestation verify <file> --repo drewsiegler/district-lookup` to confirm GitHub built it from this project's public code.
+
 District Lookup is free. If it helps your work, you can [support it on Ko-fi](https://ko-fi.com/andrewsiegler).

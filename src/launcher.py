@@ -37,12 +37,18 @@ SELF_TEST_EXPECTED = {"city": "San Jose", "council_district": "3",
 
 def self_test() -> int:
     """Checks that a finished app carries everything it needs: the maps, the
-    lookup, the page and the icon. Reports through the exit code, never by
-    crashing: on Windows a crash pops up a dialog that would stall the build."""
+    lookup, the page, the icon and the window's toolkit. Reports through the
+    exit code, never by crashing: on Windows a crash pops up a dialog that
+    would stall the build."""
     try:
         districts = lookup_point(load_layers(), *SELF_TEST_POINT)
         got = {column: (districts.get(column) or "").split("—")[0] for column in SELF_TEST_EXPECTED}
         ok = got == SELF_TEST_EXPECTED and "District Lookup" in web.PAGE and web.ICON_PATH.exists()
+        # Loads Tcl/Tk without opening a window, so it works on build machines
+        # with no display. A signed Mac app refuses libraries that weren't
+        # signed along with it, and this is where that would show up.
+        import tkinter
+        tkinter.Tcl().eval("info patchlevel")
     except Exception as err:
         got, ok = repr(err), False
     print(f"District Lookup {about.VERSION} self-test {'passed' if ok else 'FAILED'}: {got}")
