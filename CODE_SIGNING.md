@@ -7,7 +7,7 @@ Signing lets your computer confirm who made a program and that nobody has change
 | Download | Signed? |
 |---|---|
 | Mac (`.dmg`) | Yes, from version 1.1.1: signed with the maintainer's Apple Developer ID certificate and notarized (checked for malware) by Apple. |
-| Windows (`setup.exe`) | Not yet. Free signing for open-source projects is planned. |
+| Windows (`setup.exe`) | Not yet. We've applied to the [SignPath Foundation](https://signpath.org), which signs open-source projects for free. |
 | Chromebook and Linux (`.deb`, `.tar.gz`) | No. These systems don't ask for it; the checksums and attestations below let you check a download instead. |
 
 ## How the downloads are made

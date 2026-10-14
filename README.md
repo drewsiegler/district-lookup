@@ -12,7 +12,7 @@ Results are never saved anywhere on their own: the app window hands them over on
 
 Download the version for your computer from the **[latest release](https://github.com/drewsiegler/district-lookup/releases/latest)**; the release page says which file is which. Everything it needs is inside, district maps included, so there's nothing else to install.
 
-The Mac app is signed by its developer and checked by Apple, so it opens like any other app you download. The Windows app isn't signed with a paid developer certificate yet, so the first time you open it, Windows warns that it can't tell who made it; the steps below get past that. The [code signing policy](CODE_SIGNING.md) explains how the downloads are built and signed, and how to check one.
+The Mac app is signed by its developer and checked by Apple, so it opens like any other app you download. The Windows app isn't signed yet (we've applied to the SignPath Foundation for free code signing), so the first time you open it, Windows warns that it can't tell who made it; the steps below get past that. The [code signing policy](CODE_SIGNING.md) explains how the downloads are built and signed, and how to check one.
 
 ### Mac
 

@@ -12,7 +12,7 @@
 - **Which Mac?** Apple menu → About This Mac. "Chip: Apple M…" means Apple silicon; "Processor: … Intel" means Intel.
 - **Which Chromebook?** The two `.deb` files are the same app built for two kinds of processor, and only the right one installs. Settings → About ChromeOS → Diagnostics shows the processor: Intel, AMD, Celeron or Pentium means `_amd64.deb`; MediaTek or Qualcomm Snapdragon means `_arm64.deb`.
 
-The Mac apps are signed and checked by Apple, so macOS just asks once whether you're sure you want to open District Lookup. The Windows app isn't signed yet, so Windows warns you the first time you open it. The [README](https://github.com/drewsiegler/district-lookup#install) walks through getting past that warning, and through installing on a Chromebook.
+The Mac apps are signed and checked by Apple, so macOS just asks once whether you're sure you want to open District Lookup. The Windows app isn't signed yet (we've applied to the SignPath Foundation for free code signing), so Windows warns you the first time you open it. The [README](https://github.com/drewsiegler/district-lookup#install) walks through getting past that warning, and through installing on a Chromebook.
 
 To update, download the new version and install it over the old one. Your saved address lookups are kept.
 
