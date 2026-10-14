@@ -135,7 +135,14 @@ jobs:
             echo "::error::Apple didn't notarize the app (${status:-no answer}). The reason is above."
             exit 1
           fi
-          xcrun stapler staple "$dmg"
+          # Fetching the approval from Apple sometimes drops mid-download (v1.1.1's Intel
+          # build did), and it can lag a moment behind "Accepted", so try a few times.
+          for attempt in 1 2 3 4 5; do
+            xcrun stapler staple "$dmg" && break
+            if [ "$attempt" = 5 ]; then exit 1; fi
+            echo "Couldn't attach Apple's approval yet; trying again in 30 seconds"
+            sleep 30
+          done
           spctl --assess --type open --context context:primary-signature --verbose=2 "$dmg"
           mnt=$(mktemp -d)
           hdiutil attach -nobrowse -readonly -mountpoint "$mnt" "$dmg"
