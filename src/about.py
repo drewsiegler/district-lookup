@@ -15,7 +15,7 @@ import re
 
 import requests
 
-VERSION = "1.1.1"
+VERSION = "1.2.0"
 REPO = "drewsiegler/district-lookup"
 RELEASES_PAGE = f"https://github.com/{REPO}/releases/latest"
 LATEST_RELEASE_API = f"https://api.github.com/repos/{REPO}/releases/latest"
