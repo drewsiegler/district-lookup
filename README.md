@@ -1,6 +1,6 @@
 # District Lookup
 
-Give it a list of people and their addresses; it tells you every electoral district each person lives in — city council, county supervisor, Congress, State Senate and Assembly, school and community college districts and their trustee areas, County Board of Education, the two open space districts (Midpeninsula wards, Santa Clara Valley Open Space Authority districts), and Valley Water board districts — and hands the list back with those added as columns. A custom, growable version of what a registrar of voters' office uses internally, currently covering Santa Clara County.
+Give it a list of people and their addresses; it tells you every electoral district each person lives in — city council, county supervisor, Congress, State Senate and Assembly, school and community college districts and their trustee areas, County Board of Education, the two open space districts (Midpeninsula wards, Santa Clara Valley Open Space Authority districts), Valley Water board districts, and the El Camino Healthcare District — and hands the list back with those added as columns. A custom, growable version of what a registrar of voters' office uses internally, currently covering Santa Clara County.
 
 ## Your list stays private
 
@@ -136,6 +136,7 @@ The columns added, in order:
 | Open Space District | `Midpeninsula Regional Open Space District` | or `Santa Clara Valley Open Space Authority` |
 | District/Ward | `Ward 1—Dir. Craig Gleason` | a Midpeninsula ward, or an Open Space Authority district like `D7—Dir. Kalvin Gill`, with its director |
 | SCV Water District | `D6—Dir. Tony Estremera` | Valley Water board district and its director |
+| Healthcare District | `El Camino Healthcare District` | blank outside it; it covers Mountain View, Los Altos, Los Altos Hills, most of Sunnyvale, and edges of Cupertino, Santa Clara and Palo Alto. Its directors are elected at-large |
 
 Boundaries change. Verify anything you'd act on against the county Registrar of Voters.
 
@@ -168,7 +169,7 @@ Free to download, free to use, and free to adapt for another county. Donations a
 **The boundary data is not covered by that license.** The files in `data/raw_geojson/` come from public agencies, each with its own terms:
 
 - Census TIGER/Line files (`us_congress`, `ca_state_senate`, `ca_state_assembly`, the three school district layers, `city`) are U.S. government works, in the public domain.
-- City council, county supervisorial, trustee-area (including the County Board of Education's), Midpeninsula Open Space ward, Santa Clara Valley Open Space Authority district, and Valley Water board district maps come from each agency's GIS portal or public records request, and may carry their own attribution terms. Check with the source agency before redistributing.
+- City council, county supervisorial, trustee-area (including the County Board of Education's), Midpeninsula Open Space ward, Santa Clara Valley Open Space Authority district, Valley Water board district, and El Camino Healthcare District maps come from each agency's GIS portal or public records request, and may carry their own attribution terms. Check with the source agency before redistributing.
 
 ## Trademark
 

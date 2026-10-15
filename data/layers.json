@@ -278,6 +278,12 @@
         "D6": "Dir. Tony Estremera",
         "D7": "Dir. Rebecca Eisenberg"
       }
+    },
+    {
+      "id": "healthcare_district",
+      "label": "Healthcare District (El Camino)",
+      "header": "Healthcare District",
+      "name_field": "NAME"
     }
   ]
 }

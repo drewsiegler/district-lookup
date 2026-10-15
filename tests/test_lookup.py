@@ -31,6 +31,7 @@ def test_tully_road_the_original_example(layers):
     assert d["midpeninsula_regional_open_space_district"] is None  # east of Midpen's boundary
     assert d["scvosa_director_districts"] == "D7—Dir. Kalvin Gill"
     assert d["scv_water_board_districts"] == "D6—Dir. Tony Estremera"
+    assert d["healthcare_district"] is None  # El Camino covers the northwest
     assert d["high_school_trustee_area"] == "TA3"
     assert d["community_college_district"] == "San Jose-Evergreen Community College District"
     assert d["community_college_trustee_area"] == "TA4—Trustee Maria Fuentes"
@@ -99,6 +100,8 @@ def test_tully_road_the_original_example(layers):
     ("gilroy_rosanna_st", "ca_state_assembly", "AD29—Asm. Robert Rivas"),
     ("cupertino_city_hall", "scv_water_board_districts", "D5—Dir. Nai Hsueh"),
     ("stanford_campus", "scv_water_board_districts", "D7—Dir. Rebecca Eisenberg"),
+    ("mountain_view_city_hall", "healthcare_district", "El Camino Healthcare District"),
+    ("sunnyvale_city_hall", "healthcare_district", "El Camino Healthcare District"),
 ])
 def test_known_districts(layers, point, column, expected):
     assert at(layers, point)[column] == expected

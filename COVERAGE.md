@@ -1,6 +1,6 @@
 # Coverage — Santa Clara County
 
-Updated 2026-10-08. What's loaded, what's still to source, and where the gaps are. How to add a map: [docs/adding-maps.md](docs/adding-maps.md).
+Updated 2026-10-15. What's loaded, what's still to source, and where the gaps are. How to add a map: [docs/adding-maps.md](docs/adding-maps.md).
 
 ## Complete, from Census data
 
@@ -74,6 +74,10 @@ All four community college districts — Foothill-De Anza, San José-Evergreen, 
 - **Loaded:** Valley Water (Santa Clara Valley Water District) board districts, written `D1`–`D7` with their director (`D6—Dir. Tony Estremera`, listed by hand under `names` in `data/layers.json`) — the map adopted in 2022 from the 2020 Census, for the 2022–2030 elections. Valley Water covers the whole county, so every address in it gets a district, with no gaps.
 
   The loaded file is identical to Valley Water's own GIS layer (`SCVWD_Board_of_Directors_Boundaries` on services2.arcgis.com/9KdAx8qBsHiGXOEw, which lists each district's current director), district for district.
+
+- **Loaded:** El Camino Healthcare District, which runs El Camino Hospital. Its five directors are elected at-large, so the `Healthcare District` column just names the district for addresses inside it and is blank elsewhere. Two seats are on the November 3, 2026 ballot, per the Registrar's [district page](https://vote.santaclaracounty.gov/el-camino-healthcare-district). It covers almost all of Mountain View, Los Altos and Los Altos Hills, most of Sunnyvale, and edges of Cupertino, Santa Clara and Palo Alto, about 48 sq mi.
+
+  The boundary is the county's official LAFCo layer (`Healthcare_District` on services2.arcgis.com/tcv2cMrq63AgvbHF, "the official GIS layer representing the Healthcare District boundary within Santa Clara County", last edited October 13, 2026). That layer has no name field, so `NAME` was added to the saved copy in `data/raw_geojson/healthcare_district.geojson`. If the board ever moves to zone elections, it will need a zone map instead.
 
 ## Known gaps in loaded maps
 

@@ -113,6 +113,7 @@ def test_output_headings(layers, fake_geocoder):
         "High School District", "Secondary Trustee Area",
         "Community College District", "College Trustee Area",
         "County Board of Education", "Open Space District", "District/Ward", "SCV Water District",
+        "Healthcare District",
     ]
     review = pipeline.csv_text(outcome, "review").splitlines()[0].split(",")
     assert review == ["Review Reason", "Address Searched"] + results
